@@ -7,36 +7,27 @@ Your [design product spec](https://hackmd.io/s/H1wGpVUh7) (described in that lin
 
 **Required Must-have Stories**
 
- * [fill in your required user stories here]
- * ...
+ * Some sort of VideoViewer
+ * Some sort of SolarSystemDetailViewer (maybe some 3D Models?)
+ * Some sort of NotesApp (make it look nice/structured)
+ * Be able to display all 3 "features" in the app
+ * Incorporate AR into application for displaying all the information
+ * Be able to interact with our AR "Features"
 
 **Optional Nice-to-have Stories**
 
- * [fill in your required user stories here]
- * ...
+ * Natural Language Processing (give commands via speech)
+ * Speech-to-Text (instead of needing to type)
+ * Move/Resize Views
+ * Adding/Removing Views
+ * SceneForm stuff
+ * Cloud AR Data Sharing
+ * Way to showcase Notifications/Info
+ * Somehow connect watch to AR Environment
+ * Make visually appealing/connect to the theme
 
 ## 2. Screen Archetypes
 
- * [list first screen here]
-   * [list associated required story here]
-   * ...
- * [list second screen here]
-   * [list associated required story here]
-   * ...
-
-## 3. Navigation
-
-**Tab Navigation** (Tab to Screen)
-
- * [fill out your first tab]
- * [fill out your second tab]
- * [fill out your third tab]
-
-**Flow Navigation** (Screen to Screen)
-
- * [list first screen here]
-   * [list screen navigation here]
-   * ...
- * [list second screen here]
-   * [list screen navigation here]
-   * ...
+ * Since this app is exclusively in AR, there aren't necessarily screens.
+  * However, we have SceneForms that are rendered in the AR space
+  * Each of the SceneForms will have their own features, and we'll have a consistent general theme for the views
