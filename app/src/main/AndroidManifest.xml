@@ -31,7 +31,6 @@
         <activity android:name=".activities.ARActivity"/>
         <activity android:name=".activities.VideosActivity">
             <intent-filter>
-
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
