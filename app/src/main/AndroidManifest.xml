@@ -8,6 +8,7 @@
     <uses-feature
         android:name="android.hardware.camera.ar"
         android:required="true" />
+   <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -21,9 +22,9 @@
         <meta-data
             android:name="com.google.ar.core"
             android:value="required" />
-
-        <activity android:name=".MainActivity" />
+       
         <activity android:name=".VideosActivity"/>
+        <activity android:name=".MainActivity"/>
         <activity android:name=".activities.ARActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
