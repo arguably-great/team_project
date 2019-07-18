@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/youtubeFragment"
+<fragment android:id="@+id/youtubeFragment"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:name="com.google.android.youtube.player.YouTubePlayerFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"></fragment>
+    xmlns:android="http://schemas.android.com/apk/res/android">
+</fragment>
 
