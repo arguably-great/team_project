@@ -21,6 +21,7 @@ import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.fragments.NoteContentFragment;
 import com.example.fbuteamproject.interfaces.PassNoteToActivityListener;
 import com.example.fbuteamproject.models.Note;
+import com.example.fbuteamproject.models.Planet;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Config;
@@ -340,19 +341,19 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
         noteContents.setLocalScale(new Vector3(0.5f, 0.35f, 0.5f));
 
 
-        Node earthVisual = new Node();
+        Planet earthVisual = new Planet("Earth", "The grandest of places! I hear all the life is here ;)");
         earthVisual.setParent(base);
         earthVisual.setRenderable(earthRenderable);
         earthVisual.setLocalPosition(new Vector3(-0.5f, 1.5f, 0.0f) );
         earthVisual.setLocalScale(new Vector3(0.2f, 0.2f, 0.2f) );
 
-        Node marsVisual = new Node();
+        Planet marsVisual = new Planet("Mars","Pretty nifty place. Elon likes it a lot, I'm pretty sure :0");
         marsVisual.setParent(base);
         marsVisual.setRenderable(marsRenderable);
         marsVisual.setLocalPosition(new Vector3(0.0f, 1.5f, 0.0f) );
         marsVisual.setLocalScale(new Vector3(0.2f, 0.2f, 0.2f) );
 
-        Node neptuneVisual = new Node();
+        Planet neptuneVisual = new Planet("Neptune","King of the Sea?? More like last planet in our Solar System LMAO XD");
         neptuneVisual.setParent(base);
         neptuneVisual.setRenderable(neptuneRenderable);
         neptuneVisual.setLocalPosition(new Vector3(0.5f, 1.5f, 0.0f) );
@@ -377,6 +378,20 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
 //        generateNotes();
 
 
+        earthVisual.setOnTapListener((hitTestResult, motionEvent) -> {
+            ((TextView) noteTitleView.findViewById(R.id.tvTitle) ).setText(earthVisual.getPlanetName() );
+            ((TextView) noteContentView.findViewById(R.id.tvContents) ).setText(earthVisual.getPlanetNotes() );
+        });
+
+        marsVisual.setOnTapListener((hitTestResult, motionEvent) -> {
+            ((TextView) noteTitleView.findViewById(R.id.tvTitle) ).setText(marsVisual.getPlanetName() );
+            ((TextView) noteContentView.findViewById(R.id.tvContents) ).setText(marsVisual.getPlanetNotes() );
+        });
+
+        neptuneVisual.setOnTapListener((hitTestResult, motionEvent) -> {
+            ((TextView) noteTitleView.findViewById(R.id.tvTitle) ).setText( neptuneVisual.getPlanetName() );
+            ((TextView) noteContentView.findViewById(R.id.tvContents) ).setText(neptuneVisual.getPlanetNotes() );
+        });
 
 
 
