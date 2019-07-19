@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getApplicationContext(), PhotosActivity.class);
+                Intent intent = new Intent(getApplicationContext(), PhotoSceneView.class);
                 startActivity(intent);
             }
 

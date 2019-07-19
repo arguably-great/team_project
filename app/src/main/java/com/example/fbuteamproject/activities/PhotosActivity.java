@@ -7,11 +7,9 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.fbuteamproject.R;
@@ -70,7 +68,7 @@ public class PhotosActivity extends AppCompatActivity {
 
 
         ViewRenderable.builder()
-                .setView(this, R.layout.test_ar)
+                .setView(this, R.layout.test_ar1)
                 .build()
                 .thenAccept(renderable -> viewRenderable = renderable);
 
