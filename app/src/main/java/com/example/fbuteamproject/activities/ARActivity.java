@@ -3,6 +3,7 @@ package com.example.fbuteamproject.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -36,6 +37,7 @@ import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
 import org.parceler.Parcels;
@@ -57,6 +59,10 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
     private GestureDetector gestureDetector;
     private Snackbar loadingMessageSnackbar = null;
 
+    private ModelRenderable earthRenderable;
+    private ModelRenderable marsRenderable;
+    private ModelRenderable neptuneRenderable;
+
     private ViewRenderable noteTitlesRenderable;
     private ViewRenderable noteContentsRenderable;
 
@@ -64,7 +70,7 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
     private boolean hasFinishedLoading = false;
 
     // True once the scene has been placed.
-    private boolean hasPlacedFragments = false;
+    private boolean hasPlacedComponents = false;
 
 
 //    private ArrayList<Note> notesTest;
@@ -81,6 +87,15 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
 
         arSceneView = findViewById(R.id.ar_scene_view);
 
+        //Build the ModelRenderables
+        CompletableFuture<ModelRenderable> earthStage =
+                ModelRenderable.builder().setSource(this, Uri.parse("CHAHIN_EARTH.sfb") ).build();
+        CompletableFuture<ModelRenderable> marsStage =
+                ModelRenderable.builder().setSource(this, Uri.parse("1239 Mars.sfb") ).build();
+        CompletableFuture<ModelRenderable> neptuneStage =
+                ModelRenderable.builder().setSource(this, Uri.parse("Neptune.sfb") ).build();
+
+
         //Build the ViewRenderables
         CompletableFuture<ViewRenderable> noteTitleStage =
                 ViewRenderable.builder().setView(this, R.layout.fragment_note_title).build();
@@ -89,6 +104,9 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
                 ViewRenderable.builder().setView(this, R.layout.fragment_note_contents).build();
 
         CompletableFuture.allOf(
+                    earthStage,
+                    marsStage,
+                    neptuneStage,
                     noteTitleStage,
                     noteContentsStage)
                 .handle(
@@ -103,6 +121,9 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
                             }
 
                             try {
+                                earthRenderable = earthStage.get();
+                                marsRenderable = marsStage.get();
+                                neptuneRenderable = neptuneStage.get();
                                 noteTitlesRenderable = noteTitleStage.get();
                                 noteContentsRenderable = noteContentsStage.get();
 
@@ -141,7 +162,7 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
                         (HitTestResult hitTestResult, MotionEvent event) -> {
                             // If the solar system hasn't been placed yet, detect a tap and then check to see if
                             // the tap occurred on an ARCore plane to place the solar system.
-                            if (!hasPlacedFragments) {
+                            if (!hasPlacedComponents) {
                                 Log.d(APP_TAG, "Wanting to place Fragments for first time");
                                 return gestureDetector.onTouchEvent(event);
                             }
@@ -267,14 +288,14 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
 
         Frame frame = arSceneView.getArFrame();
         if (frame != null) {
-            if (!hasPlacedFragments && tryPlaceFragments(tap, frame)) {
-                hasPlacedFragments = true;
+            if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
+                hasPlacedComponents = true;
             }
         }
     }
 
 
-    private boolean tryPlaceFragments(MotionEvent tap, Frame frame) {
+    private boolean tryPlaceComponents(MotionEvent tap, Frame frame) {
         if (tap != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
             for (HitResult hit : frame.hitTest(tap)) {
                 Trackable trackable = hit.getTrackable();
@@ -284,7 +305,7 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
                     Anchor anchor = hit.createAnchor();
                     AnchorNode anchorNode = new AnchorNode(anchor);
                     anchorNode.setParent(arSceneView.getScene());
-                    Node fragments = createFragments();
+                    Node fragments = createComponents();
                     anchorNode.addChild(fragments);
                     return true;
                 }
@@ -297,26 +318,45 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
     }
 
 
-    private Node createFragments() {
+    private Node createComponents() {
 
-        Log.d(APP_TAG, "In Fragment creation method");
+        Log.d(APP_TAG, "In Component creation method");
 
         Node base = new Node();
 
         Node noteTitles = new Node();
         noteTitles.setParent(base);
-        noteTitles.setLocalPosition(new Vector3(0.0f, 0.5f, 0.0f));
+        noteTitles.setLocalPosition(new Vector3(-0.5f, 0.5f, 0.0f));
 
         Node noteVisual = new Node();
         noteVisual.setParent(noteTitles);
         noteVisual.setRenderable(noteTitlesRenderable);
-        noteVisual.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        noteVisual.setLocalScale(new Vector3(0.5f, 0.35f, 0.5f));
 
         Node noteContents = new Node();
-        noteContents.setParent(noteTitles);
+        noteContents.setParent(base);
         noteContents.setRenderable(noteContentsRenderable);
-        noteContents.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        noteContents.setLocalPosition(new Vector3(1.0f, 0.0f, 0.0f));
+        noteContents.setLocalPosition(new Vector3(0.5f, 0.5f, 0.0f));
+        noteContents.setLocalScale(new Vector3(0.5f, 0.35f, 0.5f));
+
+
+        Node earthVisual = new Node();
+        earthVisual.setParent(base);
+        earthVisual.setRenderable(earthRenderable);
+        earthVisual.setLocalPosition(new Vector3(-0.5f, 1.5f, 0.0f) );
+        earthVisual.setLocalScale(new Vector3(0.2f, 0.2f, 0.2f) );
+
+        Node marsVisual = new Node();
+        marsVisual.setParent(base);
+        marsVisual.setRenderable(marsRenderable);
+        marsVisual.setLocalPosition(new Vector3(0.0f, 1.5f, 0.0f) );
+        marsVisual.setLocalScale(new Vector3(0.2f, 0.2f, 0.2f) );
+
+        Node neptuneVisual = new Node();
+        neptuneVisual.setParent(base);
+        neptuneVisual.setRenderable(neptuneRenderable);
+        neptuneVisual.setLocalPosition(new Vector3(0.5f, 1.5f, 0.0f) );
+        neptuneVisual.setLocalScale(new Vector3(0.2f, 0.2f, 0.2f) );
 
 
         View noteTitleView = noteTitlesRenderable.getView();
