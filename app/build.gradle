@@ -12,6 +12,11 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -26,6 +31,10 @@ android {
 }
 ext {
     supportLibVersion = '28.0.0'  // variable that can be referenced to keep support libs consistent
+}
+
+repositories {
+    mavenCentral() // jcenter() works as well because it pulls from Maven Central
 }
 
 dependencies {
@@ -46,6 +55,10 @@ dependencies {
     annotationProcessor 'org.parceler:parceler:1.1.12'
     implementation 'com.android.support:design:28.0.0'
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    // Glide v4 uses this new annotation processor -- see https://bumptech.github.io/glide/doc/generatedapi.html
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+    implementation 'com.google.ar.sceneform:assets:1.10.0'
 }
 
 apply plugin: 'com.google.ar.sceneform.plugin'
@@ -67,6 +80,7 @@ sceneform.asset('sampledata/Neptune.obj',
         'sampledata/Neptune.sfa',
         'src/main/assets/Neptune')
 
+<<<<<<< HEAD
 sceneform.asset('sampledata/models/Jupiter/model.obj',
         'default',
         'sampledata/models/Jupiter/model.sfa',
@@ -82,3 +96,5 @@ sceneform.asset('sampledata/models/Venus/Venus_1241.obj',
         'sampledata/models/Venus/Venus_1241.sfa',
         'src/main/assets/Venus_1241')
 
+=======
+>>>>>>> 7279895... [Image View Feature][WIP]
