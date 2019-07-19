@@ -59,9 +59,15 @@ dependencies {
     // Glide v4 uses this new annotation processor -- see https://bumptech.github.io/glide/doc/generatedapi.html
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'com.google.ar.sceneform:assets:1.10.0'
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+
 }
 
 apply plugin: 'com.google.ar.sceneform.plugin'
+
+
+
+
 
 
 
@@ -80,7 +86,6 @@ sceneform.asset('sampledata/Neptune.obj',
         'sampledata/Neptune.sfa',
         'src/main/assets/Neptune')
 
-<<<<<<< HEAD
 sceneform.asset('sampledata/models/Jupiter/model.obj',
         'default',
         'sampledata/models/Jupiter/model.sfa',
@@ -96,5 +101,3 @@ sceneform.asset('sampledata/models/Venus/Venus_1241.obj',
         'sampledata/models/Venus/Venus_1241.sfa',
         'src/main/assets/Venus_1241')
 
-=======
->>>>>>> 7279895... [Image View Feature][WIP]

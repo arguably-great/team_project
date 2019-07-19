@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.fbuteamproject">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -24,12 +25,14 @@
         tools:ignore="GoogleAppIndexingWarning"
         android:usesCleartextTraffic="true">
 
+        <activity android:name=".activities.PhotoSceneView"></activity>
         <meta-data
             android:name="com.google.ar.core"
             android:value="required" />
 
         <activity android:name=".MainActivity"/>
 	<activity android:name=".PhotosActivity"></activity>
+
         <activity android:name=".activities.ARActivity"/>
         <activity android:name=".activities.VideosActivity">
             <intent-filter>
@@ -40,3 +43,4 @@
         </activity>
     </application>
 </manifest>
+
