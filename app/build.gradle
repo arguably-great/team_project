@@ -46,3 +46,19 @@ dependencies {
 
 apply plugin: 'com.google.ar.sceneform.plugin'
 
+
+
+sceneform.asset('sampledata/1239 Mars.obj',
+        'default',
+        'sampledata/1239 Mars.sfa',
+        'src/main/assets/1239 Mars')
+
+sceneform.asset('sampledata/CHAHIN_EARTH.obj',
+        'default',
+        'sampledata/CHAHIN_EARTH.sfa',
+        'src/main/assets/CHAHIN_EARTH')
+
+sceneform.asset('sampledata/Neptune.obj',
+        'default',
+        'sampledata/Neptune.sfa',
+        'src/main/assets/Neptune')

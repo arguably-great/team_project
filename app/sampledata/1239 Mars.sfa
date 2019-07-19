@@ -1,0 +1,50 @@
+{
+  materials: [
+    {
+      name: 'Mat',
+      parameters: [
+        {
+          baseColor: '1239 Mars',
+        },
+        {
+          baseColorTint: [
+            0.59999999999999998,
+            0.59999999999999998,
+            0.59999999999999998,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+    ],
+    collision: {},
+    file: 'sampledata/1239 Mars.obj',
+    name: '1239 Mars',
+    recenter: 'root',
+    scale: 0.0048079999999999998,
+  },
+  samplers: [
+    {
+      file: 'sampledata/1239 Mars.png',
+      name: '1239 Mars',
+      pipeline_name: '1239 Mars.png',
+    },
+  ],
+  version: '0.54:2',
+}
