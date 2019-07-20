@@ -1,45 +1,67 @@
 package com.example.fbuteamproject.activities;
 
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Gravity;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.widget.Toast;
 
+import com.example.fbuteamproject.DemoUtils;
 import com.example.fbuteamproject.R;
 import com.google.ar.core.Anchor;
+import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
+import com.google.ar.core.Session;
+import com.google.ar.core.Trackable;
+import com.google.ar.core.TrackingState;
+import com.google.ar.core.exceptions.CameraNotAvailableException;
+import com.google.ar.core.exceptions.UnavailableException;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.ExternalTexture;
 import com.google.ar.sceneform.rendering.ModelRenderable;
-import com.google.ar.sceneform.ux.ArFragment;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import static com.example.fbuteamproject.DemoUtils.checkIsSupportedDeviceOrFinish;
 
 public class VideosActivity extends AppCompatActivity {
 
     private static final String TAG = VideosActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
+    private static final int RC_PERMISSIONS =0x123;;
 
-    private ArFragment arFragment;
-
+    private boolean installRequested;
+    
     @Nullable
     private ModelRenderable videoRenderable;
     private MediaPlayer mediaPlayer;
 
+    private GestureDetector gestureDetector;
+
+    private ArSceneView arSceneView;
+
+    private Snackbar loadingMessageSnackbar = null;
+    private ModelRenderable venusRenderable;
+
+    // True once scene is loaded
+    private boolean hasFinishedLoading = false;
+
+    // True once the scene has been placed.
+    private boolean hasPlacedVideo = false;
+
     // The color to filter out of the video.
     private static final Color CHROMA_KEY_COLOR = new Color(0.1843f, 1.0f, 0.098f);
-
     // Controls the height of the video in world space.
     private static final float VIDEO_HEIGHT_METERS = 0.85f;
 
@@ -54,78 +76,148 @@ public class VideosActivity extends AppCompatActivity {
             return;
         }
 
+        //set the content and the layout
         setContentView(R.layout.activity_videos);
-        arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
+        arSceneView = findViewById(R.id.ar_scene_view);
 
         // Create an ExternalTexture for displaying the contents of the video.
         ExternalTexture texture = new ExternalTexture();
 
-        // Create an Android MediaPlayer to capture the video on the external texture's surface.
-        mediaPlayer = MediaPlayer.create(this, R.raw.venus);
-        mediaPlayer.setSurface(texture.getSurface());
-        mediaPlayer.setLooping(true);
+        CompletableFuture<ModelRenderable> venusStage =
+                ModelRenderable.builder().setSource(this, Uri.parse("Venus_1241.sfb")).build();
 
-        // Create a renderable with a material that has a parameter of type 'samplerExternal' so that
-        // it can display an ExternalTexture. The material also has an implementation of a chroma key
-        // filter.
-        ModelRenderable.builder()
-                .setSource(this, R.raw.video_screen)
-                .build()
-                .thenAccept(
-                        renderable -> {
-                            videoRenderable = renderable;
-                            renderable.getMaterial().setExternalTexture("videoTexture", texture);
-                            renderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
-                        })
-                .exceptionally(
-                        throwable -> {
-                            Toast toast =
-                                    Toast.makeText(this, "Unable to load video renderable", Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER, 0, 0);
-                            toast.show();
+        CompletableFuture<ModelRenderable> videoStage =
+                ModelRenderable.builder().setSource(this, R.raw.video_screen).build();
+
+        CompletableFuture.allOf(
+                videoStage,
+                venusStage)
+                .handle(
+                        (notUsed, throwable) -> {
+                            // When you build a Renderable, Sceneform loads its resources in the background while
+                            // returning a CompletableFuture. Call handle(), thenAccept(), or check isDone()
+                            // before calling get().
+
+                            if (throwable != null) {
+                                DemoUtils.displayError(this, "Unable to load renderable", throwable);
+                                return null;
+                            }
+
+                            try {
+                                videoRenderable = videoStage.get();
+                                venusRenderable = venusStage.get();
+                                // Everything finished loading successfully.
+                                hasFinishedLoading = true;
+                            } catch (InterruptedException | ExecutionException ex) {
+                                DemoUtils.displayError(this, "Unable to load renderable", ex);
+                            }
                             return null;
                         });
 
-        arFragment.setOnTapArPlaneListener(
-                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-                    if (videoRenderable == null) {
-                        return;
-                    }
+        //Gesture detector for tap events
+        gestureDetector =
+                new GestureDetector(
+                        this,
+                        new GestureDetector.SimpleOnGestureListener() {
+                            @Override
+                            public boolean onSingleTapUp(MotionEvent e) {
+                                onSingleTap(e);
+                                return true;
+                            }
 
-                    // Create the Anchor.
-                    Anchor anchor = hitResult.createAnchor();
-                    AnchorNode anchorNode = new AnchorNode(anchor);
-                    anchorNode.setParent(arFragment.getArSceneView().getScene());
+                            @Override
+                            public boolean onDown(MotionEvent e) {
+                                return true;
+                            }
+                        });
 
-                    // Create a node to render the video and add it to the anchor.
-                    Node videoNode = new Node();
-                    videoNode.setParent(anchorNode);
+        // Set a touch listener on the Scene to listen for taps.
+        arSceneView
+                .getScene()
+                .setOnTouchListener(
+                        (HitTestResult hitTestResult, MotionEvent event) -> {
+                            // If the solar system hasn't been placed yet, detect a tap and then check to see if
+                            // the tap occurred on an ARCore plane to place the solar system.
+                            if (!hasPlacedVideo) {
+                                return gestureDetector.onTouchEvent(event);
+                            }
 
-                    // Set the scale of the node so that the aspect ratio of the video is correct.
-                    float videoWidth = mediaPlayer.getVideoWidth();
-                    float videoHeight = mediaPlayer.getVideoHeight();
-                    videoNode.setLocalScale(
-                            new Vector3(
-                                    VIDEO_HEIGHT_METERS * (videoWidth / videoHeight), VIDEO_HEIGHT_METERS, 1.0f));
+                            // Otherwise return false so that the touch event can propagate to the scene.
+                            return false;
+                        });
 
-                    // Start playing the video when the first node is placed.
-                    if (!mediaPlayer.isPlaying()) {
-                        mediaPlayer.start();
+        // Set an update listener on the Scene that will hide the loading message once a Plane is
+        // detected.
+        arSceneView
+                .getScene()
+                .addOnUpdateListener(
+                        frameTime -> {
+                            if (loadingMessageSnackbar == null) {
+                                return;
+                            }
 
-                        // Wait to set the renderable until the first frame of the  video becomes available.
-                        // This prevents the renderable from briefly appearing as a black quad before the video
-                        // plays.
-                        texture
-                                .getSurfaceTexture()
-                                .setOnFrameAvailableListener(
-                                        (SurfaceTexture surfaceTexture) -> {
-                                            videoNode.setRenderable(videoRenderable);
-                                            texture.getSurfaceTexture().setOnFrameAvailableListener(null);
-                                        });
-                    } else {
-                        videoNode.setRenderable(videoRenderable);
-                    }
-                });
+                            Frame frame = arSceneView.getArFrame();
+                            if (frame == null) {
+                                return;
+                            }
+
+                            if (frame.getCamera().getTrackingState() != TrackingState.TRACKING) {
+                                return;
+                            }
+
+                            for (Plane plane : frame.getUpdatedTrackables(Plane.class)) {
+                                if (plane.getTrackingState() == TrackingState.TRACKING) {
+                                    hideLoadingMessage();
+                                }
+                            }
+                        });
+
+        // Lastly request CAMERA permission which is required by ARCore.
+        DemoUtils.requestCameraPermission(this, RC_PERMISSIONS);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (arSceneView == null) {
+            return;
+        }
+
+        if (arSceneView.getSession() == null) {
+            // If the session wasn't created yet, don't resume rendering.
+            // This can happen if ARCore needs to be updated or permissions are not granted yet.
+            try {
+                Session session = DemoUtils.createArSession(this, installRequested);
+                if (session == null) {
+                    installRequested = DemoUtils.hasCameraPermission(this);
+                    return;
+                } else {
+                    arSceneView.setupSession(session);
+                }
+            } catch (UnavailableException e) {
+                DemoUtils.handleSessionException(this, e);
+            }
+        }
+
+        try {
+            arSceneView.resume();
+        } catch (CameraNotAvailableException ex) {
+            DemoUtils.displayError(this, "Unable to get camera", ex);
+            finish();
+            return;
+        }
+
+        if (arSceneView.getSession() != null) {
+            showLoadingMessage();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (arSceneView != null) {
+            arSceneView.pause();
+        }
     }
 
     @Override
@@ -138,33 +230,108 @@ public class VideosActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Returns false and displays an error message if Sceneform can not run, true if Sceneform can run
-     * on this device.
-     *
-     * <p>Sceneform requires Android N on the device as well as OpenGL 3.0 capabilities.
-     *
-     * <p>Finishes the activity if Sceneform can not run
-     */
-    public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            Log.e(TAG, "Sceneform requires Android N or later");
-            Toast.makeText(activity, "Sceneform requires Android N or later", Toast.LENGTH_LONG).show();
-            activity.finish();
-            return false;
+    private void onSingleTap(MotionEvent tap) {
+        if (!hasFinishedLoading) {
+            // We can't do anything yet.
+            return;
         }
-        String openGlVersionString =
-                ((ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE))
-                        .getDeviceConfigurationInfo()
-                        .getGlEsVersion();
-        if (Double.parseDouble(openGlVersionString) < MIN_OPENGL_VERSION) {
-            Log.e(TAG, "Sceneform requires OpenGL ES 3.0 later");
-            Toast.makeText(activity, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_LONG)
-                    .show();
-            activity.finish();
-            return false;
+
+        Frame frame = arSceneView.getArFrame();
+        if (frame != null) {
+            if (!hasPlacedVideo && tryPlaceVideo(tap, frame)) {
+                hasPlacedVideo= true;
+            }
         }
-        return true;
+    }
+
+    private boolean tryPlaceVideo (MotionEvent tap, Frame frame) {
+        if (tap != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
+            for (HitResult hit : frame.hitTest(tap)) {
+                Trackable trackable = hit.getTrackable();
+                if (trackable instanceof Plane && ((Plane) trackable).isPoseInPolygon(hit.getHitPose())) {
+                    // Create the Anchor.
+                    Anchor anchor = hit.createAnchor();
+                    AnchorNode anchorNode = new AnchorNode(anchor);
+                    anchorNode.setParent(arSceneView.getScene());
+                    Node videoNode = createVideo();
+                    videoNode.setParent(anchorNode);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private Node createVideo() {
+
+        //base node for which everything will be relative to
+        Node base = new Node();
+
+        Node venus = new Node();
+        venus.setParent(base);
+        venus.setRenderable(venusRenderable);
+        venus.setLocalPosition(new Vector3(0.8f, 0.0f, 0.0f));
+
+        // Create an ExternalTexture for displaying the contents of the video.
+        ExternalTexture texture = new ExternalTexture();
+
+        // Create an Android MediaPlayer to capture the video on the external texture's surface.
+        mediaPlayer = MediaPlayer.create(this, R.raw.venus);
+        mediaPlayer.setSurface(texture.getSurface());
+        mediaPlayer.setLooping(true);
+
+        Node video = new Node();
+        video.setParent(base);
+        video.setRenderable(videoRenderable);
+        video.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+
+        videoRenderable.getMaterial().setExternalTexture("videoTexture", texture);
+        videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
+
+        float videoWidth = mediaPlayer.getVideoWidth();
+        float videoHeight = mediaPlayer.getVideoHeight();
+        video.setLocalScale(
+                new Vector3(
+                        VIDEO_HEIGHT_METERS * (videoWidth / videoHeight), VIDEO_HEIGHT_METERS, 1.0f));
+
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+
+            texture.getSurfaceTexture().setOnFrameAvailableListener(
+                        (SurfaceTexture surfaceTexture) -> {
+                            video.setRenderable(videoRenderable);
+                            texture.getSurfaceTexture().setOnFrameAvailableListener(null);
+                        });
+        } else {
+        video.setRenderable(videoRenderable);
+
+        }
+
+        return base;
+    }
+
+
+    private void hideLoadingMessage() {
+        if (loadingMessageSnackbar == null) {
+            return;
+        }
+
+        loadingMessageSnackbar.dismiss();
+        loadingMessageSnackbar = null;
+    }
+
+    private void showLoadingMessage() {
+        if (loadingMessageSnackbar != null && loadingMessageSnackbar.isShownOrQueued()) {
+            return;
+        }
+
+        loadingMessageSnackbar =
+                Snackbar.make(
+                        VideosActivity.this.findViewById(android.R.id.content),
+                        R.string.plane_finding,
+                        Snackbar.LENGTH_INDEFINITE);
+        loadingMessageSnackbar.getView().setBackgroundColor(0xbf323232);
+        loadingMessageSnackbar.show();
     }
 
 }

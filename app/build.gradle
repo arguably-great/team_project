@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.ar.sceneform.plugin'
 
 android {
     compileSdkVersion 28
@@ -22,6 +23,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+}
+ext {
+    supportLibVersion = '28.0.0'  // variable that can be referenced to keep support libs consistent
 }
 
 dependencies {
@@ -62,3 +66,10 @@ sceneform.asset('sampledata/Neptune.obj',
         'default',
         'sampledata/Neptune.sfa',
         'src/main/assets/Neptune')
+
+sceneform.asset('sampledata/models/Venus/Venus_1241.obj',
+        'default',
+        'sampledata/models/Venus/Venus_1241.sfa',
+        'src/main/assets/Venus_1241')
+}
+
