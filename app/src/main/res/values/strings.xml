@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">FBUTeamProject</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="note_contents_hint">Enter your notes here :)</string>
+    <string name="note_title_filler">Note Title</string>
+    <string name="plane_finding">Searching for Planes</string>
+    <string name="fragment_click_num">I just clicked on the other fragment %d times!!</string>
 </resources>
