@@ -81,5 +81,4 @@ sceneform.asset('sampledata/models/Venus/Venus_1241.obj',
         'default',
         'sampledata/models/Venus/Venus_1241.sfa',
         'src/main/assets/Venus_1241')
-}
 

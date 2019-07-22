@@ -8,6 +8,5 @@
     <string name="plane_finding">Searching for Planes</string>
     <string name="fragment_click_num">I just clicked on the other fragment %d times!!</string>
     <string name="youtube_api_key">AIzaSyDSSitj5qDein6OgJw-J0S7niWfXCCukdA</string>
-    <string name="plane_finding">Searching for surfaces&#8230;</string>
     <string name="button">Button</string>
 </resources>

@@ -12,6 +12,7 @@ private int planetVideoResID;
     public Planet(String planetName, String planetNotes) {
         this.planetName = planetName;
         this.planetNotes = planetNotes;
+    }
 
     public Planet(String planetName, String planetNotes, int planetVideoResID) {
         this.planetName = planetName;
