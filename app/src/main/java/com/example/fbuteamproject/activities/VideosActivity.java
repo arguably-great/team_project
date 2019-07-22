@@ -3,6 +3,7 @@ package com.example.fbuteamproject.activities;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.models.Planet;
@@ -92,6 +95,7 @@ public class VideosActivity extends AppCompatActivity {
     CompletableFuture<ViewRenderable> buttonResumeStage;
     CompletableFuture<ViewRenderable> buttonStopStage;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
     // CompletableFuture requires api level 24
@@ -176,6 +180,7 @@ public class VideosActivity extends AppCompatActivity {
                 new GestureDetector(
                         this,
                         new GestureDetector.SimpleOnGestureListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.N)
                             @Override
                             public boolean onSingleTapUp(MotionEvent e) {
                                 onSingleTap(e);
@@ -189,6 +194,7 @@ public class VideosActivity extends AppCompatActivity {
                         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setupRenderables() {
         CompletableFuture.allOf(
                 videoStage,
@@ -220,6 +226,7 @@ public class VideosActivity extends AppCompatActivity {
                         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void buildPlanetRenderables() {
         venusStage =
                 ModelRenderable
@@ -238,6 +245,7 @@ public class VideosActivity extends AppCompatActivity {
                         .build();*/
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void buildVideoRenderable() {
         videoStage =
                 ModelRenderable
@@ -246,6 +254,7 @@ public class VideosActivity extends AppCompatActivity {
                         .build();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void buildViewRenderables() {
         buttonPauseStage =
                 ViewRenderable
@@ -318,6 +327,7 @@ public class VideosActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void onSingleTap(MotionEvent tap) {
         if (!hasFinishedLoading) {
             // We can't do anything yet.
@@ -332,6 +342,7 @@ public class VideosActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private boolean tryPlaceComponents (MotionEvent tap, Frame frame) {
         if (tap != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
             for (HitResult hit : frame.hitTest(tap)) {
@@ -345,6 +356,7 @@ public class VideosActivity extends AppCompatActivity {
         return false;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setupAnchor(HitResult hit) {
         // Create the Anchor.
         Anchor anchor = hit.createAnchor();
@@ -354,6 +366,7 @@ public class VideosActivity extends AppCompatActivity {
         components.setParent(anchorNode);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private Node createComponents() {
 
         //base node for which everything will be relative to
@@ -382,6 +395,7 @@ public class VideosActivity extends AppCompatActivity {
         return base;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setupPlanetTapListenerVideo(Planet venusVisual, Planet jupiterVisual, Node baseNode) {
 
         // Create an ExternalTexture for displaying the contents of the video.
@@ -403,6 +417,7 @@ public class VideosActivity extends AppCompatActivity {
         });*/
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void playVideo(Planet planetVisual, Node baseNode, ExternalTexture texture) {
 
         stopPlaying();
@@ -433,6 +448,7 @@ public class VideosActivity extends AppCompatActivity {
         return video;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setVideoTexture(ExternalTexture texture) {
         videoRenderable.getMaterial().setExternalTexture("videoTexture", texture);
         videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
