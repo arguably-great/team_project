@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
+
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/rvNoteTitles"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_marginStart="2dp"-->
+        <!--android:layout_marginLeft="2dp"-->
+        <!--android:layout_marginTop="4dp"-->
+        <!--android:layout_marginEnd="2dp"-->
+        <!--android:layout_marginRight="2dp"-->
+        <!--android:layout_marginBottom="4dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+
+
+
+    <TextView
+    android:id="@+id/tvTitle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="176dp"
+    android:layout_marginLeft="176dp"
+    android:layout_marginTop="307dp"
+    android:layout_marginEnd="176dp"
+    android:layout_marginRight="176dp"
+    android:layout_marginBottom="405dp"
+    android:text="Fragment Titles"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+    <!--<Button-->
+        <!--android:id="@+id/btnTest"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="161dp"-->
+        <!--android:layout_marginTop="110dp"-->
+        <!--android:layout_marginEnd="162dp"-->
+        <!--android:layout_marginBottom="149dp"-->
+        <!--android:text="Button"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/tvTitle"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/ivTest"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="141dp"-->
+        <!--android:layout_marginTop="129dp"-->
+        <!--android:layout_marginEnd="142dp"-->
+        <!--android:layout_marginBottom="148dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/tvTitle"-->
+        <!--tools:srcCompat="@tools:sample/avatars[12]" />-->
+
+
+</android.support.constraint.ConstraintLayout>
