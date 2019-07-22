@@ -30,10 +30,10 @@
             android:name="com.google.ar.core"
             android:value="required" />
 
-        <activity android:name=".MainActivity"/>
-	<activity android:name=".PhotosActivity"></activity>
+        <activity android:name=".activities.MainActivity" />
+        <activity android:name=".activities.PhotosActivity"></activity>
 
-        <activity android:name=".activities.ARActivity"/>
+        <activity android:name=".activities.ARActivity" />
         <activity android:name=".activities.VideosActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
