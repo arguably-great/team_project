@@ -54,7 +54,6 @@ public class VideosActivity extends AppCompatActivity {
     private ModelRenderable jupiterRenderable;
     //private ModelRenderable saturnRenderable;
 
-
     //button renderables
     private ViewRenderable buttonPauseRenderable;
     private ViewRenderable buttonResumeRenderable;
