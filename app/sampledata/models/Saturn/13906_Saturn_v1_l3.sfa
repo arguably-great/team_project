@@ -1,0 +1,53 @@
+{
+  materials: [
+    {
+      name: '13906_Saturn',
+      parameters: [
+        {
+          baseColor: 'Saturn_diff',
+        },
+        {
+          baseColorTint: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 0.408248,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+    ],
+    collision: {},
+    file: 'sampledata/models/Saturn/13906_Saturn_v1_l3.obj',
+    name: '13906_Saturn_v1_l3',
+    recenter: 'root',
+    scale: 0.0019810000000000001,
+  },
+  samplers: [
+    {
+      file: 'sampledata/models/Saturn/Saturn_diff.jpg',
+      name: 'Saturn_diff',
+      params: {
+        usage_type: 'Data',
+      },
+      pipeline_name: 'Saturn_diff.jpg',
+    },
+  ],
+  version: '0.54:2',
+}
