@@ -57,6 +57,12 @@ public class PhotoSceneView extends AppCompatActivity {
     private Snackbar loadingMessageSnackbar = null;
 
 
+    // base URL for API
+    public final static String API_BASE_URL = "http://api.flickr.com/services/rest/?method=flickr.photos.search";
+
+    // parameter name for API key
+    public final static String API_KEY_PARAM = "api_key";
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -81,6 +87,7 @@ public class PhotoSceneView extends AppCompatActivity {
                 ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
         CompletableFuture<ViewRenderable> photoStage4 =
                 ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
+
 
 
 
@@ -235,24 +242,25 @@ public class PhotoSceneView extends AppCompatActivity {
         node1.setParent(base);
         node1.setRenderable(photoRenderable1);
         node1.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        node1.setLocalPosition(new Vector3(-0.5f, 0.0f, -1.0f));
 
         Node node2 = new Node();
         node2.setParent(base);
         node2.setRenderable(photoRenderable2);
         node2.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        node2.setLocalPosition(new Vector3(1.0f, 0.0f, 0.0f));
+        node2.setLocalPosition(new Vector3(-0.5f, 1.0f, -1.0f));
 
         Node node3 = new Node();
         node3.setParent(base);
         node3.setRenderable(photoRenderable3);
         node3.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        node3.setLocalPosition(new Vector3(0.0f, 1.0f, 0.0f));
+        node3.setLocalPosition(new Vector3(0.5f, 0.0f, -1.0f));
 
         Node node4 = new Node();
         node4.setParent(base);
         node4.setRenderable(photoRenderable4);
         node4.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        node4.setLocalPosition(new Vector3(1.0f, 1.0f, 0.0f));
+        node4.setLocalPosition(new Vector3(0.5f, 1.0f, -1.0f));
 
         return base;
     }
