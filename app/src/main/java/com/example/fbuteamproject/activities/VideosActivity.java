@@ -10,8 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import com.example.fbuteamproject.DemoUtils;
 import com.example.fbuteamproject.R;
+import com.example.fbuteamproject.models.Planet;
+import com.example.fbuteamproject.utils.DemoUtils;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
@@ -29,11 +30,12 @@ import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.ExternalTexture;
 import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.Renderable;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static com.example.fbuteamproject.DemoUtils.checkIsSupportedDeviceOrFinish;
+import static com.example.fbuteamproject.utils.DemoUtils.checkIsSupportedDeviceOrFinish;
 
 public class VideosActivity extends AppCompatActivity {
 
@@ -45,6 +47,9 @@ public class VideosActivity extends AppCompatActivity {
     
     @Nullable
     private ModelRenderable videoRenderable;
+    private ModelRenderable venusRenderable;
+    private ModelRenderable jupiterRenderable;
+    //private ModelRenderable saturnRenderable;
     private MediaPlayer mediaPlayer;
 
     private GestureDetector gestureDetector;
@@ -52,18 +57,25 @@ public class VideosActivity extends AppCompatActivity {
     private ArSceneView arSceneView;
 
     private Snackbar loadingMessageSnackbar = null;
-    private ModelRenderable venusRenderable;
 
     // True once scene is loaded
     private boolean hasFinishedLoading = false;
 
     // True once the scene has been placed.
-    private boolean hasPlacedVideo = false;
+    private boolean hasPlacedComponents = false;
 
     // The color to filter out of the video.
     private static final Color CHROMA_KEY_COLOR = new Color(0.1843f, 1.0f, 0.098f);
     // Controls the height of the video in world space.
-    private static final float VIDEO_HEIGHT_METERS = 0.85f;
+    private static final float VIDEO_HEIGHT_METERS = 0.7f;
+    private float videoWidth;
+    private float videoHeight;
+
+    //Completable Futures for model renderables
+    CompletableFuture<ModelRenderable> venusStage;
+    CompletableFuture<ModelRenderable> jupiterStage;
+    //CompletableFuture<ModelRenderable> saturnStage;
+    CompletableFuture<ModelRenderable> videoStage;
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -78,74 +90,25 @@ public class VideosActivity extends AppCompatActivity {
 
         //set the content and the layout
         setContentView(R.layout.activity_videos);
+
+        //find the sceneview
         arSceneView = findViewById(R.id.ar_scene_view);
 
-        // Create an ExternalTexture for displaying the contents of the video.
-        ExternalTexture texture = new ExternalTexture();
+        buildPlanetRenderables();
 
-        CompletableFuture<ModelRenderable> venusStage =
-                ModelRenderable.builder().setSource(this, Uri.parse("Venus_1241.sfb")).build();
+        buildVideoRenderable();
 
-        CompletableFuture<ModelRenderable> videoStage =
-                ModelRenderable.builder().setSource(this, R.raw.video_screen).build();
+        setupRenderables();
 
-        CompletableFuture.allOf(
-                videoStage,
-                venusStage)
-                .handle(
-                        (notUsed, throwable) -> {
-                            // When you build a Renderable, Sceneform loads its resources in the background while
-                            // returning a CompletableFuture. Call handle(), thenAccept(), or check isDone()
-                            // before calling get().
+        setupGestureDetector();
+        setupTouchListener();
+        setupOnUpdateListener();
 
-                            if (throwable != null) {
-                                DemoUtils.displayError(this, "Unable to load renderable", throwable);
-                                return null;
-                            }
+        // Lastly request CAMERA permission which is required by ARCore.
+        DemoUtils.requestCameraPermission(this, RC_PERMISSIONS);
+    }
 
-                            try {
-                                videoRenderable = videoStage.get();
-                                venusRenderable = venusStage.get();
-                                // Everything finished loading successfully.
-                                hasFinishedLoading = true;
-                            } catch (InterruptedException | ExecutionException ex) {
-                                DemoUtils.displayError(this, "Unable to load renderable", ex);
-                            }
-                            return null;
-                        });
-
-        //Gesture detector for tap events
-        gestureDetector =
-                new GestureDetector(
-                        this,
-                        new GestureDetector.SimpleOnGestureListener() {
-                            @Override
-                            public boolean onSingleTapUp(MotionEvent e) {
-                                onSingleTap(e);
-                                return true;
-                            }
-
-                            @Override
-                            public boolean onDown(MotionEvent e) {
-                                return true;
-                            }
-                        });
-
-        // Set a touch listener on the Scene to listen for taps.
-        arSceneView
-                .getScene()
-                .setOnTouchListener(
-                        (HitTestResult hitTestResult, MotionEvent event) -> {
-                            // If the solar system hasn't been placed yet, detect a tap and then check to see if
-                            // the tap occurred on an ARCore plane to place the solar system.
-                            if (!hasPlacedVideo) {
-                                return gestureDetector.onTouchEvent(event);
-                            }
-
-                            // Otherwise return false so that the touch event can propagate to the scene.
-                            return false;
-                        });
-
+    private void setupOnUpdateListener() {
         // Set an update listener on the Scene that will hide the loading message once a Plane is
         // detected.
         arSceneView
@@ -171,9 +134,93 @@ public class VideosActivity extends AppCompatActivity {
                                 }
                             }
                         });
+    }
 
-        // Lastly request CAMERA permission which is required by ARCore.
-        DemoUtils.requestCameraPermission(this, RC_PERMISSIONS);
+    private void setupTouchListener() {
+        // Set a touch listener on the Scene to listen for taps.
+        arSceneView
+                .getScene()
+                .setOnTouchListener(
+                        (HitTestResult hitTestResult, MotionEvent event) -> {
+                            // If the solar system hasn't been placed yet, detect a tap and then check to see if
+                            // the tap occurred on an ARCore plane to place the solar system.
+                            if (!hasPlacedComponents) {
+                                return gestureDetector.onTouchEvent(event);
+                            }
+
+                            // Otherwise return false so that the touch event can propagate to the scene.
+                            return false;
+                        });
+    }
+
+    private void setupGestureDetector() {
+        //Gesture detector for tap events
+        gestureDetector =
+                new GestureDetector(
+                        this,
+                        new GestureDetector.SimpleOnGestureListener() {
+                            @Override
+                            public boolean onSingleTapUp(MotionEvent e) {
+                                onSingleTap(e);
+                                return true;
+                            }
+
+                            @Override
+                            public boolean onDown(MotionEvent e) {
+                                return true;
+                            }
+                        });
+    }
+
+    private void setupRenderables() {
+        CompletableFuture.allOf(
+                videoStage,
+                venusStage,
+                jupiterStage)
+                .handle(
+                        (notUsed, throwable) -> {
+                            if (throwable != null) {
+                                DemoUtils.displayError(this, "Unable to load renderable", throwable);
+                                return null;
+                            }
+                            try {
+                                videoRenderable = videoStage.get();
+                                venusRenderable = venusStage.get();
+                                jupiterRenderable = jupiterStage.get();
+                                //saturnRenderable = saturnStage.get();
+                                // Everything finished loading successfully.
+                                hasFinishedLoading = true;
+                            } catch (InterruptedException | ExecutionException ex) {
+                                DemoUtils.displayError(this, "Unable to load renderable", ex);
+                            }
+                            return null;
+                        });
+    }
+
+    private void buildPlanetRenderables() {
+        venusStage =
+                ModelRenderable
+                .builder()
+                .setSource(this, Uri.parse("Venus_1241.sfb"))
+                .build();
+        jupiterStage =
+                ModelRenderable
+                        .builder()
+                        .setSource(this, Uri.parse("model.sfb"))
+                        .build();
+        /*saturnStage =
+                ModelRenderable
+                        .builder()
+                        .setSource(this, Uri.parse("13906_Saturn_v1_l3.sfb"))
+                        .build();*/
+    }
+
+    private void buildVideoRenderable() {
+        videoStage =
+                ModelRenderable
+                        .builder()
+                        .setSource(this, R.raw.video_screen)
+                        .build();
     }
 
     @Override
@@ -238,23 +285,18 @@ public class VideosActivity extends AppCompatActivity {
 
         Frame frame = arSceneView.getArFrame();
         if (frame != null) {
-            if (!hasPlacedVideo && tryPlaceVideo(tap, frame)) {
-                hasPlacedVideo= true;
+            if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
+                hasPlacedComponents= true;
             }
         }
     }
 
-    private boolean tryPlaceVideo (MotionEvent tap, Frame frame) {
+    private boolean tryPlaceComponents (MotionEvent tap, Frame frame) {
         if (tap != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
             for (HitResult hit : frame.hitTest(tap)) {
                 Trackable trackable = hit.getTrackable();
                 if (trackable instanceof Plane && ((Plane) trackable).isPoseInPolygon(hit.getHitPose())) {
-                    // Create the Anchor.
-                    Anchor anchor = hit.createAnchor();
-                    AnchorNode anchorNode = new AnchorNode(anchor);
-                    anchorNode.setParent(arSceneView.getScene());
-                    Node videoNode = createVideo();
-                    videoNode.setParent(anchorNode);
+                    setupAnchor(hit);
                     return true;
                 }
             }
@@ -262,39 +304,101 @@ public class VideosActivity extends AppCompatActivity {
         return false;
     }
 
-    private Node createVideo() {
+    private void setupAnchor(HitResult hit) {
+        // Create the Anchor.
+        Anchor anchor = hit.createAnchor();
+        AnchorNode anchorNode = new AnchorNode(anchor);
+        anchorNode.setParent(arSceneView.getScene());
+        Node components = createComponents();
+        components.setParent(anchorNode);
+    }
+
+    private Node createComponents() {
 
         //base node for which everything will be relative to
         Node base = new Node();
 
-        Node venus = new Node();
-        venus.setParent(base);
-        venus.setRenderable(venusRenderable);
-        venus.setLocalPosition(new Vector3(0.8f, 0.0f, 0.0f));
+        Planet venusVisual = new Planet("Venus", "Venus is a goddess", this.getResources().getIdentifier("venus","raw",this.getPackageName()));
+        setupNode(venusVisual, base, venusRenderable, new Vector3(-0.5f, 1.5f, 0.0f),new Vector3(0.2f, 0.2f, 0.2f));
+
+        Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", this.getResources().getIdentifier("jupiter","raw",this.getPackageName()));
+        setupNode(jupiterVisual, base, jupiterRenderable, new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));
+
+        /*Planet saturnVisual = new Planet("Saturn", "Saturn is another god", this.getResources().getIdentifier("saturn","raw",this.getPackageName()));
+        setupNode(saturnVisual, base, saturnRenderable, new Vector3(0.5f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));*/
+
+        setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base);
+
+        return base;
+    }
+
+    private void setupPlanetTapListenerVideo(Planet venusVisual, Planet jupiterVisual, Node baseNode) {
 
         // Create an ExternalTexture for displaying the contents of the video.
         ExternalTexture texture = new ExternalTexture();
 
+        venusVisual.setOnTapListener((hitTestResult, motionEvent) -> {
+
+            playVideo(venusVisual, baseNode, texture);
+        });
+
+        jupiterVisual.setOnTapListener((hitTestResult, motionEvent) -> {
+
+            playVideo(jupiterVisual, baseNode, texture);
+        });
+
+        /*saturnVisual.setOnTapListener((hitTestResult, motionEvent) -> {
+
+            playVideo(saturnVisual, baseNode, texture);
+        });*/
+    }
+
+    private void playVideo(Planet planetVisual, Node baseNode, ExternalTexture texture) {
+
+        stopPlaying();
+
+        setupMediaPlayer(texture, planetVisual.getPlanetVideoResID());
+
+        videoWidth = mediaPlayer.getVideoWidth();
+        videoHeight = mediaPlayer.getVideoHeight();
+
+        Node video = getVideoNode(baseNode);
+
+        setVideoTexture(texture);
+
+        startMediaPlayer(texture, video);
+    }
+
+    private void setupMediaPlayer(ExternalTexture texture, int videoResID) {
         // Create an Android MediaPlayer to capture the video on the external texture's surface.
-        mediaPlayer = MediaPlayer.create(this, R.raw.venus);
+        mediaPlayer = MediaPlayer.create(this, videoResID);
         mediaPlayer.setSurface(texture.getSurface());
         mediaPlayer.setLooping(true);
+    }
 
+    private Node getVideoNode(Node baseNode) {
         Node video = new Node();
-        video.setParent(base);
-        video.setRenderable(videoRenderable);
-        video.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        setupNode(video, baseNode, videoRenderable, new Vector3(0.2f, 0.2f, 0.2f), new Vector3(
+                VIDEO_HEIGHT_METERS * (videoWidth / videoHeight), VIDEO_HEIGHT_METERS, 1.0f));
+        return video;
+    }
 
+    private void setVideoTexture(ExternalTexture texture) {
         videoRenderable.getMaterial().setExternalTexture("videoTexture", texture);
         videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
+    }
 
-        float videoWidth = mediaPlayer.getVideoWidth();
-        float videoHeight = mediaPlayer.getVideoHeight();
-        video.setLocalScale(
-                new Vector3(
-                        VIDEO_HEIGHT_METERS * (videoWidth / videoHeight), VIDEO_HEIGHT_METERS, 1.0f));
+    private void stopPlaying() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
 
+    private void startMediaPlayer(ExternalTexture texture, Node video) {
         if (!mediaPlayer.isPlaying()) {
+
             mediaPlayer.start();
 
             texture.getSurfaceTexture().setOnFrameAvailableListener(
@@ -304,12 +408,15 @@ public class VideosActivity extends AppCompatActivity {
                         });
         } else {
         video.setRenderable(videoRenderable);
-
         }
-
-        return base;
     }
 
+    private void setupNode(Node currNode, Node baseNode, Renderable renderable, Vector3 localPos, Vector3 localScale){
+        currNode.setParent(baseNode);
+        currNode.setRenderable(renderable);
+        currNode.setLocalPosition(localPos);
+        currNode.setLocalScale(localScale);
+    }
 
     private void hideLoadingMessage() {
         if (loadingMessageSnackbar == null) {

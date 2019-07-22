@@ -67,6 +67,16 @@ sceneform.asset('sampledata/Neptune.obj',
         'sampledata/Neptune.sfa',
         'src/main/assets/Neptune')
 
+sceneform.asset('sampledata/models/Jupiter/model.obj',
+        'default',
+        'sampledata/models/Jupiter/model.sfa',
+        'src/main/assets/model')
+
+sceneform.asset('sampledata/models/Saturn/13906_Saturn_v1_l3.obj',
+        'default',
+        'sampledata/models/Saturn/13906_Saturn_v1_l3.sfa',
+        'src/main/assets/13906_Saturn_v1_l3')
+
 sceneform.asset('sampledata/models/Venus/Venus_1241.obj',
         'default',
         'sampledata/models/Venus/Venus_1241.sfa',

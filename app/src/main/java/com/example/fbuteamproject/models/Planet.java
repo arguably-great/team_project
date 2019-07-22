@@ -6,12 +6,17 @@ public class Planet extends Node {
 
     private String planetName;
     private String planetNotes;
+private int planetVideoResID;
 
     //TODO - Add other attributes here after rebasing and combining Project Features
-
     public Planet(String planetName, String planetNotes) {
         this.planetName = planetName;
         this.planetNotes = planetNotes;
+
+    public Planet(String planetName, String planetNotes, int planetVideoResID) {
+        this.planetName = planetName;
+        this.planetNotes = planetNotes;
+        this.planetVideoResID = planetVideoResID;
     }
 
     public String getPlanetName() {
@@ -30,4 +35,11 @@ public class Planet extends Node {
         this.planetNotes = planetNotes;
     }
 
+    public int getPlanetVideoResID() {
+        return planetVideoResID;
+    }
+
+    public void setPlanetVideoResID(int planetVideoResID) {
+        this.planetVideoResID = planetVideoResID;
+    }
 }
