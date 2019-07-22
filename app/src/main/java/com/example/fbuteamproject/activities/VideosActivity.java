@@ -9,6 +9,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.models.Planet;
@@ -31,6 +33,7 @@ import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.ExternalTexture;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
+import com.google.ar.sceneform.rendering.ViewRenderable;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -50,6 +53,13 @@ public class VideosActivity extends AppCompatActivity {
     private ModelRenderable venusRenderable;
     private ModelRenderable jupiterRenderable;
     //private ModelRenderable saturnRenderable;
+
+
+    //button renderables
+    private ViewRenderable buttonPauseRenderable;
+    private ViewRenderable buttonResumeRenderable;
+    private ViewRenderable buttonStopRenderable;
+
     private MediaPlayer mediaPlayer;
 
     private GestureDetector gestureDetector;
@@ -64,6 +74,9 @@ public class VideosActivity extends AppCompatActivity {
     // True once the scene has been placed.
     private boolean hasPlacedComponents = false;
 
+    //Keep track of where the video has been stopped in mediaplayer
+    private int pausedAt;
+
     // The color to filter out of the video.
     private static final Color CHROMA_KEY_COLOR = new Color(0.1843f, 1.0f, 0.098f);
     // Controls the height of the video in world space.
@@ -76,6 +89,9 @@ public class VideosActivity extends AppCompatActivity {
     CompletableFuture<ModelRenderable> jupiterStage;
     //CompletableFuture<ModelRenderable> saturnStage;
     CompletableFuture<ModelRenderable> videoStage;
+    CompletableFuture<ViewRenderable> buttonPauseStage;
+    CompletableFuture<ViewRenderable> buttonResumeStage;
+    CompletableFuture<ViewRenderable> buttonStopStage;
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -97,6 +113,8 @@ public class VideosActivity extends AppCompatActivity {
         buildPlanetRenderables();
 
         buildVideoRenderable();
+
+        buildViewRenderables();
 
         setupRenderables();
 
@@ -176,7 +194,10 @@ public class VideosActivity extends AppCompatActivity {
         CompletableFuture.allOf(
                 videoStage,
                 venusStage,
-                jupiterStage)
+                jupiterStage,
+                buttonPauseStage,
+                buttonResumeStage,
+                buttonStopStage)
                 .handle(
                         (notUsed, throwable) -> {
                             if (throwable != null) {
@@ -187,6 +208,9 @@ public class VideosActivity extends AppCompatActivity {
                                 videoRenderable = videoStage.get();
                                 venusRenderable = venusStage.get();
                                 jupiterRenderable = jupiterStage.get();
+                                buttonPauseRenderable = buttonPauseStage.get();
+                                buttonResumeRenderable = buttonResumeStage.get();
+                                buttonStopRenderable = buttonStopStage.get();
                                 //saturnRenderable = saturnStage.get();
                                 // Everything finished loading successfully.
                                 hasFinishedLoading = true;
@@ -220,6 +244,24 @@ public class VideosActivity extends AppCompatActivity {
                 ModelRenderable
                         .builder()
                         .setSource(this, R.raw.video_screen)
+                        .build();
+    }
+
+    private void buildViewRenderables() {
+        buttonPauseStage =
+                ViewRenderable
+                        .builder()
+                        .setView(this, R.layout.buttonpause)
+                        .build();
+        buttonResumeStage =
+                ViewRenderable
+                        .builder()
+                        .setView(this, R.layout.buttonresume)
+                        .build();
+        buttonStopStage =
+                ViewRenderable
+                        .builder()
+                        .setView(this, R.layout.buttonstop)
                         .build();
     }
 
@@ -318,6 +360,15 @@ public class VideosActivity extends AppCompatActivity {
         //base node for which everything will be relative to
         Node base = new Node();
 
+        Node videoButtons = new Node();
+        setupNode(videoButtons, base, buttonPauseRenderable, new Vector3(-0.8f, 0.5f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f));
+
+        Node videoButtons2 = new Node();
+        setupNode(videoButtons2, base, buttonResumeRenderable, new Vector3(-0.8f, 0.8f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f));
+
+        Node videoButtons3 = new Node();
+        setupNode(videoButtons3, base, buttonStopRenderable, new Vector3(-0.8f, 1.0f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f));
+
         Planet venusVisual = new Planet("Venus", "Venus is a goddess", this.getResources().getIdentifier("venus","raw",this.getPackageName()));
         setupNode(venusVisual, base, venusRenderable, new Vector3(-0.5f, 1.5f, 0.0f),new Vector3(0.2f, 0.2f, 0.2f));
 
@@ -390,9 +441,14 @@ public class VideosActivity extends AppCompatActivity {
 
     private void stopPlaying() {
         if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
+            try{
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -416,6 +472,26 @@ public class VideosActivity extends AppCompatActivity {
         currNode.setRenderable(renderable);
         currNode.setLocalPosition(localPos);
         currNode.setLocalScale(localScale);
+    }
+
+    public void pause(View v) {
+        if (mediaPlayer != null) {
+            pausedAt=mediaPlayer.getCurrentPosition();
+            mediaPlayer.pause();
+        }
+    }
+
+    public void resume(View v) {
+        if (mediaPlayer != null) {
+            mediaPlayer.seekTo(pausedAt);
+            mediaPlayer.start();
+        } else {
+            Toast.makeText(this,"Media player has been stopped", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void stop(View v) {
+        stopPlaying();
     }
 
     private void hideLoadingMessage() {
