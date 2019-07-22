@@ -44,8 +44,7 @@ public class VideosActivity extends AppCompatActivity {
 
     private static final String TAG = VideosActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
-    private static final int RC_PERMISSIONS =0x123;;
-
+    private static final int RC_PERMISSIONS =0x123;
     private boolean installRequested;
     
     @Nullable
@@ -420,8 +419,20 @@ public class VideosActivity extends AppCompatActivity {
     }
 
     private void setupMediaPlayer(ExternalTexture texture, int videoResID) {
+
+        String url = "https://video.nationalgeographic.com/video/science/101-videos/00000167-c9ec-dedb-ad7f-cfeddbd50000";
         // Create an Android MediaPlayer to capture the video on the external texture's surface.
         mediaPlayer = MediaPlayer.create(this, videoResID);
+        //mediaPlayer = new MediaPlayer();
+            //mediaPlayer.setDataSource("https://vimeo.com/219993811");
+            //mediaPlayer.setDataSource(url);
+            //mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            //mediaPlayer.prepareAsync();
+       /* } catch (IllegalArgumentException e) {
+        } catch (IllegalStateException e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
         mediaPlayer.setSurface(texture.getSurface());
         mediaPlayer.setLooping(true);
     }
@@ -434,8 +445,12 @@ public class VideosActivity extends AppCompatActivity {
     }
 
     private void setVideoTexture(ExternalTexture texture) {
-        videoRenderable.getMaterial().setExternalTexture("videoTexture", texture);
-        videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
+        if (videoRenderable != null) {
+            videoRenderable.getMaterial().setExternalTexture("videoTexture", texture);
+            videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
+        } else {
+            Toast.makeText(this, "Video renderable not found", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void stopPlaying() {

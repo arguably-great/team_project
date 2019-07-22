@@ -67,8 +67,6 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
     CompletableFuture<ViewRenderable> noteTitleStage;
     CompletableFuture<ViewRenderable> noteContentsStage;
 
-
-
     private ModelRenderable earthRenderable;
     private ModelRenderable marsRenderable;
     private ModelRenderable neptuneRenderable;
