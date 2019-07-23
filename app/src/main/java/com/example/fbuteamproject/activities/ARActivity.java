@@ -27,8 +27,8 @@ import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.NoteComponent;
 import com.example.fbuteamproject.components.VideoComponent;
-import com.example.fbuteamproject.layouts.ARComponentsShell;
 import com.example.fbuteamproject.layouts.EntityLayout;
+import com.example.fbuteamproject.layouts.VideoLayout;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
@@ -129,6 +129,7 @@ public class ARActivity extends AppCompatActivity {
     private ViewRenderable photoRenderable2;
     private ViewRenderable photoRenderable3;
     private ViewRenderable photoRenderable4;
+    private ViewRenderable buttonPhotoRenderable;
 
 
     CompletableFuture<ViewRenderable> photoStage1;
@@ -136,12 +137,13 @@ public class ARActivity extends AppCompatActivity {
     CompletableFuture<ViewRenderable> photoStage3;
     CompletableFuture<ViewRenderable> photoStage4;
 
+
     CompletableFuture<ViewRenderable> planetTitleStage;
     CompletableFuture<ViewRenderable> planetContentsStage;
-
-
     private ArrayList<Config.Entity> appEntities;
     private boolean hasTriedLoadingEntityRenderables;
+
+    private boolean hasPlayedVideo;
 
 
     //TODO - This one will be from Component Class for Notes
@@ -149,6 +151,7 @@ public class ARActivity extends AppCompatActivity {
     //TODO - This one will be from Component Class for Notes
 
     private ArrayList<ModelRenderable> myRenderables;
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -286,6 +289,7 @@ public class ARActivity extends AppCompatActivity {
                                 photoRenderable3 = photoStage3.get();
                                 photoRenderable4 = photoStage4.get();
 
+
                                 planetTitlesRenderable = planetTitleStage.get();
                                 planetContentsRenderable = planetContentsStage.get();
 
@@ -329,6 +333,7 @@ public class ARActivity extends AppCompatActivity {
         photoStage3 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
         photoStage4 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
 
+
         planetTitleStage =
                 ViewRenderable
                         .builder()
@@ -340,6 +345,9 @@ public class ARActivity extends AppCompatActivity {
                         .builder()
                         .setView(this, R.layout.component_entity_contents)
                         .build();
+
+        buttonPhotoStage = ViewRenderable.builder().setView(this, R.layout.test_ar2).build();
+
     }
 
     @Override
@@ -505,13 +513,29 @@ public class ARActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private Node createComponents(ArrayList<ModelRenderable> modelRenderables) {
 
+        Node baseNode = new Node();
+
         //TODO - Testing
         EntityLayout entityLayout = new EntityLayout(appEntities, modelRenderables);
 
-        if(true){
+        entityLayout.setParent(baseNode);
+
+        /*if(true){
             return entityLayout;
-        }
+        }*/
         //TODO - Testing
+
+        VideoLayout videoLayout = new VideoLayout(videoRenderable);
+        videoLayout.setParent(baseNode);
+
+        VideoComponent.setUpVideo(appEntities.get(1), videoLayout.getVideoNode(),this, hasPlayedVideo);
+        hasPlayedVideo = true;
+
+        VideoComponent.setUpVideo(appEntities.get(0), videoLayout.getVideoNode(), this, hasPlayedVideo);
+
+        if (true) {
+            return baseNode;
+        }
 
         Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res), this );
         venusVisual.setRenderable(modelRenderables.get(0) );
@@ -537,18 +561,18 @@ public class ARActivity extends AppCompatActivity {
         Node photo6 = new Node();
         photo6.setRenderable(photoRenderable2);
         //TODO DUMMY CODE TO TEST FUNCTIONALITY OF VIDEOCOMPONENT
-        Node videoNode = new Node();
+        //Node videoNode = new Node();
 
-        VideoComponent.setUpVideo(appEntities.get(1), videoNode,this);
 
-        //TODO END
+       // Node videoNode = new Node();
+
 
         Node planetContents = new Node();
         planetContents.setRenderable(planetContentsRenderable);
 
         //Organizes all the components relative to each other
-        Node base = new ARComponentsShell(venusVisual, jupiterVisual, photo1,
-                photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);
+        /*Node base = new ARComponentsShell(venusVisual, jupiterVisual, photo1,
+                photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);*/
 
         View planetTitleView = planetTitlesRenderable.getView();
         View planetContentView = planetContentsRenderable.getView();
@@ -578,7 +602,8 @@ public class ARActivity extends AppCompatActivity {
         });
 
         //setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView, videoNode);
-        return videoNode;
+        //return videoNode;
+        return photo1;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
