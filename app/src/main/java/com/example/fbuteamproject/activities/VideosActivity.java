@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -62,6 +63,9 @@ public class VideosActivity extends AppCompatActivity {
     private ViewRenderable buttonResumeRenderable;
     private ViewRenderable buttonStopRenderable;
 
+    private ViewRenderable planetTitlesRenderable;
+    private ViewRenderable planetContentsRenderable;
+
     private MediaPlayer mediaPlayer;
 
     private GestureDetector gestureDetector;
@@ -94,6 +98,9 @@ public class VideosActivity extends AppCompatActivity {
     CompletableFuture<ViewRenderable> buttonPauseStage;
     CompletableFuture<ViewRenderable> buttonResumeStage;
     CompletableFuture<ViewRenderable> buttonStopStage;
+
+    CompletableFuture<ViewRenderable> planetTitleStage;
+    CompletableFuture<ViewRenderable> planetContentsStage;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -202,7 +209,9 @@ public class VideosActivity extends AppCompatActivity {
                 jupiterStage,
                 buttonPauseStage,
                 buttonResumeStage,
-                buttonStopStage)
+                buttonStopStage,
+                planetTitleStage,
+                planetContentsStage)
                 .handle(
                         (notUsed, throwable) -> {
                             if (throwable != null) {
@@ -216,6 +225,10 @@ public class VideosActivity extends AppCompatActivity {
                                 buttonPauseRenderable = buttonPauseStage.get();
                                 buttonResumeRenderable = buttonResumeStage.get();
                                 buttonStopRenderable = buttonStopStage.get();
+
+                                planetTitlesRenderable = planetTitleStage.get();
+                                planetContentsRenderable = planetContentsStage.get();
+
                                 //saturnRenderable = saturnStage.get();
                                 // Everything finished loading successfully.
                                 hasFinishedLoading = true;
@@ -270,6 +283,18 @@ public class VideosActivity extends AppCompatActivity {
                 ViewRenderable
                         .builder()
                         .setView(this, R.layout.buttonstop)
+                        .build();
+
+        planetTitleStage =
+                ViewRenderable
+                        .builder()
+                        .setView(this, R.layout.component_planet_title)
+                        .build();
+
+        planetContentsStage =
+                ViewRenderable
+                        .builder()
+                        .setView(this, R.layout.component_planet_contents)
                         .build();
     }
 
@@ -390,13 +415,23 @@ public class VideosActivity extends AppCompatActivity {
         /*Planet saturnVisual = new Planet("Saturn", "Saturn is another god", this.getResources().getIdentifier("saturn","raw",this.getPackageName()));
         setupNode(saturnVisual, base, saturnRenderable, new Vector3(0.5f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));*/
 
-        setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base);
+        Node planetTitles = new Node();
+        setupNode(planetTitles, base, planetTitlesRenderable, new Vector3(-0.5f, 0.5f, -0.2f), new Vector3(0.5f, 0.35f, 0.5f) );
+
+        Node planetContents = new Node();
+        setupNode(planetContents, base, planetContentsRenderable, new Vector3(0.5f, 0.5f, -0.2f), new Vector3(0.5f, 0.35f, 0.5f) );
+
+        View planetTitleView = planetTitlesRenderable.getView();
+        View planetContentView = planetContentsRenderable.getView();
+
+
+        setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView);
 
         return base;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void setupPlanetTapListenerVideo(Planet venusVisual, Planet jupiterVisual, Node baseNode) {
+    private void setupPlanetTapListenerVideo(Planet venusVisual, Planet jupiterVisual, Node baseNode, View planetTitleView, View planetContentView) {
 
         // Create an ExternalTexture for displaying the contents of the video.
         ExternalTexture texture = new ExternalTexture();
@@ -404,17 +439,25 @@ public class VideosActivity extends AppCompatActivity {
         venusVisual.setOnTapListener((hitTestResult, motionEvent) -> {
 
             playVideo(venusVisual, baseNode, texture);
+            changePlanetScreenText(planetTitleView, planetContentView, venusVisual);
         });
 
         jupiterVisual.setOnTapListener((hitTestResult, motionEvent) -> {
 
             playVideo(jupiterVisual, baseNode, texture);
+            changePlanetScreenText(planetTitleView, planetContentView, jupiterVisual);
+
         });
 
         /*saturnVisual.setOnTapListener((hitTestResult, motionEvent) -> {
 
             playVideo(saturnVisual, baseNode, texture);
         });*/
+    }
+
+    private void changePlanetScreenText(View nameView, View contentView, Planet currPlanet){
+        ((TextView) nameView.findViewById(R.id.tvTitle) ).setText(currPlanet.getPlanetName() );
+        ((TextView) contentView.findViewById(R.id.tvContents) ).setText(currPlanet.getPlanetNotes() );
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
