@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -527,7 +528,7 @@ public class VideosActivity extends AppCompatActivity {
 
     private void changePlanetScreenText(View nameView, View contentView, Planet currPlanet){
         ((TextView) nameView.findViewById(R.id.tvTitle) ).setText(currPlanet.getPlanetName() );
-        ((TextView) contentView.findViewById(R.id.tvContents) ).setText(currPlanet.getPlanetNotes() );
+        ((EditText) contentView.findViewById(R.id.etContents) ).setText(currPlanet.getPlanetNotes() );
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
