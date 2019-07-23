@@ -118,6 +118,7 @@ public class ARActivity extends AppCompatActivity {
     private ViewRenderable photoRenderable2;
     private ViewRenderable photoRenderable3;
     private ViewRenderable photoRenderable4;
+    private ViewRenderable buttonPhotoRenderable;
 
 
     CompletableFuture<ViewRenderable> photoStage1;
@@ -125,8 +126,12 @@ public class ARActivity extends AppCompatActivity {
     CompletableFuture<ViewRenderable> photoStage3;
     CompletableFuture<ViewRenderable> photoStage4;
 
+
     CompletableFuture<ViewRenderable> planetTitleStage;
     CompletableFuture<ViewRenderable> planetContentsStage;
+
+    CompletableFuture<ViewRenderable> buttonPhotoStage;
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -233,6 +238,7 @@ public class ARActivity extends AppCompatActivity {
                 videoStage,
                 venusStage,
                 jupiterStage, photoStage1, photoStage2, photoStage3, photoStage4,
+                buttonPhotoStage,
                 buttonPauseStage,
                 buttonResumeStage,
                 buttonStopStage,
@@ -256,6 +262,7 @@ public class ARActivity extends AppCompatActivity {
                                 photoRenderable2 = photoStage2.get();
                                 photoRenderable3 = photoStage3.get();
                                 photoRenderable4 = photoStage4.get();
+
 
                                 planetTitlesRenderable = planetTitleStage.get();
                                 planetContentsRenderable = planetContentsStage.get();
@@ -315,6 +322,7 @@ public class ARActivity extends AppCompatActivity {
         photoStage3 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
         photoStage4 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
 
+
         planetTitleStage =
                 ViewRenderable
                         .builder()
@@ -326,6 +334,9 @@ public class ARActivity extends AppCompatActivity {
                         .builder()
                         .setView(this, R.layout.component_planet_contents)
                         .build();
+
+        buttonPhotoStage = ViewRenderable.builder().setView(this, R.layout.test_ar2).build();
+
     }
 
     @Override
@@ -451,6 +462,7 @@ public class ARActivity extends AppCompatActivity {
 
         Node photo6 = new Node();
         photo6.setRenderable(photoRenderable2);
+
 
         Node videoNode = new Node();
 
