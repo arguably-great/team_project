@@ -103,14 +103,14 @@ public class VideosActivity extends AppCompatActivity {
     private ViewRenderable photoRenderable2;
     private ViewRenderable photoRenderable3;
     private ViewRenderable photoRenderable4;
+    private ViewRenderable buttonPhotoRenderable;
 
 
     CompletableFuture<ViewRenderable> photoStage1;
     CompletableFuture<ViewRenderable> photoStage2;
     CompletableFuture<ViewRenderable> photoStage3;
     CompletableFuture<ViewRenderable> photoStage4;
-
-
+    CompletableFuture<ViewRenderable> buttonPhotoStage;
 
 
 
@@ -219,6 +219,7 @@ public class VideosActivity extends AppCompatActivity {
                 videoStage,
                 venusStage,
                 jupiterStage, photoStage1, photoStage2, photoStage3, photoStage4,
+                buttonPhotoStage,
                 buttonPauseStage,
                 buttonResumeStage,
                 buttonStopStage)
@@ -239,6 +240,7 @@ public class VideosActivity extends AppCompatActivity {
                                 photoRenderable2 = photoStage2.get();
                                 photoRenderable3 = photoStage3.get();
                                 photoRenderable4 = photoStage4.get();
+                                buttonPhotoRenderable = buttonPhotoStage.get();
                                 // Everything finished loading successfully.
                                 hasFinishedLoading = true;
                             } catch (InterruptedException | ExecutionException ex) {
@@ -260,11 +262,7 @@ public class VideosActivity extends AppCompatActivity {
                         .builder()
                         .setSource(this, Uri.parse("model.sfb"))
                         .build();
-        /*saturnStage =
-                ModelRenderable
-                        .builder()
-                        .setSource(this, Uri.parse("13906_Saturn_v1_l3.sfb"))
-                        .build();*/
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -298,6 +296,7 @@ public class VideosActivity extends AppCompatActivity {
         photoStage2 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
         photoStage3 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
         photoStage4 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
+        buttonPhotoStage = ViewRenderable.builder().setView(this, R.layout.test_ar2).build();
     }
 
     @Override
@@ -415,6 +414,10 @@ public class VideosActivity extends AppCompatActivity {
 
         Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", this.getResources().getIdentifier("jupiter","raw",this.getPackageName()));
         setupNode(jupiterVisual, base, jupiterRenderable, new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));
+
+
+        Node photoButton = new Node();
+        setupNode(photoButton, base, buttonPhotoRenderable, new Vector3(-0.8f, 1.2f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f));
 
         Node node1 = new Node();
         node1.setParent(base);

@@ -260,7 +260,6 @@ public class PhotoSceneView extends AppCompatActivity {
             }
 
         }
-
         return false;
     }
 
@@ -304,7 +303,6 @@ public class PhotoSceneView extends AppCompatActivity {
 
         return base;
     }
-
 
 
     private Session createArSession(Activity activity, boolean installRequested)
