@@ -1,5 +1,7 @@
 package com.example.fbuteamproject.activities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -7,7 +9,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -55,9 +59,8 @@ public class VideosActivity extends AppCompatActivity {
     private ModelRenderable videoRenderable;
     private ModelRenderable venusRenderable;
     private ModelRenderable jupiterRenderable;
-    //private ModelRenderable saturnRenderable;
 
-    //button renderables
+    // button renderables
     private ViewRenderable buttonPauseRenderable;
     private ViewRenderable buttonResumeRenderable;
     private ViewRenderable buttonStopRenderable;
@@ -89,11 +92,27 @@ public class VideosActivity extends AppCompatActivity {
     //Completable Futures for model renderables
     CompletableFuture<ModelRenderable> venusStage;
     CompletableFuture<ModelRenderable> jupiterStage;
-    //CompletableFuture<ModelRenderable> saturnStage;
     CompletableFuture<ModelRenderable> videoStage;
     CompletableFuture<ViewRenderable> buttonPauseStage;
     CompletableFuture<ViewRenderable> buttonResumeStage;
     CompletableFuture<ViewRenderable> buttonStopStage;
+
+
+    // viewrenderables for photos
+    private ViewRenderable photoRenderable1;
+    private ViewRenderable photoRenderable2;
+    private ViewRenderable photoRenderable3;
+    private ViewRenderable photoRenderable4;
+
+
+    CompletableFuture<ViewRenderable> photoStage1;
+    CompletableFuture<ViewRenderable> photoStage2;
+    CompletableFuture<ViewRenderable> photoStage3;
+    CompletableFuture<ViewRenderable> photoStage4;
+
+
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -126,7 +145,7 @@ public class VideosActivity extends AppCompatActivity {
         setupOnUpdateListener();
 
         // Lastly request CAMERA permission which is required by ARCore.
-        DemoUtils.requestCameraPermission(this, RC_PERMISSIONS);
+        requestCameraPermission(this);
     }
 
     private void setupOnUpdateListener() {
@@ -199,7 +218,7 @@ public class VideosActivity extends AppCompatActivity {
         CompletableFuture.allOf(
                 videoStage,
                 venusStage,
-                jupiterStage,
+                jupiterStage, photoStage1, photoStage2, photoStage3, photoStage4,
                 buttonPauseStage,
                 buttonResumeStage,
                 buttonStopStage)
@@ -216,7 +235,10 @@ public class VideosActivity extends AppCompatActivity {
                                 buttonPauseRenderable = buttonPauseStage.get();
                                 buttonResumeRenderable = buttonResumeStage.get();
                                 buttonStopRenderable = buttonStopStage.get();
-                                //saturnRenderable = saturnStage.get();
+                                photoRenderable1 = photoStage1.get();
+                                photoRenderable2 = photoStage2.get();
+                                photoRenderable3 = photoStage3.get();
+                                photoRenderable4 = photoStage4.get();
                                 // Everything finished loading successfully.
                                 hasFinishedLoading = true;
                             } catch (InterruptedException | ExecutionException ex) {
@@ -271,6 +293,11 @@ public class VideosActivity extends AppCompatActivity {
                         .builder()
                         .setView(this, R.layout.buttonstop)
                         .build();
+
+        photoStage1 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
+        photoStage2 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
+        photoStage3 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
+        photoStage4 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
     }
 
     @Override
@@ -369,6 +396,8 @@ public class VideosActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private Node createComponents() {
 
+        Log.d(TAG, "In Fragment creation method");
+
         //base node for which everything will be relative to
         Node base = new Node();
 
@@ -387,8 +416,29 @@ public class VideosActivity extends AppCompatActivity {
         Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", this.getResources().getIdentifier("jupiter","raw",this.getPackageName()));
         setupNode(jupiterVisual, base, jupiterRenderable, new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));
 
-        /*Planet saturnVisual = new Planet("Saturn", "Saturn is another god", this.getResources().getIdentifier("saturn","raw",this.getPackageName()));
-        setupNode(saturnVisual, base, saturnRenderable, new Vector3(0.5f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));*/
+        Node node1 = new Node();
+        node1.setParent(base);
+        node1.setRenderable(photoRenderable1);
+        node1.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        node1.setLocalPosition(new Vector3(-0.5f, 0.0f, -1.0f));
+
+        Node node2 = new Node();
+        node2.setParent(base);
+        node2.setRenderable(photoRenderable2);
+        node2.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        node2.setLocalPosition(new Vector3(-0.5f, 1.0f, -1.0f));
+
+        Node node3 = new Node();
+        node3.setParent(base);
+        node3.setRenderable(photoRenderable3);
+        node3.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        node3.setLocalPosition(new Vector3(0.5f, 0.0f, -1.0f));
+
+        Node node4 = new Node();
+        node4.setParent(base);
+        node4.setRenderable(photoRenderable4);
+        node4.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        node4.setLocalPosition(new Vector3(0.5f, 1.0f, -1.0f));
 
         setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base);
 
@@ -411,10 +461,6 @@ public class VideosActivity extends AppCompatActivity {
             playVideo(jupiterVisual, baseNode, texture);
         });
 
-        /*saturnVisual.setOnTapListener((hitTestResult, motionEvent) -> {
-
-            playVideo(saturnVisual, baseNode, texture);
-        });*/
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -530,6 +576,12 @@ public class VideosActivity extends AppCompatActivity {
                         Snackbar.LENGTH_INDEFINITE);
         loadingMessageSnackbar.getView().setBackgroundColor(0xbf323232);
         loadingMessageSnackbar.show();
+    }
+
+
+    private void requestCameraPermission(Activity activity) {
+        ActivityCompat.requestPermissions(
+                activity, new String[] {Manifest.permission.CAMERA}, VideosActivity.RC_PERMISSIONS);
     }
 
 }

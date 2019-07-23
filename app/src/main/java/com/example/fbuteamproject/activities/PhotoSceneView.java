@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
@@ -17,6 +18,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 import com.example.fbuteamproject.R;
+import com.example.fbuteamproject.models.Planet;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Config;
 import com.google.ar.core.Plane;
@@ -35,6 +37,9 @@ import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.ExternalTexture;
+import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
 import java.util.concurrent.CompletableFuture;
@@ -47,6 +52,8 @@ public class PhotoSceneView extends AppCompatActivity {
     private ViewRenderable photoRenderable2;
     private ViewRenderable photoRenderable3;
     private ViewRenderable photoRenderable4;
+    private ModelRenderable venusRenderable;
+    private ModelRenderable jupiterRenderable;
     private static final String TAG = PhotoSceneView.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
     boolean hasFinishedLoading = false;
@@ -55,6 +62,17 @@ public class PhotoSceneView extends AppCompatActivity {
     private static final int RC_PERMISSIONS = 0x123;
     private GestureDetector gestureDetector;
     private Snackbar loadingMessageSnackbar = null;
+
+    // for models
+    CompletableFuture<ModelRenderable> venusStage;
+    CompletableFuture<ModelRenderable> jupiterStage;
+
+    // for views
+    CompletableFuture<ViewRenderable> photoStage1;
+    CompletableFuture<ViewRenderable> photoStage2;
+    CompletableFuture<ViewRenderable> photoStage3;
+    CompletableFuture<ViewRenderable> photoStage4;
+
 
 
     // base URL for API
@@ -69,95 +87,24 @@ public class PhotoSceneView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
         if (!checkIsSupportedDeviceOrFinish(this)) {
             return;
         }
 
-
         setContentView(R.layout.arsceneview);
         arSceneView = findViewById(R.id.ar_holder);
 
-        CompletableFuture<ViewRenderable> photoStage1 =
-                ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
-        CompletableFuture<ViewRenderable> photoStage2 =
-                ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
-        CompletableFuture<ViewRenderable> photoStage3 =
-                ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
-        CompletableFuture<ViewRenderable> photoStage4 =
-                ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
 
+        buildViewRenderables();
+        buildPlanetRenderables();
+        createCompletableFutures();
+        setupGestureDetector();
+        arSceneViewOnTouchListener();
+        arSceneViewOnUpdateListener();
+        requestCameraPermission(this);
+    }
 
-
-
-        CompletableFuture.allOf(
-                photoStage1, photoStage2, photoStage3, photoStage4)
-                .handle(
-                        (notUsed, throwable) -> {
-                            // When you build a Renderable, Sceneform loads its resources in the background while
-                            // returning a CompletableFuture. Call handle(), thenAccept(), or check isDone()
-                            // before calling get().
-
-                            if (throwable != null) {
-                                Log.e(TAG, "Throwable found to be non-null in handle method");
-                                return null;
-                            }
-
-                            try {
-                                photoRenderable1 = photoStage1.get();
-                                photoRenderable2 = photoStage2.get();
-                                photoRenderable3 = photoStage3.get();
-                                photoRenderable4 = photoStage4.get();
-
-                                // Everything finished loading successfully.
-                                hasFinishedLoading = true;
-
-                            } catch (InterruptedException | ExecutionException ex) {
-                                Log.e(TAG, "Unable to load Renderables (IN CATCH STATEMENT)");
-                            }
-
-                            return null;
-                        });
-
-
-        gestureDetector =
-                new GestureDetector(
-                        this,
-                        new GestureDetector.SimpleOnGestureListener() {
-                            @Override
-                            public boolean onSingleTapUp(MotionEvent e) {
-                                Log.d(TAG, "Just released my finger after having tapped");
-                                onSingleTap(e);
-                                return true;
-                            }
-
-                            @Override
-                            public boolean onDown(MotionEvent e) {
-                                return true;
-                            }
-                        });
-
-        arSceneView
-                .getScene()
-                .setOnTouchListener(
-                        (HitTestResult hitTestResult, MotionEvent event) -> {
-                            // If the solar system hasn't been placed yet, detect a tap and then check to see if
-                            // the tap occurred on an ARCore plane to place the solar system.
-                            if (!hasPlacedFragments) {
-                                Log.d(TAG, "Wanting to place Fragments for first time");
-                                return gestureDetector.onTouchEvent(event);
-                            }
-
-                            // Otherwise return false so that the touch event can propagate to the scene.
-                            Log.d(TAG, "The Fragments are already out there, so we wanna" +
-                                    " do stuff in the scene");
-                            return false;
-                        });
-
-
-        // Set an update listener on the Scene that will hide the loading message once a Plane is
-        // detected.
+    private void arSceneViewOnUpdateListener() {
         arSceneView
                 .getScene()
                 .addOnUpdateListener(
@@ -181,12 +128,98 @@ public class PhotoSceneView extends AppCompatActivity {
                                 }
                             }
                         });
+    }
 
+    private void arSceneViewOnTouchListener() {
+        arSceneView
+                .getScene()
+                .setOnTouchListener(
+                        (HitTestResult hitTestResult, MotionEvent event) -> {
+                            // If the solar system hasn't been placed yet, detect a tap and then check to see if
+                            // the tap occurred on an ARCore plane to place the solar system.
+                            if (!hasPlacedFragments) {
+                                Log.d(TAG, "Wanting to place Fragments for first time");
+                                return gestureDetector.onTouchEvent(event);
+                            }
 
+                            // Otherwise return false so that the touch event can propagate to the scene.
+                            Log.d(TAG, "The Fragments are already out there, so we wanna" +
+                                    " do stuff in the scene");
+                            return false;
+                        });
+    }
 
-        requestCameraPermission(this);
+    private void setupGestureDetector() {
+        gestureDetector =
+                new GestureDetector(
+                        this,
+                        new GestureDetector.SimpleOnGestureListener() {
+                            @Override
+                            public boolean onSingleTapUp(MotionEvent e) {
+                                Log.d(TAG, "Just released my finger after having tapped");
+                                onSingleTap(e);
+                                return true;
+                            }
 
+                            @Override
+                            public boolean onDown(MotionEvent e) {
+                                return true;
+                            }
+                        });
+    }
 
+    private void buildViewRenderables() {
+        photoStage1 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
+        photoStage2 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
+        photoStage3 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
+        photoStage4 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
+    }
+
+    @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.N)
+    private void buildPlanetRenderables() {
+        venusStage =
+                ModelRenderable
+                        .builder()
+                        .setSource(this, Uri.parse("Venus_1241.sfb"))
+                        .build();
+        jupiterStage =
+                ModelRenderable
+                        .builder()
+                        .setSource(this, Uri.parse("model.sfb"))
+                        .build();
+    }
+
+    private void createCompletableFutures() {
+        CompletableFuture.allOf(
+                photoStage1, photoStage2, photoStage3, photoStage4, venusStage, jupiterStage)
+                .handle(
+                        (notUsed, throwable) -> {
+                            // When you build a Renderable, Sceneform loads its resources in the background while
+                            // returning a CompletableFuture. Call handle(), thenAccept(), or check isDone()
+                            // before calling get().
+
+                            if (throwable != null) {
+                                Log.e(TAG, "Throwable found to be non-null in handle method");
+                                return null;
+                            }
+
+                            try {
+                                photoRenderable1 = photoStage1.get();
+                                photoRenderable2 = photoStage2.get();
+                                photoRenderable3 = photoStage3.get();
+                                photoRenderable4 = photoStage4.get();
+                                venusRenderable = venusStage.get();
+                                jupiterRenderable = jupiterStage.get();
+
+                                // Everything finished loading successfully.
+                                hasFinishedLoading = true;
+
+                            } catch (InterruptedException | ExecutionException ex) {
+                                Log.e(TAG, "Unable to load Renderables (IN CATCH STATEMENT)");
+                            }
+
+                            return null;
+                        });
     }
 
     @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.N)
@@ -262,8 +295,17 @@ public class PhotoSceneView extends AppCompatActivity {
         node4.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
         node4.setLocalPosition(new Vector3(0.5f, 1.0f, -1.0f));
 
+        Planet venusVisual = new Planet("Venus", "Venus is a goddess", this.getResources().getIdentifier("venus","raw",this.getPackageName()));
+        setupNode(venusVisual, base, venusRenderable, new Vector3(-0.5f, 1.5f, 0.0f),new Vector3(0.2f, 0.2f, 0.2f));
+
+        Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", this.getResources().getIdentifier("jupiter","raw",this.getPackageName()));
+        setupNode(jupiterVisual, base, jupiterRenderable, new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));
+
+
         return base;
     }
+
+
 
     private Session createArSession(Activity activity, boolean installRequested)
             throws UnavailableException {
@@ -282,6 +324,13 @@ public class PhotoSceneView extends AppCompatActivity {
             session.configure(config);
         }
         return session;
+    }
+
+    private void setupNode(Node currNode, Node baseNode, Renderable renderable, Vector3 localPos, Vector3 localScale){
+        currNode.setParent(baseNode);
+        currNode.setRenderable(renderable);
+        currNode.setLocalPosition(localPos);
+        currNode.setLocalScale(localScale);
     }
 
 
