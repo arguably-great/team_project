@@ -129,6 +129,7 @@ public class ARActivity extends AppCompatActivity {
     private ViewRenderable photoRenderable2;
     private ViewRenderable photoRenderable3;
     private ViewRenderable photoRenderable4;
+    private ViewRenderable buttonPhotoRenderable;
 
 
     CompletableFuture<ViewRenderable> photoStage1;
@@ -136,10 +137,9 @@ public class ARActivity extends AppCompatActivity {
     CompletableFuture<ViewRenderable> photoStage3;
     CompletableFuture<ViewRenderable> photoStage4;
 
+
     CompletableFuture<ViewRenderable> planetTitleStage;
     CompletableFuture<ViewRenderable> planetContentsStage;
-
-
     private ArrayList<Config.Entity> appEntities;
     private boolean hasTriedLoadingEntityRenderables;
 
@@ -151,6 +151,7 @@ public class ARActivity extends AppCompatActivity {
     //TODO - This one will be from Component Class for Notes
 
     private ArrayList<ModelRenderable> myRenderables;
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -288,6 +289,7 @@ public class ARActivity extends AppCompatActivity {
                                 photoRenderable3 = photoStage3.get();
                                 photoRenderable4 = photoStage4.get();
 
+
                                 planetTitlesRenderable = planetTitleStage.get();
                                 planetContentsRenderable = planetContentsStage.get();
 
@@ -331,6 +333,7 @@ public class ARActivity extends AppCompatActivity {
         photoStage3 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
         photoStage4 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
 
+
         planetTitleStage =
                 ViewRenderable
                         .builder()
@@ -342,6 +345,9 @@ public class ARActivity extends AppCompatActivity {
                         .builder()
                         .setView(this, R.layout.component_entity_contents)
                         .build();
+
+        buttonPhotoStage = ViewRenderable.builder().setView(this, R.layout.test_ar2).build();
+
     }
 
     @Override
@@ -557,7 +563,10 @@ public class ARActivity extends AppCompatActivity {
         //TODO DUMMY CODE TO TEST FUNCTIONALITY OF VIDEOCOMPONENT
         //Node videoNode = new Node();
 
-        //VideoComponent.setUpVideo(appEntities.get(0), videoNode, this, hasPlayedVideo);
+
+       // Node videoNode = new Node();
+
+
         Node planetContents = new Node();
         planetContents.setRenderable(planetContentsRenderable);
 
