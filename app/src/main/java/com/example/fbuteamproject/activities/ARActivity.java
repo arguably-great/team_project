@@ -64,8 +64,8 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
     CompletableFuture<ModelRenderable> earthStage;
     CompletableFuture<ModelRenderable> marsStage;
     CompletableFuture<ModelRenderable> neptuneStage;
-    CompletableFuture<ViewRenderable> noteTitleStage;
-    CompletableFuture<ViewRenderable> noteContentsStage;
+    CompletableFuture<ViewRenderable> planetTitleStage;
+    CompletableFuture<ViewRenderable> planetContentsStage;
 
 
 
@@ -73,8 +73,8 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
     private ModelRenderable marsRenderable;
     private ModelRenderable neptuneRenderable;
 
-    private ViewRenderable noteTitlesRenderable;
-    private ViewRenderable noteContentsRenderable;
+    private ViewRenderable planetTitlesRenderable;
+    private ViewRenderable planetContentsRenderable;
 
     // True once scene is loaded
     private boolean hasFinishedLoading = false;
@@ -192,8 +192,8 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
                     earthStage,
                     marsStage,
                     neptuneStage,
-                    noteTitleStage,
-                    noteContentsStage)
+                    planetTitleStage,
+                    planetContentsStage)
                 .handle(
                         (notUsed, throwable) -> {
                             // When you build a Renderable, Sceneform loads its resources in the background while
@@ -209,8 +209,8 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
                                 earthRenderable = earthStage.get();
                                 marsRenderable = marsStage.get();
                                 neptuneRenderable = neptuneStage.get();
-                                noteTitlesRenderable = noteTitleStage.get();
-                                noteContentsRenderable = noteContentsStage.get();
+                                planetTitlesRenderable = planetTitleStage.get();
+                                planetContentsRenderable = planetContentsStage.get();
 
                                 // Everything finished loading successfully.
                                 hasFinishedLoading = true;
@@ -224,16 +224,16 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
     }
 
     private void buildViewRenderableFutures() {
-        noteTitleStage =
+        planetTitleStage =
                 ViewRenderable
                         .builder()
-                        .setView(this, R.layout.fragment_note_title)
+                        .setView(this, R.layout.component_planet_title)
                         .build();
 
-        noteContentsStage =
+        planetContentsStage =
                 ViewRenderable
                         .builder()
-                        .setView(this, R.layout.fragment_note_contents)
+                        .setView(this, R.layout.component_planet_contents)
                         .build();
     }
 
@@ -363,11 +363,11 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
 //        Node noteTitles = new Node();
 //        noteTitles.setParent(base);
 
-        Node noteTitles = new Node();
-        setupNode(noteTitles, base, noteTitlesRenderable, new Vector3(-0.5f, 0.5f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f) );
+        Node planetTitles = new Node();
+        setupNode(planetTitles, base, planetTitlesRenderable, new Vector3(-0.5f, 0.5f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f) );
 
-        Node noteContents = new Node();
-        setupNode(noteContents, base, noteContentsRenderable, new Vector3(0.5f, 0.5f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f) );
+        Node planetContents = new Node();
+        setupNode(planetContents, base, planetContentsRenderable, new Vector3(0.5f, 0.5f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f) );
 
         Planet earthVisual = new Planet("Earth", "The grandest of places! I hear all the life is here ;)");
         setupNode(earthVisual, base, earthRenderable, new Vector3(-0.5f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f) );
@@ -379,25 +379,25 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
         setupNode(neptuneVisual, base, neptuneRenderable, new Vector3(0.5f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f) );
 
 
-        View noteTitleView = noteTitlesRenderable.getView();
-        View noteContentView = noteContentsRenderable.getView();
+        View planetTitleView = planetTitlesRenderable.getView();
+        View planetContentView = planetContentsRenderable.getView();
 
-        setupPlanetTapListeners(earthVisual, marsVisual, neptuneVisual, noteTitleView, noteContentView);
+        setupPlanetTapListeners(earthVisual, marsVisual, neptuneVisual, planetTitleView, planetContentView);
 
         return base;
     }
 
-    private void setupPlanetTapListeners(Planet earthVisual, Planet marsVisual, Planet neptuneVisual, View noteTitleView, View noteContentView) {
+    private void setupPlanetTapListeners(Planet earthVisual, Planet marsVisual, Planet neptuneVisual, View planetTitleView, View planetContentView) {
         earthVisual.setOnTapListener((hitTestResult, motionEvent) -> {
-            changePlanetScreenText(noteTitleView, noteContentView, earthVisual);
+            changePlanetScreenText(planetTitleView, planetContentView, earthVisual);
         });
 
         marsVisual.setOnTapListener((hitTestResult, motionEvent) -> {
-            changePlanetScreenText(noteTitleView, noteContentView, marsVisual);
+            changePlanetScreenText(planetTitleView, planetContentView, marsVisual);
         });
 
         neptuneVisual.setOnTapListener((hitTestResult, motionEvent) -> {
-            changePlanetScreenText(noteTitleView, noteContentView, neptuneVisual);
+            changePlanetScreenText(planetTitleView, planetContentView, neptuneVisual);
         });
     }
 

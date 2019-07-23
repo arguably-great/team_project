@@ -19,7 +19,7 @@ public class NoteContentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_note_contents, container, false);
+        return inflater.inflate(R.layout.component_planet_contents, container, false);
     }
 
 

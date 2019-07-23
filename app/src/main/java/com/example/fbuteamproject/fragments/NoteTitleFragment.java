@@ -31,7 +31,7 @@ public class NoteTitleFragment extends Fragment implements NoteTitleSelectedInAd
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_note_title, container, false);
+        return inflater.inflate(R.layout.component_planet_title, container, false);
     }
 
     @Override
