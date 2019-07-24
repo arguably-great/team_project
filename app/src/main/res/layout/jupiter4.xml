@@ -3,4 +3,5 @@
     android:id="@+id/ivPlanet"
     android:layout_width="300dp"
     android:layout_height="300dp"
+    android:scaleType="centerCrop"
     app:srcCompat="@drawable/junoprobedis" />
