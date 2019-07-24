@@ -298,7 +298,6 @@ public class PhotoSceneView extends AppCompatActivity {
         /*Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", this.getResources().getIdentifier("jupiter","raw",this.getPackageName()));
         setupNode(jupiterVisual, base, jupiterRenderable, new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));*/
 
-
         return base;
     }
 

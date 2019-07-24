@@ -52,33 +52,44 @@ public class ARComponentsShell extends Node {
 
         venusNode.setParent(this);
         venusNode.setLocalPosition(new Vector3(-0.5f, 1.6f, 0.0f) );
+        venusNode.setLocalScale(new Vector3(0.2f, 0.2f, 0.2f) );
+
 
         jupiterNode.setParent(this);
         jupiterNode.setLocalPosition(new Vector3(0.5f, 1.6f, 0.0f) );
+        jupiterNode.setLocalScale(new Vector3(0.2f, 0.2f, 0.2f) );
+
 
         upperLeftImageNode.setParent(this);
         upperLeftImageNode.setLocalPosition(new Vector3(-1.0f, 1.0f, 0.0f) );
+        upperLeftImageNode.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         centerLeftImageNode.setParent(this);
         centerLeftImageNode.setLocalPosition(new Vector3(-1.5f, 0.66f, 0.0f) );
+        centerLeftImageNode.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         lowerLeftImageNode.setParent(this);
         lowerLeftImageNode.setLocalPosition(new Vector3(-1.0f, 0.33f, 0.0f) );
+        lowerLeftImageNode.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         upperRightImageNode.setParent(this);
         upperRightImageNode.setLocalPosition(new Vector3(1.0f, 1.0f, 0.0f) );
+        upperRightImageNode.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         centerRightImageNode.setParent(this);
         centerRightImageNode.setLocalPosition(new Vector3(1.5f, 0.66f, 0.0f) );
+        centerRightImageNode.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         lowerRightImageNode.setParent(this);
         lowerRightImageNode.setLocalPosition(new Vector3(1.0f, 0.33f, 0.0f) );
+        lowerRightImageNode.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         videoNode.setParent(this);
         videoNode.setLocalPosition(new Vector3(-0.25f, 0.5f, 0.0f) );
 
         planetContentsNode.setParent(this);
         planetContentsNode.setLocalPosition(new Vector3(0.0f, 1.25f, 0.0f) );
+        planetContentsNode.setLocalScale(new Vector3(0.5f, 0.35f, 0.5f) );
 
 
     }

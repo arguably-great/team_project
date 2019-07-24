@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -447,48 +446,39 @@ public class VideosActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private Node createComponents() {
 
-        Log.d(TAG, "In Fragment creation method");
-
-
 
         //TODO - TESTING THIS
 
         Planet venusVisual = new Planet("Venus", "Venus is a goddess", this.getResources().getIdentifier("venus","raw",this.getPackageName() ), this );
         venusVisual.setRenderable(venusRenderable);
-        venusVisual.setLocalScale(new Vector3(0.2f, 0.2f, 0.2f) );
 
         Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", this.getResources().getIdentifier("jupiter","raw",this.getPackageName() ), this);
         jupiterVisual.setRenderable(jupiterRenderable);
-        jupiterVisual.setLocalScale(new Vector3(0.2f, 0.2f, 0.2f) );
 
         Node photo1 = new Node();
         photo1.setRenderable(photoRenderable1);
-        photo1.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         Node photo2 = new Node();
         photo2.setRenderable(photoRenderable1);
-        photo2.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
+
         Node photo3 = new Node();
         photo3.setRenderable(photoRenderable1);
-        photo3.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         Node photo4 = new Node();
         photo4.setRenderable(photoRenderable2);
-        photo4.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
+
         Node photo5 = new Node();
         photo5.setRenderable(photoRenderable2);
-        photo5.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
+
         Node photo6 = new Node();
         photo6.setRenderable(photoRenderable2);
-        photo6.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         Node videoNode = new Node();
 
         Node planetContents = new Node();
         planetContents.setRenderable(planetContentsRenderable);
-        planetContents.setLocalScale(new Vector3(0.5f, 0.35f, 0.5f) );
 
-
+        //Organizes all the components relative to each other
         Node base = new ARComponentsShell(venusVisual, jupiterVisual, photo1,
                 photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);
 

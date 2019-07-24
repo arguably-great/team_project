@@ -20,7 +20,6 @@ public class Planet extends Node implements Node.OnTapListener{
     private Node planetNameCard;
     private final Context context;
 
-    //TODO - Add other attributes here after rebasing and combining Project Features
     public Planet(String planetName, String planetNotes, Context context) {
         this.planetName = planetName;
         this.planetNotes = planetNotes;
@@ -37,6 +36,7 @@ public class Planet extends Node implements Node.OnTapListener{
 
         setOnTapListener(this);
     }
+
 
     public String getPlanetName() {
         return planetName;
@@ -69,16 +69,16 @@ public class Planet extends Node implements Node.OnTapListener{
     @Override
     public void onActivate() {
 
-        if (getScene() == null){
+        if (getScene() == null) {
             throw new IllegalStateException("Scene is null!");
         }
 
-        if (planetNameCard == null){
+        if (planetNameCard == null) {
             Log.d("PlanetDebug", "Setting up the infocard");
             planetNameCard = new Node();
             planetNameCard.setParent(this);
-            planetNameCard.setEnabled(false);
-            planetNameCard.setLocalPosition(new Vector3(0.0f, .2f, 0.0f) );
+            planetNameCard.setEnabled(true);
+            planetNameCard.setLocalPosition(new Vector3(0.0f, .1f, 0.0f));
 
             ViewRenderable.builder()
                     .setView(context, R.layout.component_planet_title)
@@ -97,9 +97,8 @@ public class Planet extends Node implements Node.OnTapListener{
                             });
         }
 
+
     }
-
-
     @Override
     public void onTap(HitTestResult hitTestResult, MotionEvent motionEvent) {
         Log.d("PlanetDebug", "Registered a tap on one of the planets");
