@@ -23,14 +23,11 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <!--tools:ignore="GoogleAppIndexingWarning"-->
-        <activity android:name=".activities.MainActivity"></activity><meta-data
+        <meta-data
             android:name="com.google.ar.core"
             android:value="required" />
 
-        <activity android:name=".activities.PhotoSceneView" />
-        <activity android:name=".activities.PhotosActivity"></activity>
-        <activity android:name=".activities.ARActivity" />
-        <activity android:name=".activities.VideosActivity">
+        <activity android:name=".activities.ARActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

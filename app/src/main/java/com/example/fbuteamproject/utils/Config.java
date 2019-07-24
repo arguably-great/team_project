@@ -2,7 +2,7 @@ package com.example.fbuteamproject.utils;
 
 public class Config {
 
-    String entityID;
+    /*String entityID;
     String modelPath;
     String videoURL;
     //String albumID;
@@ -21,7 +21,7 @@ public class Config {
             this.videoURL = videoURL;
             //this.albumID = albumID;
             //this.notesFolder = notesFolder;
-        }
+        }*/
 
 
 }
