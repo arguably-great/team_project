@@ -3,4 +3,4 @@
     android:id="@+id/ivPlanet"
     android:layout_width="300dp"
     android:layout_height="300dp"
-    app:srcCompat="@drawable/mars" />
+    app:srcCompat="@drawable/venuss4" />
