@@ -28,7 +28,7 @@ public class Planet extends Node implements Node.OnTapListener{
         setOnTapListener(this);
     }
 
-    public Planet(String planetName, String planetNotes, int planetVideoResID, Context context) {
+    public Planet(String planetName, String planetNotes, String planetVideoResID, Context context) {
         this.planetName = planetName;
         this.planetNotes = planetNotes;
         this.planetVideoResID = planetVideoResID;
