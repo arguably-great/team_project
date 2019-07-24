@@ -1,13 +1,13 @@
 package com.example.fbuteamproject.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -18,11 +18,23 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.DemoUtils;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.video.VideoListener;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
@@ -52,7 +64,7 @@ public class VideosActivity extends AppCompatActivity {
 
     private static final String TAG = VideosActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
-    private static final int RC_PERMISSIONS =0x123;;
+    private static final int RC_PERMISSIONS =0x123;
 
     private boolean installRequested;
     
@@ -71,6 +83,13 @@ public class VideosActivity extends AppCompatActivity {
 
     private MediaPlayer mediaPlayer;
 
+    //Initialize ExoPlayer variables
+    SimpleExoPlayer player;
+    PlayerView playerView;
+    boolean playWhenReady;
+    int currentWindow = 0;
+    long playbackPosition = 0;
+
     private GestureDetector gestureDetector;
 
     private ArSceneView arSceneView;
@@ -84,14 +103,14 @@ public class VideosActivity extends AppCompatActivity {
     private boolean hasPlacedComponents = false;
 
     //Keep track of where the video has been stopped in mediaplayer
-    private int pausedAt;
-
+   /* private int pausedAt;
+    private int videoHeight;
+    private int videoWidth;
+*/
     // The color to filter out of the video.
     private static final Color CHROMA_KEY_COLOR = new Color(0.1843f, 1.0f, 0.098f);
     // Controls the height of the video in world space.
     private static final float VIDEO_HEIGHT_METERS = 0.7f;
-    private float videoWidth;
-    private float videoHeight;
 
     //Completable Futures for model renderables
     CompletableFuture<ModelRenderable> venusStage;
@@ -133,6 +152,13 @@ public class VideosActivity extends AppCompatActivity {
 
         //find the sceneview
         arSceneView = findViewById(R.id.ar_scene_view);
+
+
+        //initializing playerView for Exoplayer
+        View layout = getLayoutInflater().inflate(R.layout.player_view, null);
+        playerView = (PlayerView) layout.findViewById(R.id.video_view);
+
+
 
         buildPlanetRenderables();
 
@@ -508,55 +534,80 @@ public class VideosActivity extends AppCompatActivity {
 
         stopPlaying();
 
-        setupMediaPlayer(texture, planetVisual.getPlanetVideoResID());
-
-        videoWidth = mediaPlayer.getVideoWidth();
-        videoHeight = mediaPlayer.getVideoHeight();
+        setupExoPlayer(texture, planetVisual.getPlanetVideoResID());
 
         Node video = getVideoNode(baseNode);
 
         setVideoTexture(texture);
 
-        startMediaPlayer(texture, video);
+        startExoPlayer(texture, video);
     }
 
-    private void setupMediaPlayer(ExternalTexture texture, int videoResID) {
-        // Create an Android MediaPlayer to capture the video on the external texture's surface.
-        mediaPlayer = MediaPlayer.create(this, videoResID);
-        mediaPlayer.setSurface(texture.getSurface());
-        mediaPlayer.setLooping(true);
+    private void setupExoPlayer(ExternalTexture texture, int videoResID) {
+
+        player = ExoPlayerFactory.newSimpleInstance(
+                new DefaultRenderersFactory(this),
+                new DefaultTrackSelector(), new DefaultLoadControl());
+
+        playerView.setPlayer(player);
+        player.setVideoSurface(texture.getSurface());
+
+        player.setPlayWhenReady(playWhenReady);
+        player.seekTo(currentWindow, playbackPosition);
+
+        Uri uri = Uri.parse("https://pmdvod.nationalgeographic.com/NG_Video/402/187/1402727491971_1545282164598_1402734147842_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4");
+        MediaSource mediaSource = buildMediaSource(uri);
+        player.prepare(mediaSource, true, false);
+
+        player.addVideoListener(new VideoListener() {
+            @Override
+            public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+                Log.d(TAG, "play video listener video size changed");
+            }
+            @Override
+            public void onRenderedFirstFrame() {
+                Log.d(TAG,"play video listener render first frame");
+            }
+        });
+    }
+
+    private MediaSource buildMediaSource(Uri uri) {
+        return new ExtractorMediaSource.Factory(
+                new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "minerva"))).
+                createMediaSource(uri);
     }
 
     private Node getVideoNode(Node baseNode) {
         Node video = new Node();
         setupNode(video, baseNode, videoRenderable, new Vector3(0.2f, 0.2f, 0.2f), new Vector3(
-                VIDEO_HEIGHT_METERS * (videoWidth / videoHeight), VIDEO_HEIGHT_METERS, 1.0f));
+                VIDEO_HEIGHT_METERS * 2, VIDEO_HEIGHT_METERS, 1.0f));
         return video;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setVideoTexture(ExternalTexture texture) {
-        videoRenderable.getMaterial().setExternalTexture("videoTexture", texture);
-        videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
+            videoRenderable.getMaterial().setExternalTexture("videoTexture", texture);
+            videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
     }
 
     private void stopPlaying() {
-        if (mediaPlayer != null) {
-            try{
-                mediaPlayer.stop();
-                mediaPlayer.release();
-                mediaPlayer = null;
+        releasePlayer();
+    }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    private void releasePlayer() {
+        if (player != null) {
+            playbackPosition = player.getCurrentPosition();
+            currentWindow = player.getCurrentWindowIndex();
+            playWhenReady = player.getPlayWhenReady();
+            player.release();
+            player = null;
         }
     }
 
-    private void startMediaPlayer(ExternalTexture texture, Node video) {
-        if (!mediaPlayer.isPlaying()) {
+    private void startExoPlayer(ExternalTexture texture, Node video) {
+        if (!player.getPlayWhenReady()) {
 
-            mediaPlayer.start();
+            player.setPlayWhenReady(true);
 
             texture.getSurfaceTexture().setOnFrameAvailableListener(
                         (SurfaceTexture surfaceTexture) -> {
@@ -576,19 +627,31 @@ public class VideosActivity extends AppCompatActivity {
     }
 
     public void pause(View v) {
-        if (mediaPlayer != null) {
-            pausedAt=mediaPlayer.getCurrentPosition();
-            mediaPlayer.pause();
+        if (player != null) {
+            hideSystemUi();
+            player.setPlayWhenReady(!player.getPlayWhenReady());
+        } else {
+            Toast.makeText(this, "Video has been stopped", Toast.LENGTH_LONG).show();
         }
     }
 
     public void resume(View v) {
-        if (mediaPlayer != null) {
-            mediaPlayer.seekTo(pausedAt);
-            mediaPlayer.start();
+        if (player != null) {
+            hideSystemUi();
+            player.setPlayWhenReady(!player.getPlayWhenReady());
         } else {
-            Toast.makeText(this,"Media player has been stopped", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Video has been stopped", Toast.LENGTH_LONG).show();
         }
+    }
+
+    @SuppressLint("InlinedApi")
+    private void hideSystemUi() {
+        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
     public void stop(View v) {
