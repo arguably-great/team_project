@@ -68,7 +68,7 @@ public class PhotosActivity extends AppCompatActivity {
 
 
         ViewRenderable.builder()
-                .setView(this, R.layout.test_ar1)
+                .setView(this, R.layout.jupiter1)
                 .build()
                 .thenAccept(renderable -> viewRenderable = renderable);
 

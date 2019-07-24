@@ -37,7 +37,6 @@ import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
-import com.google.ar.sceneform.rendering.ExternalTexture;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
@@ -169,10 +168,10 @@ public class PhotoSceneView extends AppCompatActivity {
     }
 
     private void buildViewRenderables() {
-        photoStage1 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
-        photoStage2 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
-        photoStage3 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
-        photoStage4 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
+        photoStage1 = ViewRenderable.builder().setView(this, R.layout.jupiter1).build();
+        photoStage2 = ViewRenderable.builder().setView(this, R.layout.jupiter1).build();
+        photoStage3 = ViewRenderable.builder().setView(this, R.layout.jupiter1).build();
+        photoStage4 = ViewRenderable.builder().setView(this, R.layout.jupiter1).build();
     }
 
     @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.N)
