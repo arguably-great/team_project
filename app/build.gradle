@@ -34,12 +34,11 @@ ext {
 }
 
 repositories {
+    google()
+    jcenter()
     mavenCentral() // jcenter() works as well because it pulls from Maven Central
 }
 
-repositories {
-    mavenCentral() // jcenter() works as well because it pulls from Maven Central
-}
 
 dependencies {
 
@@ -78,13 +77,19 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'org.parceler:parceler-api:1.1.12'
 
-
     annotationProcessor 'org.parceler:parceler:1.1.12'
 
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
+    //Exoplayer dependency
+    //implementation 'com.google.android.exoplayer:exoplayer-core:2.10.0'
+    //implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.10.0'
 
- }
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.7.3'
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.7.3'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.7.3'
+}
+
 
 apply plugin: 'com.google.ar.sceneform.plugin'
 
