@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.SurfaceTexture;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -80,8 +79,6 @@ public class VideosActivity extends AppCompatActivity {
 
     private ViewRenderable planetTitlesRenderable;
     private ViewRenderable planetContentsRenderable;
-
-    private MediaPlayer mediaPlayer;
 
     //Initialize ExoPlayer variables
     SimpleExoPlayer player;
@@ -365,6 +362,8 @@ public class VideosActivity extends AppCompatActivity {
                     return;
                 } else {
                     arSceneView.setupSession(session);
+                    //TODO set up exoPlayer again when session is resumed or restarted
+
                 }
             } catch (UnavailableException e) {
                 DemoUtils.handleSessionException(this, e);
@@ -390,15 +389,17 @@ public class VideosActivity extends AppCompatActivity {
         if (arSceneView != null) {
             arSceneView.pause();
         }
+        if (player != null) {
+            releasePlayer();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
+        if (player != null) {
+            releasePlayer();
         }
     }
 
@@ -458,10 +459,10 @@ public class VideosActivity extends AppCompatActivity {
         Node videoButtons3 = new Node();
         setupNode(videoButtons3, base, buttonStopRenderable, new Vector3(-0.8f, 1.0f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f));
 
-        Planet venusVisual = new Planet("Venus", "Venus is a goddess", this.getResources().getIdentifier("venus","raw",this.getPackageName()));
+        Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res));
         setupNode(venusVisual, base, venusRenderable, new Vector3(-0.5f, 1.5f, 0.0f),new Vector3(0.2f, 0.2f, 0.2f));
 
-        Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", this.getResources().getIdentifier("jupiter","raw",this.getPackageName()));
+        Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god",getString(R.string.jupiter_res));
         setupNode(jupiterVisual, base, jupiterRenderable, new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));
 
         Node node1 = new Node();
@@ -543,7 +544,7 @@ public class VideosActivity extends AppCompatActivity {
         startExoPlayer(texture, video);
     }
 
-    private void setupExoPlayer(ExternalTexture texture, int videoResID) {
+    private void setupExoPlayer(ExternalTexture texture, String videoResID) {
 
         player = ExoPlayerFactory.newSimpleInstance(
                 new DefaultRenderersFactory(this),
@@ -555,7 +556,7 @@ public class VideosActivity extends AppCompatActivity {
         player.setPlayWhenReady(playWhenReady);
         player.seekTo(currentWindow, playbackPosition);
 
-        Uri uri = Uri.parse("https://pmdvod.nationalgeographic.com/NG_Video/402/187/1402727491971_1545282164598_1402734147842_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4");
+        Uri uri = Uri.parse(videoResID);
         MediaSource mediaSource = buildMediaSource(uri);
         player.prepare(mediaSource, true, false);
 
@@ -590,19 +591,6 @@ public class VideosActivity extends AppCompatActivity {
             videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
     }
 
-    private void stopPlaying() {
-        releasePlayer();
-    }
-
-    private void releasePlayer() {
-        if (player != null) {
-            playbackPosition = player.getCurrentPosition();
-            currentWindow = player.getCurrentWindowIndex();
-            playWhenReady = player.getPlayWhenReady();
-            player.release();
-            player = null;
-        }
-    }
 
     private void startExoPlayer(ExternalTexture texture, Node video) {
         if (!player.getPlayWhenReady()) {
@@ -629,7 +617,11 @@ public class VideosActivity extends AppCompatActivity {
     public void pause(View v) {
         if (player != null) {
             hideSystemUi();
-            player.setPlayWhenReady(!player.getPlayWhenReady());
+            if (player.getPlayWhenReady()){
+                player.setPlayWhenReady(!player.getPlayWhenReady());
+            } else {
+                Toast.makeText(this, "Video has been paused", Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(this, "Video has been stopped", Toast.LENGTH_LONG).show();
         }
@@ -638,9 +630,27 @@ public class VideosActivity extends AppCompatActivity {
     public void resume(View v) {
         if (player != null) {
             hideSystemUi();
-            player.setPlayWhenReady(!player.getPlayWhenReady());
+            if (!player.getPlayWhenReady()){
+                player.setPlayWhenReady(true);
+            } else {
+                Toast.makeText(this, "Video is playing", Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(this, "Video has been stopped", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void stopPlaying() {
+        releasePlayer();
+    }
+
+    private void releasePlayer() {
+        if (player != null) {
+            playbackPosition = player.getCurrentPosition();
+            currentWindow = player.getCurrentWindowIndex();
+            playWhenReady = player.getPlayWhenReady();
+            player.release();
+            player = null;
         }
     }
 
