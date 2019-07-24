@@ -1,4 +1,4 @@
-package com.example.fbuteamproject.models;
+package com.example.fbuteamproject.layouts;
 
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
