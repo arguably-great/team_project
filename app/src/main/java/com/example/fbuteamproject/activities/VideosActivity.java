@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -329,7 +330,7 @@ public class VideosActivity extends AppCompatActivity {
                         .build();
 
         photoStage1 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
-        photoStage2 = ViewRenderable.builder().setView(this, R.layout.test_ar2).build(); //TODO - Changed this for testing
+        photoStage2 = ViewRenderable.builder().setView(this, R.layout.test_ar2).build();
         photoStage3 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
         photoStage4 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
 
@@ -447,8 +448,6 @@ public class VideosActivity extends AppCompatActivity {
     private Node createComponents() {
 
 
-        //TODO - TESTING THIS
-
         Planet venusVisual = new Planet("Venus", "Venus is a goddess", this.getResources().getIdentifier("venus","raw",this.getPackageName() ), this );
         venusVisual.setRenderable(venusRenderable);
 
@@ -483,56 +482,6 @@ public class VideosActivity extends AppCompatActivity {
                 photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);
 
 
-        //TODO - TESTING THIS
-
-
-        //base node for which everything will be relative to
-//        Node base = new Node();
-//
-//        Node videoButtons = new Node();
-//        setupNode(videoButtons, base, buttonPauseRenderable, new Vector3(-0.8f, 0.5f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f));
-//
-//        Node videoButtons2 = new Node();
-//        setupNode(videoButtons2, base, buttonResumeRenderable, new Vector3(-0.8f, 0.8f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f));
-//
-//        Node videoButtons3 = new Node();
-//        setupNode(videoButtons3, base, buttonStopRenderable, new Vector3(-0.8f, 1.0f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f));
-//
-//        Planet venusVisual = new Planet("Venus", "Venus is a goddess", this.getResources().getIdentifier("venus","raw",this.getPackageName() ), this );
-//        setupNode(venusVisual, base, venusRenderable, new Vector3(-0.5f, 1.5f, 0.0f),new Vector3(0.2f, 0.2f, 0.2f));
-//
-//        Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", this.getResources().getIdentifier("jupiter","raw",this.getPackageName() ), this);
-//        setupNode(jupiterVisual, base, jupiterRenderable, new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));
-//
-//        Node node1 = new Node();
-//        node1.setParent(base);
-//        node1.setRenderable(photoRenderable1);
-//        node1.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-//        node1.setLocalPosition(new Vector3(-0.5f, 0.0f, -1.0f));
-//
-//        Node node2 = new Node();
-//        node2.setParent(base);
-//        node2.setRenderable(photoRenderable2);
-//        node2.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-//        node2.setLocalPosition(new Vector3(-0.5f, 1.0f, -1.0f));
-//
-//        Node node3 = new Node();
-//        node3.setParent(base);
-//        node3.setRenderable(photoRenderable3);
-//        node3.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-//        node3.setLocalPosition(new Vector3(0.5f, 0.0f, -1.0f));
-//
-//        Node node4 = new Node();
-//        node4.setParent(base);
-//        node4.setRenderable(photoRenderable4);
-//        node4.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-//        node4.setLocalPosition(new Vector3(0.5f, 1.0f, -1.0f));
-//
-//        Node planetTitles = new Node();
-//        setupNode(planetTitles, base, planetTitlesRenderable, new Vector3(-0.5f, 0.5f, -0.2f), new Vector3(0.5f, 0.35f, 0.5f) );
-//
-//        Node planetContents = new Node();
-//        setupNode(planetContents, base, planetContentsRenderable, new Vector3(0.5f, 0.5f, -0.2f), new Vector3(0.5f, 0.35f, 0.5f) );
 
         View planetTitleView = planetTitlesRenderable.getView();
         View planetContentView = planetContentsRenderable.getView();
@@ -619,8 +568,9 @@ public class VideosActivity extends AppCompatActivity {
 
     private Node getVideoNode(Node baseNode) {
         Node video = new Node();
+
         setupNode(video, baseNode, videoRenderable, new Vector3(0.0f, 0.5f, 0.0f), new Vector3(
-                VIDEO_HEIGHT_METERS * (videoWidth / videoHeight), VIDEO_HEIGHT_METERS, 1.0f));
+                VIDEO_HEIGHT_METERS * 2, VIDEO_HEIGHT_METERS, 1.0f));
         return video;
     }
 
