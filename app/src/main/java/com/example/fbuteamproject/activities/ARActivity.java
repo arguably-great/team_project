@@ -65,10 +65,16 @@ for notes, photos and videos upon clicking on the screen.
 public class ARActivity extends AppCompatActivity {
 
     private static final String TAG = ARActivity.class.getSimpleName();
+
     private static final int RC_PERMISSIONS =0x123;
 
     private boolean installRequested;
-    
+
+    boolean photoBool = false;
+    //int photoClick = 0;
+    int venusTouch = 0;
+    int jupiterTouch = 0;
+
     @Nullable
     private ModelRenderable videoRenderable;
     private ModelRenderable venusRenderable;
@@ -106,23 +112,32 @@ public class ARActivity extends AppCompatActivity {
     CompletableFuture<ModelRenderable> videoStage;
 
     // viewrenderables for photos
-    private ViewRenderable photoRenderable1;
-    private ViewRenderable photoRenderable2;
-    private ViewRenderable photoRenderable3;
-    private ViewRenderable photoRenderable4;
-    private ViewRenderable buttonPhotoRenderable;
+    private ViewRenderable jupiterRenderable1;
+    private ViewRenderable jupiterRenderable2;
+    private ViewRenderable jupiterRenderable3;
+    private ViewRenderable jupiterRenderable4;
 
 
-    CompletableFuture<ViewRenderable> photoStage1;
-    CompletableFuture<ViewRenderable> photoStage2;
-    CompletableFuture<ViewRenderable> photoStage3;
-    CompletableFuture<ViewRenderable> photoStage4;
+    CompletableFuture<ViewRenderable> jupiterStage1;
+    CompletableFuture<ViewRenderable> jupiterStage2;
+    CompletableFuture<ViewRenderable> jupiterStage3;
+    CompletableFuture<ViewRenderable> jupiterStage4;
+
+    private ViewRenderable venusRenderable1;
+    private ViewRenderable venusRenderable2;
+    private ViewRenderable venusRenderable3;
+    private ViewRenderable venusRenderable4;
+
+
+    CompletableFuture<ViewRenderable> venusStage1;
+    CompletableFuture<ViewRenderable> venusStage2;
+    CompletableFuture<ViewRenderable> venusStage3;
+    CompletableFuture<ViewRenderable> venusStage4;
 
 
     CompletableFuture<ViewRenderable> planetTitleStage;
     CompletableFuture<ViewRenderable> planetContentsStage;
 
-    CompletableFuture<ViewRenderable> buttonPhotoStage;
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -228,8 +243,8 @@ public class ARActivity extends AppCompatActivity {
     private void setupRenderables() {
         CompletableFuture.allOf(
                 videoStage,
-                venusStage,
-                jupiterStage, photoStage1, photoStage2, photoStage3, photoStage4,
+                venusStage, venusStage1, venusStage2, venusStage3, venusStage4,
+                jupiterStage, jupiterStage1, jupiterStage2, jupiterStage3, jupiterStage4,
                 planetTitleStage,
                 planetContentsStage)
                 .handle(
@@ -243,10 +258,15 @@ public class ARActivity extends AppCompatActivity {
                                 venusRenderable = venusStage.get();
                                 jupiterRenderable = jupiterStage.get();
 
-                                photoRenderable1 = photoStage1.get();
-                                photoRenderable2 = photoStage2.get();
-                                photoRenderable3 = photoStage3.get();
-                                photoRenderable4 = photoStage4.get();
+                                // photo renderables
+                                jupiterRenderable1 = jupiterStage1.get();
+                                jupiterRenderable2 = jupiterStage2.get();
+                                jupiterRenderable3 = jupiterStage3.get();
+                                jupiterRenderable4 = jupiterStage4.get();
+                                venusRenderable1 = venusStage1.get();
+                                venusRenderable2 = venusStage2.get();
+                                venusRenderable3 = venusStage3.get();
+                                venusRenderable4 = venusStage4.get();
 
 
                                 planetTitlesRenderable = planetTitleStage.get();
@@ -287,6 +307,7 @@ public class ARActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void buildViewRenderables() {
 
+
         photoStage1 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
         photoStage2 = ViewRenderable.builder().setView(this, R.layout.test_ar2).build();
         photoStage3 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
@@ -305,8 +326,24 @@ public class ARActivity extends AppCompatActivity {
                         .setView(this, R.layout.component_planet_contents)
                         .build();
 
-        buttonPhotoStage = ViewRenderable.builder().setView(this, R.layout.test_ar2).build();
+        buildJupiterPhotos();
+        buildVenusPhotos();
 
+
+    }
+
+    private void buildVenusPhotos() {
+        venusStage1 = ViewRenderable.builder().setView(this, R.layout.venus1).build();
+        venusStage2 = ViewRenderable.builder().setView(this, R.layout.venus2).build();
+        venusStage3 = ViewRenderable.builder().setView(this, R.layout.venus3).build();
+        venusStage4 = ViewRenderable.builder().setView(this, R.layout.venus4).build();
+    }
+
+    private void buildJupiterPhotos() {
+        jupiterStage1 = ViewRenderable.builder().setView(this, R.layout.jupiter1).build();
+        jupiterStage2 = ViewRenderable.builder().setView(this, R.layout.jupiter2).build();
+        jupiterStage3 = ViewRenderable.builder().setView(this, R.layout.jupiter3).build();
+        jupiterStage4 = ViewRenderable.builder().setView(this, R.layout.jupiter4).build();
     }
 
     @Override
@@ -454,16 +491,36 @@ public class ARActivity extends AppCompatActivity {
         return base;
     }
 
+
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setupPlanetTapListenerVideo(Planet venusVisual, Planet jupiterVisual, Node baseNode, View planetTitleView, View planetContentView) {
 
         // Create an ExternalTexture for displaying the contents of the video.
         ExternalTexture texture = new ExternalTexture();
 
+        // create nodes for photos
+        Node node1 = new Node();
+        Node node2 = new Node();
+        Node node3 = new Node();
+        Node node4 = new Node();
+
+
         venusVisual.setOnTapListener((hitTestResult, motionEvent) -> {
+
+
 
             playVideo(venusVisual, baseNode, texture);
             changePlanetScreenText(planetTitleView, planetContentView, venusVisual);
+
+            createPhotoNodes(node1, node2, node3, node4, venusRenderable1, venusRenderable2, venusRenderable3, venusRenderable4, baseNode);
+
+//            ++venusTouch;
+//            if (jupiterTouch > 0) {
+//                --jupiterTouch;
+//            }
+
+
         });
 
         jupiterVisual.setOnTapListener((hitTestResult, motionEvent) -> {
@@ -471,7 +528,62 @@ public class ARActivity extends AppCompatActivity {
             playVideo(jupiterVisual, baseNode, texture);
             changePlanetScreenText(planetTitleView, planetContentView, jupiterVisual);
 
+            createPhotoNodes(node1, node2, node3, node4, jupiterRenderable1, jupiterRenderable2, jupiterRenderable3, jupiterRenderable4, baseNode);
+
+//            ++jupiterTouch;
+//            if (venusTouch > 0) {
+//                --venusTouch;
+//            }
+
         });
+
+    }
+
+    private void createPhotoNodes(Node node1, Node node2, Node node3, Node node4, ViewRenderable photoRenderable1, ViewRenderable photoRenderable2, ViewRenderable photoRenderable3, ViewRenderable photoRenderable4, Node baseNode) {
+
+        if (photoBool) {
+            // if we have already clicked on photo, remove previous photos
+            node1.getParent().removeChild(node1);
+            node2.getParent().removeChild(node2);
+            node3.getParent().removeChild(node3);
+            node4.getParent().removeChild(node4);
+            photoBool = false;
+
+        }
+
+//        if (venusTouch > 1 || jupiterTouch > 1) {
+//            // if we have already clicked on photo, remove previous photos
+//            node1.getParent().removeChild(node1);
+//            node2.getParent().removeChild(node2);
+//            node3.getParent().removeChild(node3);
+//            node4.getParent().removeChild(node4);
+//            photoBool = false;
+//            return;
+//
+//        }
+
+        // setting up nodes for photos
+        node1.setParent(baseNode);
+        node1.setRenderable(photoRenderable1);
+        node1.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        node1.setLocalPosition(new Vector3(-0.5f, 0.0f, -1.0f));
+
+        node2.setParent(baseNode);
+        node2.setRenderable(photoRenderable2);
+        node2.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        node2.setLocalPosition(new Vector3(-0.5f, 1.0f, -1.0f));
+
+        node3.setParent(baseNode);
+        node3.setRenderable(photoRenderable3);
+        node3.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        node3.setLocalPosition(new Vector3(0.5f, 0.0f, -1.0f));
+
+        node4.setParent(baseNode);
+        node4.setRenderable(photoRenderable4);
+        node4.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
+        node4.setLocalPosition(new Vector3(0.5f, 1.0f, -1.0f));
+
+        photoBool = true;
 
     }
 
@@ -544,6 +656,8 @@ public class ARActivity extends AppCompatActivity {
                 VIDEO_HEIGHT_METERS * 2, VIDEO_HEIGHT_METERS, 1.0f));
         return video;
     }
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setVideoTexture(ExternalTexture texture) {
