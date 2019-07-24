@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.fragments.NoteContentFragment;
@@ -369,41 +368,41 @@ public class ARActivity extends AppCompatActivity implements PassNoteToActivityL
         Node planetContents = new Node();
         setupNode(planetContents, base, planetContentsRenderable, new Vector3(0.5f, 0.5f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f) );
 
-        Planet earthVisual = new Planet("Earth", "The grandest of places! I hear all the life is here ;)");
-        setupNode(earthVisual, base, earthRenderable, new Vector3(-0.5f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f) );
-
-        Planet marsVisual = new Planet("Mars","Pretty nifty place. Elon likes it a lot, I'm pretty sure :0");
-        setupNode(marsVisual, base, marsRenderable, new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f) );
-
-        Planet neptuneVisual = new Planet("Neptune","King of the Sea?? More like last planet in our Solar System LMAO XD");
-        setupNode(neptuneVisual, base, neptuneRenderable, new Vector3(0.5f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f) );
+//        Planet earthVisual = new Planet("Earth", "The grandest of places! I hear all the life is here ;)");
+//        setupNode(earthVisual, base, earthRenderable, new Vector3(-0.5f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f) );
+//
+//        Planet marsVisual = new Planet("Mars","Pretty nifty place. Elon likes it a lot, I'm pretty sure :0");
+//        setupNode(marsVisual, base, marsRenderable, new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f) );
+//
+//        Planet neptuneVisual = new Planet("Neptune","King of the Sea?? More like last planet in our Solar System LMAO XD");
+//        setupNode(neptuneVisual, base, neptuneRenderable, new Vector3(0.5f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f) );
 
 
         View planetTitleView = planetTitlesRenderable.getView();
         View planetContentView = planetContentsRenderable.getView();
 
-        setupPlanetTapListeners(earthVisual, marsVisual, neptuneVisual, planetTitleView, planetContentView);
+//        setupPlanetTapListeners(earthVisual, marsVisual, neptuneVisual, planetTitleView, planetContentView);
 
         return base;
     }
 
     private void setupPlanetTapListeners(Planet earthVisual, Planet marsVisual, Planet neptuneVisual, View planetTitleView, View planetContentView) {
         earthVisual.setOnTapListener((hitTestResult, motionEvent) -> {
-            changePlanetScreenText(planetTitleView, planetContentView, earthVisual);
+//            changePlanetScreenText(planetTitleView, planetContentView, earthVisual);
         });
 
         marsVisual.setOnTapListener((hitTestResult, motionEvent) -> {
-            changePlanetScreenText(planetTitleView, planetContentView, marsVisual);
+//            changePlanetScreenText(planetTitleView, planetContentView, marsVisual);
         });
 
         neptuneVisual.setOnTapListener((hitTestResult, motionEvent) -> {
-            changePlanetScreenText(planetTitleView, planetContentView, neptuneVisual);
+//            changePlanetScreenText(planetTitleView, planetContentView, neptuneVisual);
         });
     }
 
     private void changePlanetScreenText(View nameView, View contentView, Planet currPlanet){
-        ((TextView) nameView.findViewById(R.id.tvTitle) ).setText(currPlanet.getPlanetName() );
-        ((TextView) contentView.findViewById(R.id.tvContents) ).setText(currPlanet.getPlanetNotes() );
+//        ((TextView) nameView.findViewById(R.id.tvTitle) ).setText(currPlanet.getPlanetName() );
+//        ((TextView) contentView.findViewById(R.id.tvContents) ).setText(currPlanet.getPlanetNotes() );
     }
 
 

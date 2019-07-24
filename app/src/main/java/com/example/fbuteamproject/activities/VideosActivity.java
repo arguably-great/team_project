@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.example.fbuteamproject.R;
+import com.example.fbuteamproject.models.ARComponentsShell;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.DemoUtils;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -328,7 +330,7 @@ public class VideosActivity extends AppCompatActivity {
                         .build();
 
         photoStage1 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
-        photoStage2 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
+        photoStage2 = ViewRenderable.builder().setView(this, R.layout.test_ar2).build();
         photoStage3 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
         photoStage4 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
 
@@ -445,55 +447,41 @@ public class VideosActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private Node createComponents() {
 
-        Log.d(TAG, "In Fragment creation method");
 
-        //base node for which everything will be relative to
-        Node base = new Node();
+        Planet venusVisual = new Planet("Venus", "Venus is a goddess", this.getResources().getIdentifier("venus","raw",this.getPackageName() ), this );
+        venusVisual.setRenderable(venusRenderable);
 
-        Node videoButtons = new Node();
-        setupNode(videoButtons, base, buttonPauseRenderable, new Vector3(-0.8f, 0.5f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f));
+        Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", this.getResources().getIdentifier("jupiter","raw",this.getPackageName() ), this);
+        jupiterVisual.setRenderable(jupiterRenderable);
 
-        Node videoButtons2 = new Node();
-        setupNode(videoButtons2, base, buttonResumeRenderable, new Vector3(-0.8f, 0.8f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f));
+        Node photo1 = new Node();
+        photo1.setRenderable(photoRenderable1);
 
-        Node videoButtons3 = new Node();
-        setupNode(videoButtons3, base, buttonStopRenderable, new Vector3(-0.8f, 1.0f, 0.0f), new Vector3(0.5f, 0.35f, 0.5f));
+        Node photo2 = new Node();
+        photo2.setRenderable(photoRenderable1);
 
-        Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res));
-        setupNode(venusVisual, base, venusRenderable, new Vector3(-0.5f, 1.5f, 0.0f),new Vector3(0.2f, 0.2f, 0.2f));
+        Node photo3 = new Node();
+        photo3.setRenderable(photoRenderable1);
 
-        Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god",getString(R.string.jupiter_res));
-        setupNode(jupiterVisual, base, jupiterRenderable, new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));
+        Node photo4 = new Node();
+        photo4.setRenderable(photoRenderable2);
 
-        Node node1 = new Node();
-        node1.setParent(base);
-        node1.setRenderable(photoRenderable1);
-        node1.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        node1.setLocalPosition(new Vector3(-0.5f, 0.0f, -1.0f));
+        Node photo5 = new Node();
+        photo5.setRenderable(photoRenderable2);
 
-        Node node2 = new Node();
-        node2.setParent(base);
-        node2.setRenderable(photoRenderable2);
-        node2.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        node2.setLocalPosition(new Vector3(-0.5f, 1.0f, -1.0f));
+        Node photo6 = new Node();
+        photo6.setRenderable(photoRenderable2);
 
-        Node node3 = new Node();
-        node3.setParent(base);
-        node3.setRenderable(photoRenderable3);
-        node3.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        node3.setLocalPosition(new Vector3(0.5f, 0.0f, -1.0f));
-
-        Node node4 = new Node();
-        node4.setParent(base);
-        node4.setRenderable(photoRenderable4);
-        node4.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        node4.setLocalPosition(new Vector3(0.5f, 1.0f, -1.0f));
-
-        Node planetTitles = new Node();
-        setupNode(planetTitles, base, planetTitlesRenderable, new Vector3(-0.5f, 0.5f, -0.2f), new Vector3(0.5f, 0.35f, 0.5f) );
+        Node videoNode = new Node();
 
         Node planetContents = new Node();
-        setupNode(planetContents, base, planetContentsRenderable, new Vector3(0.5f, 0.5f, -0.2f), new Vector3(0.5f, 0.35f, 0.5f) );
+        planetContents.setRenderable(planetContentsRenderable);
+
+        //Organizes all the components relative to each other
+        Node base = new ARComponentsShell(venusVisual, jupiterVisual, photo1,
+                photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);
+
+
 
         View planetTitleView = planetTitlesRenderable.getView();
         View planetContentView = planetContentsRenderable.getView();
@@ -526,8 +514,8 @@ public class VideosActivity extends AppCompatActivity {
     }
 
     private void changePlanetScreenText(View nameView, View contentView, Planet currPlanet){
-        ((TextView) nameView.findViewById(R.id.tvTitle) ).setText(currPlanet.getPlanetName() );
-        ((TextView) contentView.findViewById(R.id.tvContents) ).setText(currPlanet.getPlanetNotes() );
+        ((TextView) nameView).setText(currPlanet.getPlanetName() );
+        ((EditText) contentView).setText(currPlanet.getPlanetNotes() );
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -580,7 +568,8 @@ public class VideosActivity extends AppCompatActivity {
 
     private Node getVideoNode(Node baseNode) {
         Node video = new Node();
-        setupNode(video, baseNode, videoRenderable, new Vector3(0.2f, 0.2f, 0.2f), new Vector3(
+
+        setupNode(video, baseNode, videoRenderable, new Vector3(0.0f, 0.5f, 0.0f), new Vector3(
                 VIDEO_HEIGHT_METERS * 2, VIDEO_HEIGHT_METERS, 1.0f));
         return video;
     }
