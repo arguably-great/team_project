@@ -93,7 +93,6 @@ public class ARComponentsShell extends Node {
         planetContentsNode.setLocalPosition(new Vector3(0.0f, 0.40f, 0.0f) );
         planetContentsNode.setLocalScale(new Vector3(1.5f, 1.0f, 0.2f) );
 
-
     }
 
 
