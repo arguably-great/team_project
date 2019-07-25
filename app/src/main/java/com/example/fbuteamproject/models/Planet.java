@@ -11,6 +11,9 @@ import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 public class Planet extends Node implements Node.OnTapListener{
 
     private String planetName;
@@ -20,6 +23,8 @@ public class Planet extends Node implements Node.OnTapListener{
     private Node planetNameCard;
     private final Context context;
 
+    private File planetFile;
+
     public Planet(String planetName, String planetNotes, Context context) {
         this.planetName = planetName;
         this.planetNotes = planetNotes;
@@ -28,14 +33,42 @@ public class Planet extends Node implements Node.OnTapListener{
         setOnTapListener(this);
     }
 
-    public Planet(String planetName, String planetNotes, int planetVideoResID, Context context) {
+    public Planet(String planetName, String planetNotes, String planetVideoResID, Context context) {
         this.planetName = planetName;
         this.planetNotes = planetNotes;
         this.planetVideoResID = planetVideoResID;
         this.context = context;
 
+        this.planetFile = new File(context.getFilesDir(), planetName + ".txt");
+
+
+        setupFile();
+
+
         setOnTapListener(this);
     }
+
+    private void setupFile() {
+
+        if (planetFile.exists() ){
+            Log.d("FileDebug", "File already exists");
+            return;
+        }
+
+
+        Log.d("FileDebug", "About to fill up Planet with generic Notes. Doing this for " + planetName);
+        FileOutputStream outputStream;
+
+        try {
+            outputStream = context.openFileOutput(planetFile.getName(), Context.MODE_PRIVATE);
+            outputStream.write(planetNotes.getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 
     public String getPlanetName() {
@@ -60,6 +93,10 @@ public class Planet extends Node implements Node.OnTapListener{
 
     public void setPlanetVideoResID(String planetVideoResID) {
         this.planetVideoResID = planetVideoResID;
+    }
+
+    public File getPlanetFile() {
+        return planetFile;
     }
 
     public Node getPlanetNameCard() {

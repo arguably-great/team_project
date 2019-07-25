@@ -10,11 +10,11 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +56,10 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -448,10 +452,24 @@ public class VideosActivity extends AppCompatActivity {
     private Node createComponents() {
 
 
-        Planet venusVisual = new Planet("Venus", "Venus is a goddess", this.getResources().getIdentifier("venus","raw",this.getPackageName() ), this );
+        String genericPlanetText = "";
+
+        genericPlanetText += "Name: PLANET_NAME\n" +
+                "Distance from Sun: SUN_DIST\n" +
+                "Age: PLANET_AGE\n" +
+                "Padding: PADDDDDD\n" +
+                "More Padding: PADDDD\n" +
+                "Even MoRe PaDdInG: PADDDD\n" +
+                "Padding: PADDDDDD\n" +
+                "More Padding: PADDDD\n" +
+                "Even MoRe PaDdInG: PADDDD\n";
+
+
+
+        Planet venusVisual = new Planet("Venus", "VENUS TAPPED\n" + genericPlanetText, getString(R.string.venus_res), this );
         venusVisual.setRenderable(venusRenderable);
 
-        Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", this.getResources().getIdentifier("jupiter","raw",this.getPackageName() ), this);
+        Planet jupiterVisual = new Planet("Jupiter", "JUPITER TAPPED\n" + genericPlanetText, getString(R.string.jupiter_res), this);
         jupiterVisual.setRenderable(jupiterRenderable);
 
         Node photo1 = new Node();
@@ -514,8 +532,36 @@ public class VideosActivity extends AppCompatActivity {
     }
 
     private void changePlanetScreenText(View nameView, View contentView, Planet currPlanet){
-        ((TextView) nameView).setText(currPlanet.getPlanetName() );
-        ((EditText) contentView).setText(currPlanet.getPlanetNotes() );
+
+        File currPlanetFile = currPlanet.getPlanetFile();
+
+        StringBuilder fileText = new StringBuilder();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(currPlanetFile) );
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                fileText.append(line);
+                fileText.append('\n');
+            }
+            br.close();
+        }
+        catch (IOException e) {
+            //You'll need to add proper error handling here
+            Log.e("FileDebug", e.getLocalizedMessage() );
+        }
+
+        Log.d("FileDebug", fileText.toString() );
+
+
+
+        ( (TextView) contentView.findViewById(R.id.tvContents) ).setMovementMethod(new ScrollingMovementMethod() );
+
+        ( (TextView) contentView.findViewById(R.id.tvContents) ).setText(fileText.toString() );
+
+//        ((TextView) nameView).setText(currPlanet.getPlanetName() );
+//        ((EditText) contentView).setText(currPlanet.getPlanetNotes() );
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
