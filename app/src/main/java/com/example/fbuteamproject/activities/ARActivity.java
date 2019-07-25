@@ -3,6 +3,7 @@ package com.example.fbuteamproject.activities;
 import android.Manifest;
 import android.app.Activity;
 
+
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 
@@ -12,7 +13,6 @@ import android.graphics.BitmapFactory;
 
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -25,6 +25,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+
 import android.widget.ImageView;
 
 import android.widget.TextView;
@@ -34,11 +35,13 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.example.fbuteamproject.R;
+
 import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.NoteComponent;
 import com.example.fbuteamproject.components.VideoComponent;
 import com.example.fbuteamproject.layouts.EntityLayout;
 import com.example.fbuteamproject.layouts.VideoLayout;
+
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
@@ -73,6 +76,7 @@ import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -86,10 +90,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static com.example.fbuteamproject.utils.DemoUtils.checkIsSupportedDeviceOrFinish;
+
+//import com.example.fbuteamproject.layouts.ARComponentsShell;
 
 /* ARActivity that populates the sceneview with model renderables and view renderables
 for notes, photos and videos upon clicking on the screen.
@@ -104,11 +111,6 @@ public class ARActivity extends AppCompatActivity {
     private Planet currPlanetSelected;
 
     private boolean installRequested;
-
-    boolean photoBool = false;
-    //int photoClick = 0;
-    int venusTouch = 0;
-    int jupiterTouch = 0;
 
     @Nullable
     private ModelRenderable videoRenderable;
@@ -151,23 +153,23 @@ public class ARActivity extends AppCompatActivity {
     private ViewRenderable jupiterRenderable2;
     private ViewRenderable jupiterRenderable3;
     private ViewRenderable jupiterRenderable4;
-//    private ViewRenderable jupiterRenderable5;
-//    private ViewRenderable jupiterRenderable6;
+    private ViewRenderable jupiterRenderable5;
+    private ViewRenderable jupiterRenderable6;
 
 
     CompletableFuture<ViewRenderable> jupiterStage1;
     CompletableFuture<ViewRenderable> jupiterStage2;
     CompletableFuture<ViewRenderable> jupiterStage3;
     CompletableFuture<ViewRenderable> jupiterStage4;
-//    CompletableFuture<ViewRenderable> jupiterStage5;
-//    CompletableFuture<ViewRenderable> jupiterStage6;
+    CompletableFuture<ViewRenderable> jupiterStage5;
+    CompletableFuture<ViewRenderable> jupiterStage6;
 
     private ViewRenderable venusRenderable1;
     private ViewRenderable venusRenderable2;
     private ViewRenderable venusRenderable3;
     private ViewRenderable venusRenderable4;
-//    private ViewRenderable venusRenderable5;
-//    private ViewRenderable venusRenderable6;
+    private ViewRenderable venusRenderable5;
+    private ViewRenderable venusRenderable6;
 
 
 
@@ -175,8 +177,8 @@ public class ARActivity extends AppCompatActivity {
     CompletableFuture<ViewRenderable> venusStage2;
     CompletableFuture<ViewRenderable> venusStage3;
     CompletableFuture<ViewRenderable> venusStage4;
-//    CompletableFuture<ViewRenderable> venusStage5;
-//    CompletableFuture<ViewRenderable> venusStage6;
+    CompletableFuture<ViewRenderable> venusStage5;
+    CompletableFuture<ViewRenderable> venusStage6;
 
 
     CompletableFuture<ViewRenderable> planetTitleStage;
@@ -313,6 +315,8 @@ public class ARActivity extends AppCompatActivity {
                 venusStage5, venusStage6,
                 jupiterStage, jupiterStage1, jupiterStage2, jupiterStage3, jupiterStage4,
                 jupiterStage5, jupiterStage6,
+
+
                 planetTitleStage,
                 planetContentsStage)
                 .handle(
@@ -322,23 +326,25 @@ public class ARActivity extends AppCompatActivity {
                                 return null;
                             }
                             try {
-//                                videoRenderable = videoStage.get();
-//                                jupiterRenderable = jupiterStage.get();
-//                                venusRenderable = venusStage.get();
+
+                               // videoRenderable = videoStage.get();
+                           //     venusRenderable = venusStage.get();
+                             //   jupiterRenderable = jupiterStage.get();
+
 
                                 // photo renderables
                                 jupiterRenderable1 = jupiterStage1.get();
                                 jupiterRenderable2 = jupiterStage2.get();
                                 jupiterRenderable3 = jupiterStage3.get();
                                 jupiterRenderable4 = jupiterStage4.get();
-//                                jupiterRenderable5 = jupiterStage5.get();
-//                                jupiterRenderable6 = jupiterStage6.get();
+                                jupiterRenderable5 = jupiterStage5.get();
+                                jupiterRenderable6 = jupiterStage6.get();
                                 venusRenderable1 = venusStage1.get();
                                 venusRenderable2 = venusStage2.get();
                                 venusRenderable3 = venusStage3.get();
                                 venusRenderable4 = venusStage4.get();
-//                                venusRenderable5 = venusStage5.get();
-//                                venusRenderable6 = venusStage6.get();
+                                venusRenderable5 = venusStage5.get();
+                                venusRenderable6 = venusStage6.get();
 
 
                                 planetTitlesRenderable = planetTitleStage.get();
@@ -379,13 +385,6 @@ public class ARActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void buildViewRenderables() {
 
-
-        photoStage1 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
-        photoStage2 = ViewRenderable.builder().setView(this, R.layout.test_ar2).build();
-        photoStage3 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
-        photoStage4 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
-
-
         planetTitleStage =
                 ViewRenderable
                         .builder()
@@ -404,36 +403,83 @@ public class ARActivity extends AppCompatActivity {
 
     }
 
-//    public static setPhotoURL(imageUrl) {
-//        try {
-//            ImageView i = (ImageView)findViewById(R.id.image);
-//            Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(imageUrl).getContent());
-//            i.setImageBitmap(bitmap);
-//        } catch (
-//                MalformedURLException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
 
     private void buildVenusPhotos() {
+//
+//        ImageView images[] = new ImageView[6];
+//
+//        try {
+//            // Make a request to list all media items in an album
+//            // Provide the ID of the album as a parameter in the searchMediaItems call
+//            // Iterate over all the retrieved media items
+//            InternalPhotosLibraryClient.SearchMediaItemsPagedResponse response = InternalPhotosLibraryClient.searchMediaItems(albumId);
+//            int index = 1;
+//
+//            for (MediaItem item : response.iterateAll()) {
+//                String productUrl = item.getProductUrl();
+//                Log.d("Checking API", productUrl);
+//
+//                ImageView imageView = images[index];
+//                Glide.with(this).load(productUrl)
+////                         .listener(new RequestListener<String, GlideDrawable>() {
+////                            @Override
+////                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+////                                return false;
+////                            }
+////
+////                            @Override
+////                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+////                                // do something
+////                                return false;
+////                            }
+////                        })
+//                        .into(imageView);
+//
+//                switch(index) {
+//                    case 1:
+//                        venusStage1 = ViewRenderable.builder().setView(this, R.id.imageView).build();
+//                        break;
+//                    case 2:
+//                        venusStage2 = ViewRenderable.builder().setView(this, R.id.imageView).build();
+//                        break;
+//                    case 3:
+//                        venusStage3 = ViewRenderable.builder().setView(this, R.id.imageView).build();
+//                        break;
+//                    case 4:
+//                        venusStage4 = ViewRenderable.builder().setView(this, R.id.imageView).build();
+//                        break;
+//                    case 5:
+//                        venusStage5 = ViewRenderable.builder().setView(this, R.id.imageView).build();
+//                        break;
+//                    case 6:
+//                        venusStage6 = ViewRenderable.builder().setView(this, R.id.imageView).build();
+//                        break;
+//                }
+//
+//                index++;
+//            }
+//        } catch (ApiException e) {
+//            Log.e(TAG, "Unable to get API photos");
+//        }
+
         venusStage1 = ViewRenderable.builder().setView(this, R.layout.venus1).build();
         venusStage2 = ViewRenderable.builder().setView(this, R.layout.venus2).build();
         venusStage3 = ViewRenderable.builder().setView(this, R.layout.venus3).build();
         venusStage4 = ViewRenderable.builder().setView(this, R.layout.venus4).build();
-//        venusStage5 = ViewRenderable.builder().setView(this, R.layout.venus5).build();
-//        venusStage6 = ViewRenderable.builder().setView(this, R.layout.venus6).build();
+        venusStage5 = ViewRenderable.builder().setView(this, R.layout.venus5).build();
+        venusStage6 = ViewRenderable.builder().setView(this, R.layout.venus6).build();
     }
+
+
+
 
     private void buildJupiterPhotos() {
         jupiterStage1 = ViewRenderable.builder().setView(this, R.layout.jupiter1).build();
         jupiterStage2 = ViewRenderable.builder().setView(this, R.layout.jupiter2).build();
         jupiterStage3 = ViewRenderable.builder().setView(this, R.layout.jupiter3).build();
         jupiterStage4 = ViewRenderable.builder().setView(this, R.layout.jupiter4).build();
-//        jupiterStage5 = ViewRenderable.builder().setView(this, R.layout.jupiter5).build();
-//        jupiterStage6 = ViewRenderable.builder().setView(this, R.layout.jupiter6).build();
+        jupiterStage5 = ViewRenderable.builder().setView(this, R.layout.jupiter5).build();
+        jupiterStage6 = ViewRenderable.builder().setView(this, R.layout.jupiter6).build();
     }
 
     @Override
@@ -623,42 +669,47 @@ public class ARActivity extends AppCompatActivity {
             return baseNode;
         }
 
-        Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res), this );
-        venusVisual.setRenderable(modelRenderables.get(0) );
 
-        Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", getString(R.string.jupiter_res), this);
-        jupiterVisual.setRenderable(jupiterRenderable);
+    //    Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res), this );
+     //   venusVisual.setRenderable(modelRenderables.get(0) );
 
-        Node photo1 = new Node();
-        photo1.setRenderable(photoRenderable1);
+     //   Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", getString(R.string.jupiter_res), this);
+    //    jupiterVisual.setRenderable(jupiterRenderable);
 
-        Node photo2 = new Node();
-        photo2.setRenderable(photoRenderable1);
+     //   Node photo1 = new Node();
+       // photo1.setRenderable(photoRenderable1);
 
-        Node photo3 = new Node();
-        photo3.setRenderable(photoRenderable1);
+   //     Node photo2 = new Node();
+     //   photo2.setRenderable(photoRenderable1);
 
-        Node photo4 = new Node();
-        photo4.setRenderable(photoRenderable2);
+    //    Node photo3 = new Node();
+    //    photo3.setRenderable(photoRenderable1);
 
-        Node photo5 = new Node();
-        photo5.setRenderable(photoRenderable2);
+    //    Node photo4 = new Node();
+    //    photo4.setRenderable(photoRenderable2);
 
-        Node photo6 = new Node();
-        photo6.setRenderable(photoRenderable2);
+      //  Node photo5 = new Node();
+      //  photo5.setRenderable(photoRenderable2);
+
+      //  Node photo6 = new Node();
+     //   photo6.setRenderable(photoRenderable2);
         //TODO DUMMY CODE TO TEST FUNCTIONALITY OF VIDEOCOMPONENT
         //Node videoNode = new Node();
 
+        Node base = new Node();
 
-       // Node videoNode = new Node();
+        Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res), this);
+        setupNode(venusVisual, base, venusRenderable, new Vector3(-0.5f, 1.6f, 0.0f),new Vector3(0.2f, 0.2f, 0.2f));
+
+
+        Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", getString(R.string.jupiter_res), this);
+        setupNode(jupiterVisual, base, jupiterRenderable, new Vector3(0.5f, 1.6f, 0.0f), new Vector3(0.2f, 0.2f, 0.2f));
+
 
 
         Node planetContents = new Node();
         planetContents.setRenderable(planetContentsRenderable);
 
-        //Organizes all the components relative to each other
-        /*Node base = new ARComponentsShell(venusVisual, jupiterVisual, photo1,
-                photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);*/
 
         View planetTitleView = planetTitlesRenderable.getView();
         View planetContentView = planetContentsRenderable.getView();
@@ -705,29 +756,26 @@ public class ARActivity extends AppCompatActivity {
         Node node2 = new Node();
         Node node3 = new Node();
         Node node4 = new Node();
-//        Node node5 = new Node();
-//        Node node6 = new Node();
+        Node node5 = new Node();
+        Node node6 = new Node();
 
 
         venusVisual.setOnTapListener((hitTestResult, motionEvent) -> {
             currPlanetSelected = venusVisual;
 
 
+
             playVideo(venusVisual, texture, videoNode);
+
+
+         //   playVideo(venusVisual, baseNode, texture);
 
             changePlanetScreenText(planetTitleView, planetContentView, venusVisual);
 
             createPhotoNodes(node1, node2, node3, node4,
-//                    node5, node6,
+                    node5, node6,
                     venusRenderable1, venusRenderable2, venusRenderable3, venusRenderable4,
-//                    venusRenderable5, venusRenderable6,
-                    baseNode);
-
-//            ++venusTouch;
-//            if (jupiterTouch > 0) {
-//                --jupiterTouch;
-//            }
-
+                    venusRenderable5, venusRenderable6, baseNode);
 
         });
 
@@ -738,81 +786,50 @@ public class ARActivity extends AppCompatActivity {
             changePlanetScreenText(planetTitleView, planetContentView, jupiterVisual);
 
             createPhotoNodes(node1, node2, node3, node4,
-//                    node5, node6,
+                    node5, node6,
                     jupiterRenderable1, jupiterRenderable2, jupiterRenderable3, jupiterRenderable4,
-//                    jupiterRenderable5, jupiterRenderable6,
-                    baseNode);
+                    jupiterRenderable5, jupiterRenderable6, baseNode);
 
-//            ++jupiterTouch;
-//            if (venusTouch > 0) {
-//                --venusTouch;
-//            }
 
         });
 
     }
 
     private void createPhotoNodes(Node node1, Node node2, Node node3, Node node4,
-//                                  Node node5, Node node6,
+                                  Node node5, Node node6,
                                   ViewRenderable photoRenderable1, ViewRenderable photoRenderable2, ViewRenderable photoRenderable3, ViewRenderable photoRenderable4,
-//                                  ViewRenderable photoRenderable5, ViewRenderable photoRenderable6,
-                                  Node baseNode) {
-
-        if (photoBool) {
-            // if we have already clicked on photo, remove previous photos
-            node1.getParent().removeChild(node1);
-            node2.getParent().removeChild(node2);
-            node3.getParent().removeChild(node3);
-            node4.getParent().removeChild(node4);
-//            node5.getParent().removeChild(node5);
-//            node6.getParent().removeChild(node6);
-            photoBool = false;
-
-        }
-
-//        if (venusTouch > 1 || jupiterTouch > 1) {
-//            // if we have already clicked on photo, remove previous photos
-//            node1.getParent().removeChild(node1);
-//            node2.getParent().removeChild(node2);
-//            node3.getParent().removeChild(node3);
-//            node4.getParent().removeChild(node4);
-//            photoBool = false;
-//            return;
-//
-//        }
+                                  ViewRenderable photoRenderable5, ViewRenderable photoRenderable6, Node baseNode) {
 
         // setting up nodes for photos
         node1.setParent(baseNode);
         node1.setRenderable(photoRenderable1);
-        node1.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        node1.setLocalPosition(new Vector3(-0.5f, 0.0f, -1.0f));
+        node1.setLocalPosition(new Vector3(-1.0f, 1.0f, 0.0f) );
+        node1.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         node2.setParent(baseNode);
         node2.setRenderable(photoRenderable2);
-        node2.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        node2.setLocalPosition(new Vector3(-0.5f, 1.0f, -1.0f));
+        node2.setLocalPosition(new Vector3(-1.5f, 0.66f, 0.0f) );
+        node2.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         node3.setParent(baseNode);
         node3.setRenderable(photoRenderable3);
-        node3.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        node3.setLocalPosition(new Vector3(-0.5f, 1.5f, -1.0f));
+        node3.setLocalPosition(new Vector3(-1.0f, 0.33f, 0.0f) );
+        node3.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         node4.setParent(baseNode);
         node4.setRenderable(photoRenderable4);
-        node4.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-        node4.setLocalPosition(new Vector3(0.5f, 0.0f, -1.0f));
+        node4.setLocalPosition(new Vector3(1.0f, 1.0f, 0.0f) );
+        node4.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
-//        node5.setParent(baseNode);
-//        node5.setRenderable(photoRenderable5);
-//        node5.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-//        node5.setLocalPosition(new Vector3(0.5f, 1.0f, -1.0f));
-//
-//        node6.setParent(baseNode);
-//        node6.setRenderable(photoRenderable6);
-//        node6.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f));
-//        node6.setLocalPosition(new Vector3(0.5f, 1.5f, -1.0f));
+        node5.setParent(baseNode);
+        node5.setRenderable(photoRenderable5);
+        node5.setLocalPosition(new Vector3(1.5f, 0.66f, 0.0f) );
+        node5.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
-        photoBool = true;
+        node6.setParent(baseNode);
+        node6.setRenderable(photoRenderable6);
+        node6.setLocalPosition(new Vector3(1.0f, 0.33f, 0.0f) );
+        node6.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
     }
 
@@ -915,12 +932,14 @@ public class ARActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setVideoTexture(ExternalTexture texture) {
+
         if (videoRenderable == null || videoRenderable.getMaterial() == null || texture == null) {
             Toast.makeText(this, "Video not found", Toast.LENGTH_LONG).show();
             return;
         }
             videoRenderable.getMaterial().setExternalTexture("videoTexture", texture);
             videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
+
     }
 
 
@@ -1058,7 +1077,6 @@ public class ARActivity extends AppCompatActivity {
 
         }
     }
-
 
 
 }
