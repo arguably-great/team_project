@@ -78,11 +78,6 @@ public class ARActivity extends AppCompatActivity {
     private ModelRenderable venusRenderable;
     private ModelRenderable jupiterRenderable;
 
-    // button renderables
-    private ViewRenderable buttonPauseRenderable;
-    private ViewRenderable buttonResumeRenderable;
-    private ViewRenderable buttonStopRenderable;
-
     private ViewRenderable planetTitlesRenderable;
     private ViewRenderable planetContentsRenderable;
 
@@ -113,9 +108,6 @@ public class ARActivity extends AppCompatActivity {
     CompletableFuture<ModelRenderable> venusStage;
     CompletableFuture<ModelRenderable> jupiterStage;
     CompletableFuture<ModelRenderable> videoStage;
-    CompletableFuture<ViewRenderable> buttonPauseStage;
-    CompletableFuture<ViewRenderable> buttonResumeStage;
-    CompletableFuture<ViewRenderable> buttonStopStage;
 
     // viewrenderables for photos
     private ViewRenderable photoRenderable1;
@@ -237,9 +229,6 @@ public class ARActivity extends AppCompatActivity {
                 videoStage,
                 venusStage,
                 jupiterStage, photoStage1, photoStage2, photoStage3, photoStage4,
-                buttonPauseStage,
-                buttonResumeStage,
-                buttonStopStage,
                 planetTitleStage,
                 planetContentsStage)
                 .handle(
@@ -252,9 +241,6 @@ public class ARActivity extends AppCompatActivity {
                                 videoRenderable = videoStage.get();
                                 venusRenderable = venusStage.get();
                                 jupiterRenderable = jupiterStage.get();
-                                buttonPauseRenderable = buttonPauseStage.get();
-                                buttonResumeRenderable = buttonResumeStage.get();
-                                buttonStopRenderable = buttonStopStage.get();
 
                                 photoRenderable1 = photoStage1.get();
                                 photoRenderable2 = photoStage2.get();
@@ -298,21 +284,6 @@ public class ARActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void buildViewRenderables() {
-        buttonPauseStage =
-                ViewRenderable
-                        .builder()
-                        .setView(this, R.layout.buttonpause)
-                        .build();
-        buttonResumeStage =
-                ViewRenderable
-                        .builder()
-                        .setView(this, R.layout.buttonresume)
-                        .build();
-        buttonStopStage =
-                ViewRenderable
-                        .builder()
-                        .setView(this, R.layout.buttonstop)
-                        .build();
 
         photoStage1 = ViewRenderable.builder().setView(this, R.layout.test_ar1).build();
         photoStage2 = ViewRenderable.builder().setView(this, R.layout.test_ar2).build();
@@ -412,11 +383,13 @@ public class ARActivity extends AppCompatActivity {
                 Trackable trackable = hit.getTrackable();
                 if (trackable instanceof Plane && ((Plane) trackable).isPoseInPolygon(hit.getHitPose())) {
                     setupAnchor(hit);
+
                     return true;
                 }
             }
         }
         return false;
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -540,6 +513,16 @@ public class ARActivity extends AppCompatActivity {
         setVideoTexture(texture);
 
         startExoPlayer(texture, video);
+
+        video.setOnTapListener((hitTestResult, motionEvent) -> {
+
+            if (player == null) {
+                Toast.makeText(this, "Video not found", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            player.setPlayWhenReady(!player.getPlayWhenReady());
+        });
     }
 
     private void setupExoPlayer(ExternalTexture texture, String videoResID) {
@@ -638,6 +621,7 @@ public class ARActivity extends AppCompatActivity {
 
         player.setPlayWhenReady(true);
     }
+
 
     private void stopPlaying() {
         releasePlayer();
