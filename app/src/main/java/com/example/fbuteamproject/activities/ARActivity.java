@@ -160,7 +160,7 @@ public class ARActivity extends AppCompatActivity {
         setContentView(R.layout.activity_videos);
 
         //find the sceneview
-        arSceneView = findViewById(R.id.ar_scene_view);
+        arSceneView = (ArSceneView) findViewById(R.id.ar_scene_view);
 
         buildPlanetRenderables();
 
