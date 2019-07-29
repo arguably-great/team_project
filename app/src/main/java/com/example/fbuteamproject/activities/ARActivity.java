@@ -2,10 +2,13 @@ package com.example.fbuteamproject.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -56,8 +59,12 @@ import com.google.ar.sceneform.rendering.ViewRenderable;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -70,6 +77,9 @@ public class ARActivity extends AppCompatActivity {
 
     private static final String TAG = ARActivity.class.getSimpleName();
     private static final int RC_PERMISSIONS =0x123;
+    private final int SPEECH_REQUEST_CODE = 100;
+
+    private Planet currPlanetSelected;
 
     private boolean installRequested;
     
@@ -442,6 +452,32 @@ public class ARActivity extends AppCompatActivity {
         View planetContentView = planetContentsRenderable.getView();
 
 
+        //Creating Intent for Speech-To-Text
+        planetContentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
+
+
+                try {
+                    startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
+                } catch (ActivityNotFoundException a) {
+                    Toast.makeText(getApplicationContext(),
+                            "Sorry your device not supported",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+
+
+
+
         setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView);
 
         return base;
@@ -454,12 +490,14 @@ public class ARActivity extends AppCompatActivity {
         ExternalTexture texture = new ExternalTexture();
 
         venusVisual.setOnTapListener((hitTestResult, motionEvent) -> {
+            currPlanetSelected = venusVisual;
 
             playVideo(venusVisual, baseNode, texture);
             changePlanetScreenText(planetTitleView, planetContentView, venusVisual);
         });
 
         jupiterVisual.setOnTapListener((hitTestResult, motionEvent) -> {
+            currPlanetSelected = jupiterVisual;
 
             playVideo(jupiterVisual, baseNode, texture);
             changePlanetScreenText(planetTitleView, planetContentView, jupiterVisual);
@@ -672,5 +710,44 @@ public class ARActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(
                 activity, new String[] {Manifest.permission.CAMERA}, ARActivity.RC_PERMISSIONS);
     }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case SPEECH_REQUEST_CODE: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    File currPlanetFile = currPlanetSelected.getPlanetFile();
+
+                    try {
+
+                        FileWriter fileWriter = new FileWriter( currPlanetFile, true);
+
+                        ArrayList<String> speechResult = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+                        fileWriter.append("\n" + speechResult.get(0) );
+                        fileWriter.close();
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    //TODO - WANT TO BE ABLE TO ALSO CHANGE THE TEXTVIEW THAT IS CURRENTLY SHOWING.
+
+                }
+                break;
+            }
+
+        }
+    }
+
+
+
+
 
 }
