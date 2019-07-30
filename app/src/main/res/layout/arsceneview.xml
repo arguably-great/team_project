@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.PhotosActivity">
+    tools:context=".activities.ARActivity">
 
     <com.google.ar.sceneform.ArSceneView
         android:id="@+id/ar_holder"

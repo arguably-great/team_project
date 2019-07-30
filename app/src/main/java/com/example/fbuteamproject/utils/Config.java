@@ -10,24 +10,29 @@ public class Config {
     String albumID;
     String notesFolder;
 
-    class Entity {
+    public static class Entity {
         String entityID;
         String modelPath;
         String videoURL;
         String albumID;
         String notesFolder;
 
-        Entity(String entityID, String modelPath, String videoURL, String albumID, String notesFolder) {
+        Entity(String entityID, String modelPath, String videoURL) {
             this.entityID = entityID;
             this.modelPath = modelPath;
             this.videoURL = videoURL;
             this.albumID = albumID;
             this.notesFolder = notesFolder;
         }
+
     }
 
-    static class AppConfig {
-        ArrayList<Entity> entities = new ArrayList<>();
+    public static class AppConfig {
+        public ArrayList<Entity> entities = new ArrayList<>();
+
+        public static AppConfig getAppConfig() {
+            return planetConfig;
+        }
     }
 
     static AppConfig planetConfig;
@@ -35,6 +40,7 @@ public class Config {
 
     static {
         planetConfig = new AppConfig();
+        planetConfig.entities.add(new Entity("myvenus", "DummyValue", "AnotherDummyValue"));
 
     }
 

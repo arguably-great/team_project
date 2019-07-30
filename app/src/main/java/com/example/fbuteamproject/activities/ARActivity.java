@@ -24,8 +24,10 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.example.fbuteamproject.R;
+import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.layouts.ARComponentsShell;
 import com.example.fbuteamproject.models.Planet;
+import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -65,6 +67,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -152,7 +155,18 @@ public class ARActivity extends AppCompatActivity {
         //find the sceneview
         arSceneView = findViewById(R.id.ar_scene_view);
 
-        buildPlanetRenderables();
+        Config.AppConfig configuration = (Config.AppConfig) Config.AppConfig.getAppConfig();
+        ArrayList<Config.Entity> appEntities = configuration.entities;
+
+        ArrayList<CompletableFuture<ModelRenderable>> myFutures = ModelComponent.buildModelStages(appEntities, this);
+
+        ArrayList<ModelRenderable> myRenderables = ModelComponent.buildModelRenderables(myFutures, this);
+
+        for (int i = 0; i < myRenderables.size(); i++) {
+            Log.d(TAG, "Printing model renderable");
+        }
+
+        //buildPlanetRenderables();
 
         buildVideoRenderable();
 
@@ -237,8 +251,9 @@ public class ARActivity extends AppCompatActivity {
     private void setupRenderables() {
         CompletableFuture.allOf(
                 videoStage,
-                venusStage,
-                jupiterStage, photoStage1, photoStage2, photoStage3, photoStage4,
+//                venusStage,
+//                jupiterStage,
+                photoStage1, photoStage2, photoStage3, photoStage4,
                 planetTitleStage,
                 planetContentsStage)
                 .handle(
@@ -249,8 +264,8 @@ public class ARActivity extends AppCompatActivity {
                             }
                             try {
                                 videoRenderable = videoStage.get();
-                                venusRenderable = venusStage.get();
-                                jupiterRenderable = jupiterStage.get();
+//                                jupiterRenderable = jupiterStage.get();
+//                                venusRenderable = venusStage.get();
 
                                 photoRenderable1 = photoStage1.get();
                                 photoRenderable2 = photoStage2.get();
