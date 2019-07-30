@@ -27,8 +27,6 @@ import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.VideoComponent;
 import com.example.fbuteamproject.components.NoteComponent;
-import com.example.fbuteamproject.components.ModelComponent;
-import com.example.fbuteamproject.components.VideoComponent;
 import com.example.fbuteamproject.layouts.ARComponentsShell;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
