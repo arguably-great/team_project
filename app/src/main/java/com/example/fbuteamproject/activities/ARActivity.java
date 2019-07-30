@@ -24,8 +24,11 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.example.fbuteamproject.R;
+import com.example.fbuteamproject.components.ModelComponent;
+import com.example.fbuteamproject.components.VideoComponent;
 import com.example.fbuteamproject.layouts.ARComponentsShell;
 import com.example.fbuteamproject.models.Planet;
+import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -65,6 +68,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -152,9 +156,24 @@ public class ARActivity extends AppCompatActivity {
         //find the sceneview
         arSceneView = findViewById(R.id.ar_scene_view);
 
-        buildPlanetRenderables();
+        Config.AppConfig configuration = (Config.AppConfig) Config.AppConfig.getAppConfig();
+        ArrayList<Config.Entity> appEntities = configuration.entities;
 
-        buildVideoRenderable();
+        ArrayList<CompletableFuture<ModelRenderable>> myFutures = ModelComponent.buildModelStages(appEntities, this);
+
+        ArrayList<ModelRenderable> myRenderables = ModelComponent.buildModelRenderables(myFutures, this);
+
+        for (int i = 0; i < myRenderables.size(); i++) {
+            Log.d(TAG, "Printing model renderable");
+        }
+
+        videoStage = VideoComponent.buildVideoStage(this);
+
+        videoRenderable = VideoComponent.buildModelRenderable(videoStage, this);
+
+        //buildPlanetRenderables();
+
+        //buildVideoRenderable();
 
         buildViewRenderables();
 
@@ -236,9 +255,10 @@ public class ARActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setupRenderables() {
         CompletableFuture.allOf(
-                videoStage,
-                venusStage,
-                jupiterStage, photoStage1, photoStage2, photoStage3, photoStage4,
+//                videoStage,
+//                venusStage,
+//                jupiterStage,
+                photoStage1, photoStage2, photoStage3, photoStage4,
                 planetTitleStage,
                 planetContentsStage)
                 .handle(
@@ -248,9 +268,9 @@ public class ARActivity extends AppCompatActivity {
                                 return null;
                             }
                             try {
-                                videoRenderable = videoStage.get();
-                                venusRenderable = venusStage.get();
-                                jupiterRenderable = jupiterStage.get();
+//                                videoRenderable = videoStage.get();
+//                                jupiterRenderable = jupiterStage.get();
+//                                venusRenderable = venusStage.get();
 
                                 photoRenderable1 = photoStage1.get();
                                 photoRenderable2 = photoStage2.get();
@@ -439,7 +459,12 @@ public class ARActivity extends AppCompatActivity {
         Node photo6 = new Node();
         photo6.setRenderable(photoRenderable2);
 
+        //TODO DUMMY CODE TO TEST FUNCTIONALITY OF VIDEOCOMPONENT
         Node videoNode = new Node();
+
+        VideoComponent.setUpVideo(venusVisual, videoNode,this);
+        //TODO END
+
 
         Node planetContents = new Node();
         planetContents.setRenderable(planetContentsRenderable);
@@ -475,16 +500,12 @@ public class ARActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-        setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView);
-
+        //setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView, videoNode);
         return base;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void setupPlanetTapListenerVideo(Planet venusVisual, Planet jupiterVisual, Node baseNode, View planetTitleView, View planetContentView) {
+    private void setupPlanetTapListenerVideo(Planet venusVisual, Planet jupiterVisual, Node baseNode, View planetTitleView, View planetContentView, Node videoNode) {
 
         // Create an ExternalTexture for displaying the contents of the video.
         ExternalTexture texture = new ExternalTexture();
@@ -492,14 +513,14 @@ public class ARActivity extends AppCompatActivity {
         venusVisual.setOnTapListener((hitTestResult, motionEvent) -> {
             currPlanetSelected = venusVisual;
 
-            playVideo(venusVisual, baseNode, texture);
+            playVideo(venusVisual, texture, videoNode);
             changePlanetScreenText(planetTitleView, planetContentView, venusVisual);
         });
 
         jupiterVisual.setOnTapListener((hitTestResult, motionEvent) -> {
             currPlanetSelected = jupiterVisual;
 
-            playVideo(jupiterVisual, baseNode, texture);
+            playVideo(jupiterVisual, texture, videoNode);
             changePlanetScreenText(planetTitleView, planetContentView, jupiterVisual);
 
         });
@@ -540,19 +561,17 @@ public class ARActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void playVideo(Planet planetVisual, Node baseNode, ExternalTexture texture) {
+    private void playVideo(Planet planetVisual, ExternalTexture texture, Node videoNode) {
 
         stopPlaying();
 
         setupExoPlayer(texture, planetVisual.getPlanetVideoResID());
 
-        Node video = getVideoNode(baseNode);
-
         setVideoTexture(texture);
 
-        startExoPlayer(texture, video);
+        startExoPlayer(texture, videoNode);
 
-        video.setOnTapListener((hitTestResult, motionEvent) -> {
+        videoNode.setOnTapListener((hitTestResult, motionEvent) -> {
 
             if (player == null) {
                 Toast.makeText(this, "Video not found", Toast.LENGTH_LONG).show();
@@ -570,7 +589,6 @@ public class ARActivity extends AppCompatActivity {
                 new DefaultTrackSelector(), new DefaultLoadControl());
 
         player.setVideoSurface(texture.getSurface());
-
         player.setPlayWhenReady(playWhenReady);
         player.seekTo(currentWindow, playbackPosition);
 
@@ -596,6 +614,8 @@ public class ARActivity extends AppCompatActivity {
                 createMediaSource(uri);
     }
 
+
+    //TODO MOVE THE SETUP NODE TO VIDEO LAYOUT!
     private Node getVideoNode(Node baseNode) {
         Node video = new Node();
 
@@ -606,6 +626,10 @@ public class ARActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setVideoTexture(ExternalTexture texture) {
+        if (videoRenderable == null || videoRenderable.getMaterial() == null || texture == null) {
+            Toast.makeText(this, "Video not found", Toast.LENGTH_LONG).show();
+            return;
+        }
             videoRenderable.getMaterial().setExternalTexture("videoTexture", texture);
             videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
     }
