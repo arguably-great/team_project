@@ -20,7 +20,6 @@ public class Config {
             this.albumID = albumID;
             this.notesFolder = notesFolder;
         }
-
         //TODO generate getters
 
     }

@@ -118,7 +118,7 @@ public class Planet extends Node implements Node.OnTapListener{
             planetNameCard.setLocalPosition(new Vector3(0.0f, .1f, 0.0f));
 
             ViewRenderable.builder()
-                    .setView(context, R.layout.component_planet_title)
+                    .setView(context, R.layout.component_entity_title)
                     .build()
                     .thenAccept(
                             (renderable) -> {
