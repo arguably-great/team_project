@@ -25,6 +25,7 @@ import androidx.annotation.RequiresApi;
 
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.ModelComponent;
+import com.example.fbuteamproject.components.VideoComponent;
 import com.example.fbuteamproject.layouts.ARComponentsShell;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
@@ -166,9 +167,13 @@ public class ARActivity extends AppCompatActivity {
             Log.d(TAG, "Printing model renderable");
         }
 
+        videoStage = VideoComponent.buildVideoStage(this);
+
+        videoRenderable = VideoComponent.buildModelRenderable(videoStage, this);
+
         //buildPlanetRenderables();
 
-        buildVideoRenderable();
+        //buildVideoRenderable();
 
         buildViewRenderables();
 
@@ -250,7 +255,7 @@ public class ARActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setupRenderables() {
         CompletableFuture.allOf(
-                videoStage,
+//                videoStage,
 //                venusStage,
 //                jupiterStage,
                 photoStage1, photoStage2, photoStage3, photoStage4,
@@ -263,7 +268,7 @@ public class ARActivity extends AppCompatActivity {
                                 return null;
                             }
                             try {
-                                videoRenderable = videoStage.get();
+//                                videoRenderable = videoStage.get();
 //                                jupiterRenderable = jupiterStage.get();
 //                                venusRenderable = venusStage.get();
 
