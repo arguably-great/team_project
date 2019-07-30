@@ -1,21 +1,17 @@
 package com.example.fbuteamproject.utils;
 
+import com.google.ar.sceneform.Node;
+
 import java.util.ArrayList;
 
 public class Config {
 
-    String entityID;
-    String modelPath;
-    String videoURL;
-    String albumID;
-    String notesFolder;
-
-    public static class Entity {
-        String entityID;
-        String modelPath;
-        String videoURL;
-        String albumID;
-        String notesFolder;
+    public static class Entity extends Node {
+        private String entityID;
+        private String modelPath;
+        private String videoURL;
+        private String albumID;
+        private String notesFolder;
 
         Entity(String entityID, String modelPath, String videoURL) {
             this.entityID = entityID;
@@ -24,6 +20,8 @@ public class Config {
             this.albumID = albumID;
             this.notesFolder = notesFolder;
         }
+
+        //TODO generate getters
 
     }
 

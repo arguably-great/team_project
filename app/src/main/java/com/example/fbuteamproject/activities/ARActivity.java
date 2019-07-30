@@ -459,7 +459,12 @@ public class ARActivity extends AppCompatActivity {
         Node photo6 = new Node();
         photo6.setRenderable(photoRenderable2);
 
+        //TODO DUMMY CODE TO TEST FUNCTIONALITY OF VIDEOCOMPONENT
         Node videoNode = new Node();
+
+        VideoComponent.setUpVideo(venusVisual, videoNode,this);
+        //TODO END
+
 
         Node planetContents = new Node();
         planetContents.setRenderable(planetContentsRenderable);
@@ -495,16 +500,12 @@ public class ARActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-        setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView);
-
+        //setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView, videoNode);
         return base;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void setupPlanetTapListenerVideo(Planet venusVisual, Planet jupiterVisual, Node baseNode, View planetTitleView, View planetContentView) {
+    private void setupPlanetTapListenerVideo(Planet venusVisual, Planet jupiterVisual, Node baseNode, View planetTitleView, View planetContentView, Node videoNode) {
 
         // Create an ExternalTexture for displaying the contents of the video.
         ExternalTexture texture = new ExternalTexture();
@@ -512,14 +513,14 @@ public class ARActivity extends AppCompatActivity {
         venusVisual.setOnTapListener((hitTestResult, motionEvent) -> {
             currPlanetSelected = venusVisual;
 
-            playVideo(venusVisual, baseNode, texture);
+            playVideo(venusVisual, texture, videoNode);
             changePlanetScreenText(planetTitleView, planetContentView, venusVisual);
         });
 
         jupiterVisual.setOnTapListener((hitTestResult, motionEvent) -> {
             currPlanetSelected = jupiterVisual;
 
-            playVideo(jupiterVisual, baseNode, texture);
+            playVideo(jupiterVisual, texture, videoNode);
             changePlanetScreenText(planetTitleView, planetContentView, jupiterVisual);
 
         });
@@ -560,19 +561,17 @@ public class ARActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void playVideo(Planet planetVisual, Node baseNode, ExternalTexture texture) {
+    private void playVideo(Planet planetVisual, ExternalTexture texture, Node videoNode) {
 
         stopPlaying();
 
         setupExoPlayer(texture, planetVisual.getPlanetVideoResID());
 
-        Node video = getVideoNode(baseNode);
-
         setVideoTexture(texture);
 
-        startExoPlayer(texture, video);
+        startExoPlayer(texture, videoNode);
 
-        video.setOnTapListener((hitTestResult, motionEvent) -> {
+        videoNode.setOnTapListener((hitTestResult, motionEvent) -> {
 
             if (player == null) {
                 Toast.makeText(this, "Video not found", Toast.LENGTH_LONG).show();
@@ -590,7 +589,6 @@ public class ARActivity extends AppCompatActivity {
                 new DefaultTrackSelector(), new DefaultLoadControl());
 
         player.setVideoSurface(texture.getSurface());
-
         player.setPlayWhenReady(playWhenReady);
         player.seekTo(currentWindow, playbackPosition);
 
@@ -616,6 +614,8 @@ public class ARActivity extends AppCompatActivity {
                 createMediaSource(uri);
     }
 
+
+    //TODO MOVE THE SETUP NODE TO VIDEO LAYOUT!
     private Node getVideoNode(Node baseNode) {
         Node video = new Node();
 
@@ -626,6 +626,10 @@ public class ARActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setVideoTexture(ExternalTexture texture) {
+        if (videoRenderable == null || videoRenderable.getMaterial() == null || texture == null) {
+            Toast.makeText(this, "Video not found", Toast.LENGTH_LONG).show();
+            return;
+        }
             videoRenderable.getMaterial().setExternalTexture("videoTexture", texture);
             videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
     }
