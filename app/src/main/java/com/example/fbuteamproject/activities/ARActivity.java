@@ -26,6 +26,7 @@ import androidx.annotation.RequiresApi;
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.VideoComponent;
+import com.example.fbuteamproject.components.NoteComponent;
 import com.example.fbuteamproject.layouts.ARComponentsShell;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
@@ -138,6 +139,12 @@ public class ARActivity extends AppCompatActivity {
     CompletableFuture<ViewRenderable> planetTitleStage;
     CompletableFuture<ViewRenderable> planetContentsStage;
 
+
+    //TODO - This one will be from Component Class for Notes
+    private ViewRenderable entityContentRenderableFromComponent;
+    //TODO - This one will be from Component Class for Notes
+
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -172,6 +179,10 @@ public class ARActivity extends AppCompatActivity {
         videoRenderable = VideoComponent.buildModelRenderable(videoStage, this);
 
         //buildPlanetRenderables();
+
+        //TODO - This one will be from Component Class for Notes
+        entityContentRenderableFromComponent = NoteComponent.buildContentRenderable(this);
+        //TODO - This one will be from Component Class for Notes
 
         //buildVideoRenderable();
 
@@ -323,13 +334,13 @@ public class ARActivity extends AppCompatActivity {
         planetTitleStage =
                 ViewRenderable
                         .builder()
-                        .setView(this, R.layout.component_planet_title)
+                        .setView(this, R.layout.component_entity_title)
                         .build();
 
         planetContentsStage =
                 ViewRenderable
                         .builder()
-                        .setView(this, R.layout.component_planet_contents)
+                        .setView(this, R.layout.component_entity_contents)
                         .build();
     }
 
@@ -393,7 +404,8 @@ public class ARActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void onSingleTap(MotionEvent tap) {
-        if (!hasFinishedLoading) {
+
+        if (!hasFinishedLoading && !NoteComponent.getHasLoadedContentRenderable() ) {
             // We can't do anything yet.
             return;
         }
