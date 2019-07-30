@@ -85,12 +85,13 @@ public class ARComponentsShell extends Node {
         lowerRightImageNode.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
         videoNode.setParent(this);
-        videoNode.setLocalPosition(new Vector3(-0.25f, 0.5f, 0.0f) );
+        videoNode.setLocalPosition(new Vector3(0.0f, 0.75f, 0.0f) );
+        //TODO - At the moment not being used ://
+
 
         planetContentsNode.setParent(this);
-        planetContentsNode.setLocalPosition(new Vector3(0.0f, 1.25f, 0.0f) );
-        planetContentsNode.setLocalScale(new Vector3(0.5f, 0.35f, 0.5f) );
-
+        planetContentsNode.setLocalPosition(new Vector3(0.0f, 0.40f, 0.0f) );
+        planetContentsNode.setLocalScale(new Vector3(1.5f, 1.0f, 0.2f) );
 
     }
 
