@@ -27,6 +27,7 @@ import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.VideoComponent;
 import com.example.fbuteamproject.components.NoteComponent;
+import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.layouts.ARComponentsShell;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
@@ -163,6 +164,15 @@ public class ARActivity extends AppCompatActivity {
         //find the sceneview
         arSceneView = findViewById(R.id.ar_scene_view);
 
+        videoStage = VideoComponent.buildVideoStage(this);
+
+        videoRenderable = VideoComponent.buildModelRenderable(videoStage, this);
+
+
+        //TODO - This one will be from Component Class for Notes
+        entityContentRenderableFromComponent = NoteComponent.buildContentRenderable(this);
+        //TODO - This one will be from Component Class for Notes
+
         Config.AppConfig configuration = (Config.AppConfig) Config.AppConfig.getAppConfig();
         ArrayList<Config.Entity> appEntities = configuration.entities;
 
@@ -174,18 +184,9 @@ public class ARActivity extends AppCompatActivity {
             Log.d(TAG, "Printing model renderable");
         }
 
-        videoStage = VideoComponent.buildVideoStage(this);
-
-        videoRenderable = VideoComponent.buildModelRenderable(videoStage, this);
 
         //buildPlanetRenderables();
-
-        //TODO - This one will be from Component Class for Notes
-        entityContentRenderableFromComponent = NoteComponent.buildContentRenderable(this);
-        //TODO - This one will be from Component Class for Notes
-
         //buildVideoRenderable();
-
         buildViewRenderables();
 
         setupRenderables();
