@@ -16,9 +16,9 @@ public class EntityLayout extends Node {
 
     private ArrayList<Node> entityNodes;
 
-    private final float MAX_COVERAGE_DIST  = 2.0f;
-    private final Vector3 ENTITY_SCALE_VECTOR = new Vector3(0.2f, 0.2f, 0.2f);
-    private final float PLANET_Y = 1.4f;
+    private final float MAX_COVERAGE_DIST  = 1.0f;
+    private final Vector3 ENTITY_SCALE_VECTOR = new Vector3(0.005f, 0.005f, 0.005f);
+    private final float PLANET_Y = 0.5f;
     private final float PLANET_Z = 0.0f;
 
     public EntityLayout(ArrayList<Config.Entity> appEntities, ArrayList<ModelRenderable> entityViewRenderables ){
@@ -29,16 +29,23 @@ public class EntityLayout extends Node {
 
     }
 
-    private void createEntityNodes(ArrayList<Config.Entity> appEntities, ArrayList<ModelRenderable> entityViewRenderables) {
+    private void createEntityNodes(ArrayList<Config.Entity> appEntities, ArrayList<ModelRenderable> entityModelRenderables) {
 
-        float entitySplit = (MAX_COVERAGE_DIST) / (entityViewRenderables.size() - 1);
+        float entitySplit;
 
+        if (entityModelRenderables.size() == 1){
+            entitySplit = 0;
+        }
+        else {
+            entitySplit = (MAX_COVERAGE_DIST) / (entityModelRenderables.size() - 1);
+        }
 
-        for(int currIndex = 0; currIndex < entityViewRenderables.size(); currIndex++){
+        for(int currIndex = 0; currIndex < entityModelRenderables.size(); currIndex++){
+
             Config.Entity currEntity = appEntities.get(currIndex);
 
             currEntity.setParent(this);
-            currEntity.setRenderable(entityViewRenderables.get(currIndex) );
+            currEntity.setRenderable(entityModelRenderables.get(currIndex) );
 
             //Calculate the X-Position for the current Node
             float currXPos = (-MAX_COVERAGE_DIST / 2) + (currIndex * entitySplit);

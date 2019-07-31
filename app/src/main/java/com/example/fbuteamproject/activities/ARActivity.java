@@ -28,6 +28,7 @@ import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.NoteComponent;
 import com.example.fbuteamproject.components.VideoComponent;
 import com.example.fbuteamproject.layouts.ARComponentsShell;
+import com.example.fbuteamproject.layouts.EntityLayout;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
@@ -140,7 +141,7 @@ public class ARActivity extends AppCompatActivity {
 
 
     private ArrayList<Config.Entity> appEntities;
-    private Config.Entity currEntitySelected;
+    private boolean hasTriedLoadingEntityRenderables;
 
 
     //TODO - This one will be from Component Class for Notes
@@ -170,7 +171,6 @@ public class ARActivity extends AppCompatActivity {
         videoStage = VideoComponent.buildVideoStage(this);
 
         videoRenderable = VideoComponent.buildModelRenderable(videoStage, this);
-
 
         //TODO - This one will be from Component Class for Notes
         entityContentRenderableFromComponent = NoteComponent.buildContentRenderable(this);
@@ -236,6 +236,7 @@ public class ARActivity extends AppCompatActivity {
                             }
 
                             // Otherwise return false so that the touch event can propagate to the scene.
+                            Log.d(TAG, "Trying to propagate touch input to the Scene");
                             return false;
                         });
     }
@@ -402,42 +403,75 @@ public class ARActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void onSingleTap(MotionEvent tap) {
 
-        if (!hasFinishedLoading && !NoteComponent.getHasLoadedContentRenderable() ) {
+//        if (!hasFinishedLoading && !NoteComponent.getHasLoadedContentRenderable()) {
+//            // We can't do anything yet.
+//            return;
+//        }
+//
+//        Log.d(TAG, "Current size of completableFutures: " + ModelComponent.GetFuturesSize());
+//
+//        Log.d(TAG, "Printing completable Futures");
+//
+//        if (ModelComponent.GetFuturesSize() == appEntities.size()) {
+//
+//            ArrayList<CompletableFuture<ModelRenderable>> myCompFutures = ModelComponent.getCompletableFutures();
+//
+//            for (int i = 0; i < ModelComponent.GetFuturesSize(); i++) {
+//
+//                Log.d(TAG, "My completable future" + myCompFutures.get(i));
+//            }
+//        }
+//
+//        myRenderables = ModelComponent.buildModelRenderables(ModelComponent.getCompletableFutures(), this);
+//
+//        for (int i = 0; i < myRenderables.size(); i++) {
+//            Log.d(TAG, "Printing model renderable" + myRenderables.get(i));
+//        }
+//
+//        if (!hasFinishedLoading) {
+//            // We can't do anything yet.
+//            return;
+//        }
+//
+//        Frame frame = arSceneView.getArFrame();
+//        if (frame != null) {
+//            if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
+//                hasPlacedComponents = true;
+//            }
+//        }
+//    }
+
+        if (hasTriedLoadingEntityRenderables) {
+
+            if (myRenderables.size() != appEntities.size()) {
+                return;
+            }
+            for (int i = 0; i < myRenderables.size(); i++) {
+                Log.d(TAG, "Printing model renderable" + myRenderables.get(i));
+            }
+
+            Frame frame = arSceneView.getArFrame();
+            if (frame != null) {
+                if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
+                    hasPlacedComponents = true;
+                }
+            }
+            return;
+
+        }
+
+        if (!hasFinishedLoading || ModelComponent.GetFuturesSize() != appEntities.size()) {
             // We can't do anything yet.
             return;
         }
 
-        Log.d(TAG, "Current size of completableFutures: " + ModelComponent.GetFuturesSize());
+        ArrayList<CompletableFuture<ModelRenderable>> myCompFutures = ModelComponent.getCompletableFutures();
 
-        Log.d(TAG, "Printing completable Futures");
+        myRenderables = ModelComponent.buildModelRenderables(myCompFutures, this);
 
-        if (ModelComponent.GetFuturesSize() == appEntities.size()) {
+        hasTriedLoadingEntityRenderables = true;
 
-            ArrayList<CompletableFuture<ModelRenderable>> myCompFutures = ModelComponent.getCompletableFutures();
-
-            for (int i = 0; i < ModelComponent.GetFuturesSize(); i++) {
-
-                Log.d(TAG, "My completable future" + myCompFutures.get(i));
-            }
-        }
-
-        myRenderables = ModelComponent.buildModelRenderables(ModelComponent.getCompletableFutures(), this);
-
-        for (int i = 0; i < myRenderables.size(); i++) {
-            Log.d(TAG, "Printing model renderable" + myRenderables.get(i));
-        }
-
-        if (!hasFinishedLoading) {
-            // We can't do anything yet.
-            return;
-        }
-
-        Frame frame = arSceneView.getArFrame();
-        if (frame != null) {
-            if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
-                hasPlacedComponents= true;
-            }
-        }
+        onSingleTap(tap);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -469,8 +503,16 @@ public class ARActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private Node createComponents(ArrayList<ModelRenderable> modelRenderables) {
 
+        //TODO - Testing
+        EntityLayout entityLayout = new EntityLayout(appEntities, modelRenderables);
+
+        if(true){
+            return entityLayout;
+        }
+        //TODO - Testing
+
         Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res), this );
-        venusVisual.setRenderable(venusRenderable);
+        venusVisual.setRenderable(modelRenderables.get(0) );
 
         Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", getString(R.string.jupiter_res), this);
         jupiterVisual.setRenderable(jupiterRenderable);
@@ -648,16 +690,6 @@ public class ARActivity extends AppCompatActivity {
         return new ExtractorMediaSource.Factory(
                 new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "minerva"))).
                 createMediaSource(uri);
-    }
-
-
-    //TODO MOVE THE SETUP NODE TO VIDEO LAYOUT!
-    private Node getVideoNode(Node baseNode) {
-        Node video = new Node();
-
-        setupNode(video, baseNode, videoRenderable, new Vector3(0.0f, 0.75f, 0.0f), new Vector3(
-                VIDEO_HEIGHT_METERS * 2, VIDEO_HEIGHT_METERS, 1.0f));
-        return video;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
