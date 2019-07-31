@@ -27,7 +27,6 @@ import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.NoteComponent;
 import com.example.fbuteamproject.components.VideoComponent;
-import com.example.fbuteamproject.layouts.ARComponentsShell;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
@@ -147,6 +146,7 @@ public class ARActivity extends AppCompatActivity {
     private ViewRenderable entityContentRenderableFromComponent;
     //TODO - This one will be from Component Class for Notes
 
+    private ArrayList<ModelRenderable> myRenderables;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -178,13 +178,7 @@ public class ARActivity extends AppCompatActivity {
         Config.AppConfig configuration = (Config.AppConfig) Config.AppConfig.getAppConfig();
         appEntities = configuration.entities;
 
-        ArrayList<CompletableFuture<ModelRenderable>> myFutures = ModelComponent.buildModelStages(appEntities, this);
-
-        ArrayList<ModelRenderable> myRenderables = ModelComponent.buildModelRenderables(myFutures, this);
-
-        for (int i = 0; i < myRenderables.size(); i++) {
-            Log.d(TAG, "Printing model renderable");
-        }
+        ModelComponent.generateCompletableFutures(appEntities, this);
 
 //        buildPlanetRenderables();
 //        buildVideoRenderable();
@@ -412,12 +406,37 @@ public class ARActivity extends AppCompatActivity {
             return;
         }
 
-        Frame frame = arSceneView.getArFrame();
-        if (frame != null) {
-            if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
-                hasPlacedComponents= true;
+        Log.d(TAG, "Current size of completableFutures: " + ModelComponent.GetFuturesSize());
+
+        Log.d(TAG, "Printing completable Futures");
+
+        if (ModelComponent.GetFuturesSize() == appEntities.size()) {
+
+            ArrayList<CompletableFuture<ModelRenderable>> myCompFutures = ModelComponent.getCompletableFutures();
+
+            for (int i = 0; i < ModelComponent.GetFuturesSize(); i++) {
+
+                Log.d(TAG, "My completable future" + myCompFutures.get(i));
             }
         }
+
+        myRenderables = ModelComponent.buildModelRenderables(ModelComponent.getCompletableFutures(), this);
+
+        for (int i = 0; i < myRenderables.size(); i++) {
+            Log.d(TAG, "Printing model renderable" + myRenderables.get(i));
+        }
+
+//        if (!hasFinishedLoading) {
+//            // We can't do anything yet.
+//            return;
+//        }
+//
+//        Frame frame = arSceneView.getArFrame();
+//        if (frame != null) {
+//            if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
+//                hasPlacedComponents= true;
+//            }
+//        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -472,20 +491,18 @@ public class ARActivity extends AppCompatActivity {
 
         Node photo6 = new Node();
         photo6.setRenderable(photoRenderable2);
-
         //TODO DUMMY CODE TO TEST FUNCTIONALITY OF VIDEOCOMPONENT
         Node videoNode = new Node();
 
         VideoComponent.setUpVideo(venusVisual, videoNode,this);
         //TODO END
 
-
         Node planetContents = new Node();
         planetContents.setRenderable(planetContentsRenderable);
 
-        //Organizes all the components relative to each other
+        /*//Organizes all the components relative to each other
         Node base = new ARComponentsShell(venusVisual, jupiterVisual, photo1,
-                photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);
+                photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);*/
 
         View planetTitleView = planetTitlesRenderable.getView();
         View planetContentView = planetContentsRenderable.getView();
@@ -515,7 +532,7 @@ public class ARActivity extends AppCompatActivity {
         });
 
         //setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView, videoNode);
-        return base;
+        return videoNode;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

@@ -8,14 +8,14 @@ public class Config {
 
     public static class Entity extends Node {
         private String entityID;
-        private String modelPath;
+        private String modelId;
         private String videoURL;
         private String albumID;
         private String notesFolder;
 
-        Entity(String entityID, String modelPath, String videoURL) {
+        Entity(String entityID, String modelId, String videoURL) {
             this.entityID = entityID;
-            this.modelPath = modelPath;
+            this.modelId = modelId;
             this.videoURL = videoURL;
             this.albumID = albumID;
             this.notesFolder = notesFolder;
@@ -25,20 +25,40 @@ public class Config {
             return entityID;
         }
 
-        public String getModelPath() {
-            return modelPath;
+        public void setEntityID(String entityID) {
+            this.entityID = entityID;
+        }
+
+        public String getModelId() {
+            return modelId;
+        }
+
+        public void setModelPath(String modelId) {
+            this.modelId = modelId;
         }
 
         public String getVideoURL() {
             return videoURL;
         }
 
+        public void setVideoURL(String videoURL) {
+            this.videoURL = videoURL;
+        }
+
         public String getAlbumID() {
             return albumID;
         }
 
+        public void setAlbumID(String albumID) {
+            this.albumID = albumID;
+        }
+
         public String getNotesFolder() {
             return notesFolder;
+        }
+
+        public void setNotesFolder(String notesFolder) {
+            this.notesFolder = notesFolder;
         }
     }
 
@@ -55,15 +75,9 @@ public class Config {
 
     static {
         planetConfig = new AppConfig();
-        planetConfig.entities.add(new Entity("planetOne", "DummyValue", "AnotherDummyValue"));
-        planetConfig.entities.add(new Entity("planetTwo", "DummyValue", "AnotherDummyValue"));
-        planetConfig.entities.add(new Entity("planetThree", "DummyValue", "AnotherDummyValue"));
-        planetConfig.entities.add(new Entity("planetFour", "DummyValue", "AnotherDummyValue"));
-        planetConfig.entities.add(new Entity("planetFive", "DummyValue", "AnotherDummyValue"));
-        planetConfig.entities.add(new Entity("planetSix", "DummyValue", "AnotherDummyValue"));
-        planetConfig.entities.add(new Entity("planetSeven", "DummyValue", "AnotherDummyValue"));
-        planetConfig.entities.add(new Entity("planetEight", "DummyValue", "AnotherDummyValue"));
 
+        planetConfig.entities.add(new Entity("Venus", "5ovHBezIGyZ", "AnotherDummyValue"));
+        planetConfig.entities.add(new Entity("Jupiter", "e_2JJbbD6fU", "AnotherDummyValue"));
 
     }
 
