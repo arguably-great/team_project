@@ -1,8 +1,7 @@
 package com.example.fbuteamproject.components;
 
 /* Class to build model renderables by making asynchronous requests to
-Poly API
- */
+Poly API*/
 
 import android.app.Activity;
 import android.content.Context;
@@ -131,14 +130,19 @@ public class ModelComponent {
         for (int i = 0; i < myFutures.size(); i++) {
 
             int finalI = i;
+
             myFutures.get(i).handle(
                         (notUsed, throwable) -> {
                             if (throwable != null) {
                                 DemoUtils.displayError(context, "Unable to load renderable", throwable);
                                 return null;
                             }try {
+
+                                ModelRenderable testModelRenderable;
                                 //get it from the completablefuture
-                                modelRenderable = myFutures.get(finalI).get();
+                                testModelRenderable = myFutures.get(finalI).get();
+                                Log.d(TAG, "FinalI is: " + finalI);
+                                modelRenderables.add(testModelRenderable);
 
                             } catch (InterruptedException | ExecutionException ex) {
                                 DemoUtils.displayError(context, "Unable to load renderable", ex);
@@ -147,9 +151,9 @@ public class ModelComponent {
                             return null;
                         });
 
-        //adding it to top-level modelrenderables array
-        modelRenderables.add(modelRenderable);
-    }
+            //adding it to top-level modelrenderables array
+//            modelRenderables.add(modelRenderable);
+        }
 
     for (int i = 0; i < modelRenderables.size(); i++) {
         Log.d(TAG, "Printing model renderable");
