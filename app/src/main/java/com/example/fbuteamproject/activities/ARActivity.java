@@ -22,6 +22,7 @@ import androidx.annotation.RequiresApi;
 
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.PhotoComponent;
+import com.example.fbuteamproject.layouts.PhotoLayout;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.DemoUtils;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -92,6 +93,8 @@ public class ARActivity extends AppCompatActivity {
     private ArSceneView arSceneView;
 
     private Snackbar loadingMessageSnackbar;
+
+    public static boolean photoClicked = false;
 
     // True once scene is loaded
     private boolean hasFinishedLoading;
@@ -493,58 +496,19 @@ public class ARActivity extends AppCompatActivity {
         ExternalTexture texture = new ExternalTexture();
 
         // create nodes for photos
-        Node node1 = new Node();
-        Node node2 = new Node();
-        Node node3 = new Node();
-        Node node4 = new Node();
-        Node node5 = new Node();
-        Node node6 = new Node();
 
 
         venusVisual.setOnTapListener((hitTestResult, motionEvent) -> {
 
             playVideo(venusVisual, baseNode, texture);
             changePlanetScreenText(planetTitleView, planetContentView, venusVisual);
-//
-//            createPhotoNodes(node1, node2, node3, node4, node5, node6, venusRenderable1, venusRenderable2, venusRenderable3, venusRenderable4,
-//                    venusRenderable5, venusRenderable6, baseNode);
+
+            Log.d(TAG, "LOL" + PhotoComponent.viewRenderables.size());
 
 
-            for (int i = 0; i < PhotoComponent.viewRenderables.size(); i++) {
 
-                // setting up nodes for photos
+            PhotoLayout.photoNodeSetUp(baseNode);
 
-                if (i == 0 ) {
-                    node1.setParent(baseNode);
-                    node1.setRenderable(PhotoComponent.viewRenderables.get(i));
-                    node1.setLocalPosition(new Vector3(-1.0f, 1.0f, 0.0f) );
-                    node1.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-
-                }
-
-                if (i == 1) {
-                    node2.setParent(baseNode);
-                    node2.setRenderable(PhotoComponent.viewRenderables.get(i));
-                    node2.setLocalPosition(new Vector3(-1.5f, 0.66f, 0.0f) );
-                    node2.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-                }
-
-
-//                node4.setParent(baseNode);
-//                node4.setRenderable(photoRenderable4);
-//                node4.setLocalPosition(new Vector3(1.0f, 1.0f, 0.0f) );
-//                node4.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-//
-//                node5.setParent(baseNode);
-//                node5.setRenderable(photoRenderable5);
-//                node5.setLocalPosition(new Vector3(1.5f, 0.66f, 0.0f) );
-//                node5.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-//
-//                node6.setParent(baseNode);
-//                node6.setRenderable(photoRenderable6);
-//                node6.setLocalPosition(new Vector3(1.0f, 0.33f, 0.0f) );
-//                node6.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-            }
 
         });
 
@@ -553,19 +517,28 @@ public class ARActivity extends AppCompatActivity {
             playVideo(jupiterVisual, baseNode, texture);
             changePlanetScreenText(planetTitleView, planetContentView, jupiterVisual);
 
-            createPhotoNodes(node1, node2, node3, node4, node5, node6,
-                    jupiterRenderable1, jupiterRenderable2, jupiterRenderable3, jupiterRenderable4,
+            createPhotoNodes(jupiterRenderable1, jupiterRenderable2, jupiterRenderable3, jupiterRenderable4,
                     jupiterRenderable5, jupiterRenderable6, baseNode);
+//                    node1, node2, node3, node4, node5, node6,
+
 
 
         });
 
     }
 
-    private void createPhotoNodes(Node node1, Node node2, Node node3, Node node4,
-                                  Node node5, Node node6,
+    private void createPhotoNodes(
+//            Node node1, Node node2, Node node3, Node node4,
+//                                  Node node5, Node node6,
                                   ViewRenderable photoRenderable1, ViewRenderable photoRenderable2, ViewRenderable photoRenderable3, ViewRenderable photoRenderable4,
                                   ViewRenderable photoRenderable5, ViewRenderable photoRenderable6, Node baseNode) {
+
+        Node node1 = new Node();
+        Node node2 = new Node();
+        Node node3 = new Node();
+        Node node4 = new Node();
+        Node node5 = new Node();
+        Node node6 = new Node();
 
         // setting up nodes for photos
         node1.setParent(baseNode);

@@ -25,7 +25,6 @@ public class PhotoComponent {
     private static ViewRenderable viewRenderable;
     private static ArrayList<AtomicBoolean> hasLoaded;
 
-
     public static void buildAlbumPhotos(Context context) {
 
         ArrayList<Photo> photoViews = new ArrayList<>();
