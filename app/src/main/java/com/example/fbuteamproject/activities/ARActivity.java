@@ -25,8 +25,8 @@ import androidx.annotation.RequiresApi;
 
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.ModelComponent;
-import com.example.fbuteamproject.components.VideoComponent;
 import com.example.fbuteamproject.components.NoteComponent;
+import com.example.fbuteamproject.components.VideoComponent;
 import com.example.fbuteamproject.layouts.ARComponentsShell;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
@@ -69,7 +69,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -140,6 +139,10 @@ public class ARActivity extends AppCompatActivity {
     CompletableFuture<ViewRenderable> planetContentsStage;
 
 
+    private ArrayList<Config.Entity> appEntities;
+    private Config.Entity currEntitySelected;
+
+
     //TODO - This one will be from Component Class for Notes
     private ViewRenderable entityContentRenderableFromComponent;
     //TODO - This one will be from Component Class for Notes
@@ -173,7 +176,7 @@ public class ARActivity extends AppCompatActivity {
         //TODO - This one will be from Component Class for Notes
 
         Config.AppConfig configuration = (Config.AppConfig) Config.AppConfig.getAppConfig();
-        ArrayList<Config.Entity> appEntities = configuration.entities;
+        appEntities = configuration.entities;
 
         ArrayList<CompletableFuture<ModelRenderable>> myFutures = ModelComponent.buildModelStages(appEntities, this);
 
@@ -183,8 +186,8 @@ public class ARActivity extends AppCompatActivity {
             Log.d(TAG, "Printing model renderable");
         }
 
-        //buildPlanetRenderables();
-        //buildVideoRenderable();
+//        buildPlanetRenderables();
+//        buildVideoRenderable();
         buildViewRenderables();
 
         setupRenderables();

@@ -20,8 +20,26 @@ public class Config {
             this.albumID = albumID;
             this.notesFolder = notesFolder;
         }
-        //TODO generate getters
 
+        public String getEntityID() {
+            return entityID;
+        }
+
+        public String getModelPath() {
+            return modelPath;
+        }
+
+        public String getVideoURL() {
+            return videoURL;
+        }
+
+        public String getAlbumID() {
+            return albumID;
+        }
+
+        public String getNotesFolder() {
+            return notesFolder;
+        }
     }
 
     public static class AppConfig {
@@ -37,7 +55,15 @@ public class Config {
 
     static {
         planetConfig = new AppConfig();
-        planetConfig.entities.add(new Entity("myvenus", "DummyValue", "AnotherDummyValue"));
+        planetConfig.entities.add(new Entity("planetOne", "DummyValue", "AnotherDummyValue"));
+        planetConfig.entities.add(new Entity("planetTwo", "DummyValue", "AnotherDummyValue"));
+        planetConfig.entities.add(new Entity("planetThree", "DummyValue", "AnotherDummyValue"));
+        planetConfig.entities.add(new Entity("planetFour", "DummyValue", "AnotherDummyValue"));
+        planetConfig.entities.add(new Entity("planetFive", "DummyValue", "AnotherDummyValue"));
+        planetConfig.entities.add(new Entity("planetSix", "DummyValue", "AnotherDummyValue"));
+        planetConfig.entities.add(new Entity("planetSeven", "DummyValue", "AnotherDummyValue"));
+        planetConfig.entities.add(new Entity("planetEight", "DummyValue", "AnotherDummyValue"));
+
 
     }
 
