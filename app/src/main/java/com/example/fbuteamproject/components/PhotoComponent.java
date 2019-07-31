@@ -14,42 +14,42 @@ import com.google.ar.sceneform.rendering.ViewRenderable;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PhotoComponent {
 
 
     private static final String TAG = "PhotoComponent";
-    public static ArrayList<CompletableFuture<ViewRenderable>> completableFutures;
+    private static ArrayList<CompletableFuture<ViewRenderable>> completableFutures;
     public static ArrayList<ViewRenderable> viewRenderables;
-    public static ViewRenderable viewRenderable;
+    private static ViewRenderable viewRenderable;
+    private static ArrayList<AtomicBoolean> hasLoaded;
 
 
-    public static void buildVenusPhotos(Context context) {
+    public static void buildAlbumPhotos(Context context) {
 
-        ArrayList<Photo> data = new ArrayList<>();
-        String IMGS[] = {
+        ArrayList<Photo> photoViews = new ArrayList<>();
+        hasLoaded = new ArrayList<>();
+        String[] photosAlbum = {
                 "https://i.imgur.com/8mKSLC8.jpg",
                 "https://i.imgur.com/9vbrRQm.jpg"
         };
 
-        for (int i = 0; i < IMGS.length; i++) {
-            //	Adding images & title to POJO class and storing in Array (our data)
-            Photo imageModel = new Photo();
-            imageModel.setName("Image " + i);
-            imageModel.setUrl(IMGS[i]);
-            data.add(imageModel);
-
+        for (int i = 0; i < photosAlbum.length; i++) {
+            // adding images in photoalbum to be staged
+            Photo photo = new Photo();
+            photo.setName("Image " + i);
+            photo.setUrl(photosAlbum[i]);
+            photoViews.add(photo);
+            hasLoaded.add(new AtomicBoolean(false) );
         }
 
-        Log.d(TAG, "buildVenusPhotos: "+ data);
+        Log.d(TAG, "buildVenusPhotos: "+ photoViews);
+        buildStages(photoViews, context);
 
-        buildStages(data, context);
-
-        buildViewRenderables(completableFutures, context);
     }
 
-
-     public static ArrayList<CompletableFuture<ViewRenderable>> buildStages(ArrayList<Photo> data, Context context) {
+     private static void buildStages(ArrayList<Photo> data, Context context) {
 
         completableFutures = new ArrayList<>();
 
@@ -75,15 +75,9 @@ public class PhotoComponent {
             Log.d(TAG, "hiya"+ photoStage );
 
             completableFutures.add(photoStage);
-
         }
-
-
          Log.d(TAG, "completable futures" + completableFutures );
-         return completableFutures;
     }
-
-
 
     public static ArrayList<ViewRenderable> buildViewRenderables(ArrayList<CompletableFuture<ViewRenderable>> completableFutures, Context context) {
 
@@ -91,11 +85,11 @@ public class PhotoComponent {
 
         Log.d(TAG, completableFutures.toString());
 
-
         // get stages for view renderables
         for (int i = 0; i < completableFutures.size(); i++) {
 
             final int stage = i;
+            // handling each completable future in array
             completableFutures.get(i).handle(
                     (notUsed, throwable) -> {
                         if (throwable != null) {
@@ -103,7 +97,9 @@ public class PhotoComponent {
                             return null;
                         } try {
                             viewRenderable = completableFutures.get(stage).get();
-                            //TODO check if each viewRenderable is complete
+                            hasLoaded.get(stage).set(true);
+
+
 
                         } catch (InterruptedException | ExecutionException ex) {
                             DemoUtils.displayError(context, "Unable to load renderable", ex);
@@ -111,7 +107,7 @@ public class PhotoComponent {
 
                         return null;
                     });
-            //adding it to top-level modelrenderables array
+
             viewRenderables.add(viewRenderable);
         }
 
@@ -121,5 +117,14 @@ public class PhotoComponent {
         }
 
         return viewRenderables;
+    }
+
+
+    public static ArrayList<CompletableFuture<ViewRenderable>> getCompletableFutures() {
+        return completableFutures;
+    }
+
+    public static int getCompletableFuturesSize() {
+        return completableFutures.size();
     }
 }
