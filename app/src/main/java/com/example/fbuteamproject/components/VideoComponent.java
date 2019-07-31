@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 
 import com.example.fbuteamproject.R;
-import com.example.fbuteamproject.models.Planet;
+import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -84,19 +84,19 @@ public class VideoComponent {
         return videoRenderable;
     }
 
-    public static void setUpVideo(Planet planetVisual, Node videoNode, Context context) {
+    public static void setUpVideo(Config.Entity currEntity, Node videoNode, Context context) {
         // Create an ExternalTexture for displaying the contents of the video.
         ExternalTexture texture = new ExternalTexture();
 
-        playVideo(texture, planetVisual, videoNode, context);
+        playVideo(texture, currEntity, videoNode, context);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public static void playVideo(ExternalTexture texture, Planet planetVisual, Node videoNode, Context context) {
+    public static void playVideo(ExternalTexture texture, Config.Entity currEntity, Node videoNode, Context context) {
 
         stopPlaying();
 
-        setupExoPlayer(texture, planetVisual.getPlanetVideoResID(), context);
+        setupExoPlayer(texture, currEntity.getVideoURL(), context);
 
         setVideoTexture(texture, context);
 

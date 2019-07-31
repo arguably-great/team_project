@@ -27,6 +27,7 @@ import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.NoteComponent;
 import com.example.fbuteamproject.components.VideoComponent;
+import com.example.fbuteamproject.layouts.ARComponentsShell;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
@@ -426,17 +427,17 @@ public class ARActivity extends AppCompatActivity {
             Log.d(TAG, "Printing model renderable" + myRenderables.get(i));
         }
 
-//        if (!hasFinishedLoading) {
-//            // We can't do anything yet.
-//            return;
-//        }
-//
-//        Frame frame = arSceneView.getArFrame();
-//        if (frame != null) {
-//            if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
-//                hasPlacedComponents= true;
-//            }
-//        }
+        if (!hasFinishedLoading) {
+            // We can't do anything yet.
+            return;
+        }
+
+        Frame frame = arSceneView.getArFrame();
+        if (frame != null) {
+            if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
+                hasPlacedComponents= true;
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -461,12 +462,12 @@ public class ARActivity extends AppCompatActivity {
         Anchor anchor = hit.createAnchor();
         AnchorNode anchorNode = new AnchorNode(anchor);
         anchorNode.setParent(arSceneView.getScene());
-        Node components = createComponents();
+        Node components = createComponents(myRenderables);
         components.setParent(anchorNode);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private Node createComponents() {
+    private Node createComponents(ArrayList<ModelRenderable> modelRenderables) {
 
         Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res), this );
         venusVisual.setRenderable(venusRenderable);
@@ -494,15 +495,19 @@ public class ARActivity extends AppCompatActivity {
         //TODO DUMMY CODE TO TEST FUNCTIONALITY OF VIDEOCOMPONENT
         Node videoNode = new Node();
 
-        VideoComponent.setUpVideo(venusVisual, videoNode,this);
+        for (int i = 0; i < appEntities.size(); i++) {
+
+            VideoComponent.setUpVideo(appEntities.get(i), videoNode,this);
+        }
+
         //TODO END
 
         Node planetContents = new Node();
         planetContents.setRenderable(planetContentsRenderable);
 
-        /*//Organizes all the components relative to each other
+        //Organizes all the components relative to each other
         Node base = new ARComponentsShell(venusVisual, jupiterVisual, photo1,
-                photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);*/
+                photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);
 
         View planetTitleView = planetTitlesRenderable.getView();
         View planetContentView = planetContentsRenderable.getView();

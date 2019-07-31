@@ -43,8 +43,6 @@ public class ModelComponent {
     // The API host.
     private static String HOST = "poly.googleapis.com";
 
-    //private static String assetId = "5ovHBezIGyZ";
-
     // Handler for the background thread, to which we post background thread tasks.
     private static Handler backgroundThreadHandler;
 
@@ -219,8 +217,6 @@ public class ModelComponent {
                 buildModelStage(context);
             }
         });
-
-        //WHEN YOU PUT MODEL STAGE PRINT STATEMENT HERE IT DOES NOT WORK!!!
     }
 
     // NOTE: this runs on the background thread.
