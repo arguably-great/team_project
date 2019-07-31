@@ -54,6 +54,7 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -161,9 +162,7 @@ public class ARActivity extends AppCompatActivity {
         setContentView(R.layout.activity_videos);
 
         //find the sceneview
-        arSceneView = (ArSceneView) findViewById(R.id.ar_scene_view);
-
-
+        arSceneView = findViewById(R.id.ar_scene_view);
 
 
 
@@ -173,7 +172,7 @@ public class ARActivity extends AppCompatActivity {
 
         buildViewRenderables();
 
-        PhotoComponent.buildVenusPhotos(this);
+        PhotoComponent.buildAlbumPhotos(this);
 
 
         setupRenderables();
@@ -416,7 +415,18 @@ public class ARActivity extends AppCompatActivity {
             return;
         }
 
+        Log.d(TAG, "onSingleTap: here are my futures"+ PhotoComponent.getCompletableFutures());
+        Log.d(TAG, "onSingleTap: here are my sizes"+ PhotoComponent.getCompletableFuturesSize());
+
+        ArrayList<CompletableFuture<ViewRenderable>> myVar = PhotoComponent.getCompletableFutures();
+
+        ArrayList<ViewRenderable> myRenders = PhotoComponent.buildViewRenderables(myVar, this);
+
+        Log.d(TAG, "onSingleTap: here are my renderables"+ myRenders);
+
+
         Frame frame = arSceneView.getArFrame();
+
         if (frame != null) {
             if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
                 hasPlacedComponents= true;
