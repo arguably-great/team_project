@@ -79,7 +79,6 @@ import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -92,7 +91,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -241,7 +239,7 @@ public class ARActivity extends AppCompatActivity {
 //        buildVideoRenderable();
         buildViewRenderables();
 
-        PhotoComponent.buildVenusPhotos(this);
+        PhotoComponent.buildAlbumPhotos(this);
 
 
         setupRenderables();
@@ -552,6 +550,23 @@ public class ARActivity extends AppCompatActivity {
         if (!hasFinishedLoading || ModelComponent.GetFuturesSize() != appEntities.size()) {
             // We can't do anything yet.
             return;
+
+        Log.d(TAG, "onSingleTap: here are my futures"+ PhotoComponent.getCompletableFutures());
+        Log.d(TAG, "onSingleTap: here are my sizes"+ PhotoComponent.getCompletableFuturesSize());
+
+        ArrayList<CompletableFuture<ViewRenderable>> myVar = PhotoComponent.getCompletableFutures();
+
+        ArrayList<ViewRenderable> myRenders = PhotoComponent.buildViewRenderables(myVar, this);
+
+        Log.d(TAG, "onSingleTap: here are my renderables"+ myRenders);
+
+
+        Frame frame = arSceneView.getArFrame();
+
+        if (frame != null) {
+            if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
+                hasPlacedComponents= true;
+            }
         }
 
         ArrayList<CompletableFuture<ModelRenderable>> myCompFutures = ModelComponent.getCompletableFutures();
