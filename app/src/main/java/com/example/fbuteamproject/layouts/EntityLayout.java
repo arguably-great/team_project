@@ -10,7 +10,7 @@ import java.util.ArrayList;
 This Class serves as one piece of the bigger overall Layout structure for the application.
     More specifically, this Class organizes the Nodes with respect to one another
     by having the EntityLayout Object be the Parent for all the Node objects created.
-    This EntityLayout Object can then be placed relative to other GenericLayout Objects
+    This EntityLayout Object can then be placed relative to other Layout Objects
  */
 public class EntityLayout extends Node {
 
