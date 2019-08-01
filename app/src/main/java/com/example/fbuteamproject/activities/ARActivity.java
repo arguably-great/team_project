@@ -23,6 +23,7 @@ import androidx.annotation.RequiresApi;
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.PhotoComponent;
 import com.example.fbuteamproject.layouts.PhotoLayout;
+import com.example.fbuteamproject.models.Photo;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.DemoUtils;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -71,6 +72,7 @@ public class ARActivity extends AppCompatActivity {
     private static final String TAG = ARActivity.class.getSimpleName();
 
     private static final int RC_PERMISSIONS =0x123;
+    public static int entityClicked;
 
     private boolean installRequested;
 
@@ -87,6 +89,7 @@ public class ARActivity extends AppCompatActivity {
     private boolean playWhenReady;
     private int currentWindow = 0;
     private long playbackPosition = 0;
+
 
     private GestureDetector gestureDetector;
 
@@ -148,6 +151,8 @@ public class ARActivity extends AppCompatActivity {
     CompletableFuture<ViewRenderable> planetTitleStage;
     CompletableFuture<ViewRenderable> planetContentsStage;
 
+    ArrayList<Photo> album;
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -175,14 +180,33 @@ public class ARActivity extends AppCompatActivity {
 
         buildViewRenderables();
 
-        PhotoComponent.buildAlbumPhotos(this);
+
+//        album = PhotoComponent.buildAlbumPhotos(this);
+//
+//        //Log.d(TAG, "here is le album "+ album);
+//
+//        PhotoComponent.buildStages(album, this);
+
+//        PhotoComponent.buildAlbumPhotos(this);
+
+
+        album = PhotoComponent.buildAlbumPhotos(this);
+
+
+        //Log.d(TAG, "here is le album "+ album);
+
+        PhotoComponent.buildStages(album, this);
 
 
         setupRenderables();
 
 
+
+
         // listeners and click
         setupGestureDetector();
+
+
         setupTouchListener();
         setupOnUpdateListener();
 
@@ -260,8 +284,6 @@ public class ARActivity extends AppCompatActivity {
     private void setupRenderables() {
         CompletableFuture.allOf(
                 videoStage,
-//                venusStage, venusStage1, venusStage2, venusStage3, venusStage4,
-//                venusStage5, venusStage6,
                 jupiterStage, jupiterStage1, jupiterStage2, jupiterStage3, jupiterStage4,
                 jupiterStage5, jupiterStage6,
                 planetTitleStage,
@@ -282,12 +304,6 @@ public class ARActivity extends AppCompatActivity {
                                 jupiterRenderable4 = jupiterStage4.get();
                                 jupiterRenderable5 = jupiterStage5.get();
                                 jupiterRenderable6 = jupiterStage6.get();
-//                                venusRenderable1 = venusStage1.get();
-//                                venusRenderable2 = venusStage2.get();
-//                                venusRenderable3 = venusStage3.get();
-//                                venusRenderable4 = venusStage4.get();
-//                                venusRenderable5 = venusStage5.get();
-//                                venusRenderable6 = venusStage6.get();
                                 planetTitlesRenderable = planetTitleStage.get();
                                 planetContentsRenderable = planetContentsStage.get();
 
@@ -418,14 +434,14 @@ public class ARActivity extends AppCompatActivity {
             return;
         }
 
-        Log.d(TAG, "onSingleTap: here are my futures"+ PhotoComponent.getCompletableFutures());
-        Log.d(TAG, "onSingleTap: here are my sizes"+ PhotoComponent.getCompletableFuturesSize());
-
-        ArrayList<CompletableFuture<ViewRenderable>> myVar = PhotoComponent.getCompletableFutures();
-
-        ArrayList<ViewRenderable> myRenders = PhotoComponent.buildViewRenderables(myVar, this);
-
-        Log.d(TAG, "onSingleTap: here are my renderables"+ myRenders);
+//        Log.d(TAG, "onSingleTap: here are my futures"+ PhotoComponent.getCompletableFutures());
+//        Log.d(TAG, "onSingleTap: here are my sizes"+ PhotoComponent.getCompletableFuturesSize());
+//
+//        ArrayList<CompletableFuture<ViewRenderable>> myVar = PhotoComponent.getCompletableFutures();
+//
+//        ArrayList<ViewRenderable> myRenders = PhotoComponent.buildViewRenderables(myVar, this);
+//
+//        Log.d(TAG, "onSingleTap: here are my renderables"+ myRenders);
 
 
         Frame frame = arSceneView.getArFrame();
@@ -482,6 +498,7 @@ public class ARActivity extends AppCompatActivity {
         View planetContentView = planetContentsRenderable.getView();
 
 
+
         setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView);
 
         return base;
@@ -503,16 +520,26 @@ public class ARActivity extends AppCompatActivity {
             playVideo(venusVisual, baseNode, texture);
             changePlanetScreenText(planetTitleView, planetContentView, venusVisual);
 
-            Log.d(TAG, "LOL" + PhotoComponent.viewRenderables.size());
+//            Log.d(TAG, "LOL" + PhotoComponent.viewRenderables.size());
+
+            Log.d(TAG, "UGH setupPlanetTapListenerVideo: "+ album);
+
+           // PhotoComponent.buildStages(album, this);
 
 
+            ArrayList<CompletableFuture<ViewRenderable>> photoCompletables = PhotoComponent.getCompletableFutures();
 
+            PhotoComponent.buildViewRenderables(photoCompletables, this);
+
+            // putting renderables in correct layout
             PhotoLayout.photoNodeSetUp(baseNode);
 
 
         });
 
         jupiterVisual.setOnTapListener((hitTestResult, motionEvent) -> {
+
+//            entityClicked = 2;
 
             playVideo(jupiterVisual, baseNode, texture);
             changePlanetScreenText(planetTitleView, planetContentView, jupiterVisual);
