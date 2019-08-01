@@ -36,4 +36,7 @@ public class VideoLayout extends Node {
 
     }
 
+    public Node getVideoNode() {
+        return videoNode;
+    }
 }

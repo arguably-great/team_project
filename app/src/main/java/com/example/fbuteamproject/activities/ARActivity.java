@@ -27,8 +27,8 @@ import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.NoteComponent;
 import com.example.fbuteamproject.components.VideoComponent;
-import com.example.fbuteamproject.layouts.ARComponentsShell;
 import com.example.fbuteamproject.layouts.EntityLayout;
+import com.example.fbuteamproject.layouts.VideoLayout;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
@@ -507,13 +507,29 @@ public class ARActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private Node createComponents(ArrayList<ModelRenderable> modelRenderables) {
 
+        Node baseNode = new Node();
+
         //TODO - Testing
         EntityLayout entityLayout = new EntityLayout(appEntities, modelRenderables);
 
-        if(true){
+        entityLayout.setParent(baseNode);
+
+        /*if(true){
             return entityLayout;
-        }
+        }*/
         //TODO - Testing
+
+        VideoLayout videoLayout = new VideoLayout(videoRenderable);
+        videoLayout.setParent(baseNode);
+
+        VideoComponent.setUpVideo(appEntities.get(1), videoLayout.getVideoNode(),this, hasPlayedVideo);
+        hasPlayedVideo = true;
+
+        VideoComponent.setUpVideo(appEntities.get(0), videoLayout.getVideoNode(), this, hasPlayedVideo);
+
+        if (true) {
+            return baseNode;
+        }
 
         Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res), this );
         venusVisual.setRenderable(modelRenderables.get(0) );
@@ -539,23 +555,15 @@ public class ARActivity extends AppCompatActivity {
         Node photo6 = new Node();
         photo6.setRenderable(photoRenderable2);
         //TODO DUMMY CODE TO TEST FUNCTIONALITY OF VIDEOCOMPONENT
-        Node videoNode = new Node();
-
-        VideoComponent.setUpVideo(appEntities.get(1), videoNode,this, hasPlayedVideo);
-        hasPlayedVideo = true;
+        //Node videoNode = new Node();
 
         //VideoComponent.setUpVideo(appEntities.get(0), videoNode, this, hasPlayedVideo);
-
-
-
-        //TODO END
-
         Node planetContents = new Node();
         planetContents.setRenderable(planetContentsRenderable);
 
         //Organizes all the components relative to each other
-        Node base = new ARComponentsShell(venusVisual, jupiterVisual, photo1,
-                photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);
+        /*Node base = new ARComponentsShell(venusVisual, jupiterVisual, photo1,
+                photo2, photo3, photo4, photo5, photo6, videoNode, planetContents);*/
 
         View planetTitleView = planetTitlesRenderable.getView();
         View planetContentView = planetContentsRenderable.getView();
@@ -585,7 +593,8 @@ public class ARActivity extends AppCompatActivity {
         });
 
         //setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView, videoNode);
-        return videoNode;
+        //return videoNode;
+        return photo1;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
