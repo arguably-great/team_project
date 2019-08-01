@@ -37,16 +37,14 @@ public class ModelComponent {
 
     private static ArrayList<ModelRenderable> modelRenderables;
 
-//    private static String ASSET_3D; //the url .gltf to retreive the asset
-
     // The API host.
     private static String HOST = "poly.googleapis.com";
 
     // Handler for the background thread, to which we post background thread tasks.
-    private static Handler backgroundThreadHandler;
+//    private static Handler backgroundThreadHandler;
 
     // Our background thread, which does all of the heavy lifting so we don't block the main thread.
-    private static HandlerThread backgroundThread;
+//    private static HandlerThread backgroundThread;
 
     private static ModelRenderable modelRenderable;
 
@@ -59,14 +57,14 @@ public class ModelComponent {
 
     public static void makePolyRequest(ArrayList<Config.Entity> entities, Context context) {
 
-        // Create a background thread, where we will do the heavy lifting.
-        backgroundThread = new HandlerThread("Worker");
-        backgroundThread.start();
-        backgroundThreadHandler = new Handler(backgroundThread.getLooper());
-
         for (int i = 0; i < entities.size(); i++) {
 
             currentEntity = entities.get(i);
+
+            // Create a background thread, where we will do the heavy lifting.
+            HandlerThread backgroundThread = new HandlerThread("Worker");
+            backgroundThread.start();
+            Handler backgroundThreadHandler = new Handler(backgroundThread.getLooper());
 
             // Request the asset from the Poly API.
             Log.d(TAG, "Requesting asset "+ currentEntity.getEntityID());
