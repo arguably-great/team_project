@@ -47,6 +47,7 @@ import com.example.fbuteamproject.components.PhotoComponent;
 
 
 import com.example.fbuteamproject.layouts.PhotoLayout;
+import com.example.fbuteamproject.models.Photo;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
@@ -109,9 +110,13 @@ public class ARActivity extends AppCompatActivity {
     private static final String TAG = ARActivity.class.getSimpleName();
 
     private static final int RC_PERMISSIONS =0x123;
+
     private final int SPEECH_REQUEST_CODE = 100;
 
     private Planet currPlanetSelected;
+
+    public static int entityClicked;
+
 
     private boolean installRequested;
 
@@ -128,6 +133,7 @@ public class ARActivity extends AppCompatActivity {
     private boolean playWhenReady;
     private int currentWindow = 0;
     private long playbackPosition = 0;
+
 
     private GestureDetector gestureDetector;
 
@@ -193,12 +199,15 @@ public class ARActivity extends AppCompatActivity {
 
     private boolean hasPlayedVideo;
 
-
     //TODO - This one will be from Component Class for Notes
     private ViewRenderable entityContentRenderableFromComponent;
     //TODO - This one will be from Component Class for Notes
 
     private ArrayList<ModelRenderable> myRenderables;
+
+    ArrayList<Photo> album;
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -243,14 +252,33 @@ public class ARActivity extends AppCompatActivity {
 //        buildVideoRenderable();
         buildViewRenderables();
 
-        PhotoComponent.buildAlbumPhotos(this);
+
+//        album = PhotoComponent.buildAlbumPhotos(this);
+//
+//        //Log.d(TAG, "here is le album "+ album);
+//
+//        PhotoComponent.buildStages(album, this);
+
+//        PhotoComponent.buildAlbumPhotos(this);
+
+
+        album = PhotoComponent.buildAlbumPhotos(this);
+
+
+        //Log.d(TAG, "here is le album "+ album);
+
+        PhotoComponent.buildStages(album, this);
 
 
         setupRenderables();
 
 
+
+
         // listeners and click
         setupGestureDetector();
+
+
         setupTouchListener();
         setupOnUpdateListener();
 
@@ -329,8 +357,6 @@ public class ARActivity extends AppCompatActivity {
     private void setupRenderables() {
         CompletableFuture.allOf(
                 videoStage,
-//                venusStage, venusStage1, venusStage2, venusStage3, venusStage4,
-//                venusStage5, venusStage6,
                 jupiterStage, jupiterStage1, jupiterStage2, jupiterStage3, jupiterStage4,
                 jupiterStage5, jupiterStage6,
 
@@ -362,12 +388,6 @@ public class ARActivity extends AppCompatActivity {
                                 jupiterRenderable4 = jupiterStage4.get();
                                 jupiterRenderable5 = jupiterStage5.get();
                                 jupiterRenderable6 = jupiterStage6.get();
-//                                venusRenderable1 = venusStage1.get();
-//                                venusRenderable2 = venusStage2.get();
-//                                venusRenderable3 = venusStage3.get();
-//                                venusRenderable4 = venusStage4.get();
-//                                venusRenderable5 = venusStage5.get();
-//                                venusRenderable6 = venusStage6.get();
                                 planetTitlesRenderable = planetTitleStage.get();
                                 planetContentsRenderable = planetContentsStage.get();
 
@@ -551,6 +571,7 @@ public class ARActivity extends AppCompatActivity {
 
         }
 
+
         if (!hasFinishedLoading || ModelComponent.GetFuturesSize() != appEntities.size()) {
             // We can't do anything yet.
             return;
@@ -563,6 +584,16 @@ public class ARActivity extends AppCompatActivity {
         ArrayList<ViewRenderable> myRenders = PhotoComponent.buildViewRenderables(myVar, this);
 
         Log.d(TAG, "onSingleTap: here are my renderables"+ myRenders);
+
+//        Log.d(TAG, "onSingleTap: here are my futures"+ PhotoComponent.getCompletableFutures());
+//        Log.d(TAG, "onSingleTap: here are my sizes"+ PhotoComponent.getCompletableFuturesSize());
+//
+//        ArrayList<CompletableFuture<ViewRenderable>> myVar = PhotoComponent.getCompletableFutures();
+//
+//        ArrayList<ViewRenderable> myRenders = PhotoComponent.buildViewRenderables(myVar, this);
+//
+//        Log.d(TAG, "onSingleTap: here are my renderables"+ myRenders);
+
 
 
         Frame frame = arSceneView.getArFrame();
@@ -683,28 +714,33 @@ public class ARActivity extends AppCompatActivity {
         View planetContentView = planetContentsRenderable.getView();
 
 
+
         //Creating Intent for Speech-To-Text
-        planetContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
+     //   planetContentView.setOnClickListener(new View.OnClickListener() {
+      //      @Override
+        //    public void onClick(View v) {
+            //    Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+          //      speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                //        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+              //  speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+             //   speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
 
 
-                try {
-                    startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
-                } catch (ActivityNotFoundException a) {
-                    Toast.makeText(getApplicationContext(),
-                            "Sorry your device not supported",
-                            Toast.LENGTH_SHORT).show();
-                }
+           //     try {
+                  //  startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
+                //} catch (ActivityNotFoundException a) {
+               //     Toast.makeText(getApplicationContext(),
+             //               "Sorry your device not supported",
+           //                 Toast.LENGTH_SHORT).show();
+         //       }
 
 
-            }
-        });
+       //     }
+     //   });
+
+
+        setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView);
+
 
         //setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView, videoNode);
         //return videoNode;
@@ -734,10 +770,18 @@ public class ARActivity extends AppCompatActivity {
 
             changePlanetScreenText(planetTitleView, planetContentView, venusVisual);
 
-            Log.d(TAG, "LOL" + PhotoComponent.viewRenderables.size());
+//            Log.d(TAG, "LOL" + PhotoComponent.viewRenderables.size());
+
+            Log.d(TAG, "UGH setupPlanetTapListenerVideo: "+ album);
+
+           // PhotoComponent.buildStages(album, this);
 
 
+            ArrayList<CompletableFuture<ViewRenderable>> photoCompletables = PhotoComponent.getCompletableFutures();
 
+            PhotoComponent.buildViewRenderables(photoCompletables, this);
+
+            // putting renderables in correct layout
             PhotoLayout.photoNodeSetUp(baseNode);
 
 
@@ -746,7 +790,13 @@ public class ARActivity extends AppCompatActivity {
         jupiterVisual.setOnTapListener((hitTestResult, motionEvent) -> {
             currPlanetSelected = jupiterVisual;
 
+
             playVideo(jupiterVisual, texture, videoNode);
+
+//            entityClicked = 2;
+
+        //    playVideo(jupiterVisual, baseNode, texture);
+
             changePlanetScreenText(planetTitleView, planetContentView, jupiterVisual);
 
             createPhotoNodes(jupiterRenderable1, jupiterRenderable2, jupiterRenderable3, jupiterRenderable4,
