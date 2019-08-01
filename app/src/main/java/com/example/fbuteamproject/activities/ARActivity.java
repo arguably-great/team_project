@@ -142,6 +142,8 @@ public class ARActivity extends AppCompatActivity {
     private ArrayList<Config.Entity> appEntities;
     private boolean hasTriedLoadingEntityRenderables;
 
+    private boolean hasPlayedVideo;
+
 
     //TODO - This one will be from Component Class for Notes
     private ViewRenderable entityContentRenderableFromComponent;
@@ -538,7 +540,12 @@ public class ARActivity extends AppCompatActivity {
         //TODO DUMMY CODE TO TEST FUNCTIONALITY OF VIDEOCOMPONENT
         Node videoNode = new Node();
 
-        VideoComponent.setUpVideo(appEntities.get(1), videoNode,this);
+        VideoComponent.setUpVideo(appEntities.get(1), videoNode,this, hasPlayedVideo);
+        hasPlayedVideo = true;
+
+        //VideoComponent.setUpVideo(appEntities.get(0), videoNode, this, hasPlayedVideo);
+
+
 
         //TODO END
 
