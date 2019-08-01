@@ -36,6 +36,7 @@ public class VideoComponent {
 
     private static ModelRenderable videoRenderable;
     private static CompletableFuture<ModelRenderable> videoStage;
+    private static ExternalTexture texture;
 
     //Initialize ExoPlayer variables
     private static SimpleExoPlayer player;
@@ -84,9 +85,19 @@ public class VideoComponent {
         return videoRenderable;
     }
 
-    public static void setUpVideo(Config.Entity currEntity, Node videoNode, Context context) {
-        // Create an ExternalTexture for displaying the contents of the video.
-        ExternalTexture texture = new ExternalTexture();
+    public static void setUpVideo(Config.Entity currEntity, Node videoNode, Context context, boolean hasPlayedVideo) {
+
+        if (!hasPlayedVideo) {
+
+            // Create an ExternalTexture for displaying the contents of the video.
+            texture = new ExternalTexture();
+
+            player = ExoPlayerFactory.newSimpleInstance(
+                    new DefaultRenderersFactory(context),
+                    new DefaultTrackSelector(), new DefaultLoadControl());
+
+            player.setVideoSurface(texture.getSurface());
+        }
 
         playVideo(texture, currEntity, videoNode, context);
     }
@@ -94,9 +105,9 @@ public class VideoComponent {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static void playVideo(ExternalTexture texture, Config.Entity currEntity, Node videoNode, Context context) {
 
-        stopPlaying();
+        //stopPlaying();
 
-        setupExoPlayer(texture, currEntity.getVideoURL(), context);
+        setupVideoSourcePlayer(currEntity.getVideoURL(), context);
 
         setVideoTexture(texture, context);
 
@@ -125,18 +136,18 @@ public class VideoComponent {
         playbackPosition = player.getCurrentPosition();
         currentWindow = player.getCurrentWindowIndex();
         playWhenReady = player.getPlayWhenReady();
-        player.release();
-        player = null;
+        //player.release();
+        //player = null;
 
     }
 
-    private static void setupExoPlayer(ExternalTexture texture, String videoResID, Context context) {
+    private static void setupVideoSourcePlayer(String videoResID, Context context) {
 
-        player = ExoPlayerFactory.newSimpleInstance(
-                new DefaultRenderersFactory(context),
-                new DefaultTrackSelector(), new DefaultLoadControl());
+        if (player == null) {
+            Log.d(TAG, "Player not ready");
+            return;
+        }
 
-        player.setVideoSurface(texture.getSurface());
         player.setPlayWhenReady(playWhenReady);
         player.seekTo(currentWindow, playbackPosition);
 
@@ -176,6 +187,12 @@ public class VideoComponent {
     }
 
     private static void startExoPlayer(ExternalTexture texture, Node video) {
+
+        if (player == null) {
+            Log.d(TAG, "Player not ready");
+            return;
+        }
+
         if (!player.getPlayWhenReady()) {
 
             player.setPlayWhenReady(true);
