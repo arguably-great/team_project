@@ -16,15 +16,19 @@ public class VideoLayout extends Node {
     private static final Vector3 VIDEO_SCALE_VECTOR = new Vector3(VIDEO_HEIGHT * 2, VIDEO_HEIGHT, 1.0f);
     private Node videoNode;
 
+    public VideoLayout(){
+        this.videoNode = new Node();
+    }
+
     public VideoLayout(ModelRenderable videoRenderable){
 
-        videoNode = new Node();
+        this.videoNode = new Node();
 
         createVideoNode(videoRenderable);
 
     }
 
-    private void createVideoNode(ModelRenderable videoRenderable) {
+    public void createVideoNode(ModelRenderable videoRenderable) {
         videoNode.setParent(this);
         videoNode.setRenderable(videoRenderable);
         videoNode.setLocalScale(VIDEO_LOCATION_VECTOR);
