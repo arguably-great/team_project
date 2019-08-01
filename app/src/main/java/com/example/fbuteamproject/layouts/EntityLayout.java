@@ -16,10 +16,9 @@ public class EntityLayout extends Node {
 
     private ArrayList<Node> entityNodes;
 
-    private final float MAX_COVERAGE_DIST  = 1.0f;
+    private final float MAX_X_COVERAGE_DIST  = 2.0f;
     private final Vector3 ENTITY_SCALE_VECTOR = new Vector3(0.005f, 0.005f, 0.005f);
-    private final float PLANET_Y = 0.5f;
-    private final float PLANET_Z = 0.0f;
+    private final float PLANET_Y = 1.4f;
 
     public EntityLayout(ArrayList<Config.Entity> appEntities, ArrayList<ModelRenderable> entityViewRenderables ){
 
@@ -37,7 +36,7 @@ public class EntityLayout extends Node {
             entitySplit = 0;
         }
         else {
-            entitySplit = (MAX_COVERAGE_DIST) / (entityModelRenderables.size() - 1);
+            entitySplit = (MAX_X_COVERAGE_DIST) / (entityModelRenderables.size() - 1);
         }
 
         for(int currIndex = 0; currIndex < entityModelRenderables.size(); currIndex++){
@@ -47,11 +46,11 @@ public class EntityLayout extends Node {
             currEntity.setParent(this);
             currEntity.setRenderable(entityModelRenderables.get(currIndex) );
 
-            //Calculate the X-Position for the current Node
-            float currXPos = (-MAX_COVERAGE_DIST / 2) + (currIndex * entitySplit);
+            //Calculate the X and Z positions for the current Node
+            float currXPos = (-MAX_X_COVERAGE_DIST / 2) + (currIndex * entitySplit);
+            float currZPos = (float) (Math.pow(currXPos, 2) - MAX_X_COVERAGE_DIST/2);
 
-            currEntity.setLocalPosition(new Vector3(currXPos, PLANET_Y, PLANET_Z) );
-
+            currEntity.setLocalPosition(new Vector3(currXPos, PLANET_Y, currZPos) );
             currEntity.setLocalScale(ENTITY_SCALE_VECTOR);
 
             entityNodes.add(currEntity);
