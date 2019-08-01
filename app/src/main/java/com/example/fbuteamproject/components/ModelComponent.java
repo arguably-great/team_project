@@ -37,7 +37,7 @@ public class ModelComponent {
 
     private static ArrayList<ModelRenderable> modelRenderables;
 
-    private static String ASSET_3D; //the url .gltf to retreive the asset
+//    private static String ASSET_3D; //the url .gltf to retreive the asset
 
     // The API host.
     private static String HOST = "poly.googleapis.com";
@@ -98,7 +98,7 @@ public class ModelComponent {
     public static ArrayList<CompletableFuture<ModelRenderable>> getCompletableFutures() {return completableFutures;}
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public static void buildModelStage(Context context) {
+    public static void buildModelStage(Context context, String ASSET_3D) {
 
         //create completable future for the entity
         CompletableFuture<ModelRenderable> modelStage;
@@ -119,6 +119,8 @@ public class ModelComponent {
                         .setRegistryId(ASSET_3D)
                         .build();
 
+        Log.d(TAG, "Before adding, asset is" + ASSET_3D);
+
         completableFutures.add(modelStage);
     }
 
@@ -129,7 +131,7 @@ public class ModelComponent {
 
         for (int i = 0; i < myFutures.size(); i++) {
 
-            int finalI = i;
+            final int stage = i;
 
             myFutures.get(i).handle(
                         (notUsed, throwable) -> {
@@ -138,11 +140,11 @@ public class ModelComponent {
                                 return null;
                             }try {
 
-                                ModelRenderable testModelRenderable;
+
                                 //get it from the completablefuture
-                                testModelRenderable = myFutures.get(finalI).get();
-                                Log.d(TAG, "FinalI is: " + finalI);
-                                modelRenderables.add(testModelRenderable);
+                                modelRenderable = myFutures.get(stage).get();
+                                Log.d(TAG, "FinalI is: " + stage);
+                                modelRenderables.add(modelRenderable);
 
                             } catch (InterruptedException | ExecutionException ex) {
                                 DemoUtils.displayError(context, "Unable to load renderable", ex);
@@ -156,7 +158,6 @@ public class ModelComponent {
         }
 
     for (int i = 0; i < modelRenderables.size(); i++) {
-        Log.d(TAG, "Printing model renderable");
         Log.d(TAG, "Model renderables size is " + modelRenderables.size());
     }
 
@@ -211,14 +212,14 @@ public class ModelComponent {
         // The "root file" is the GLTF.
         JSONObject rootFile = gltfFormat.getJSONObject("root");
 
-        ASSET_3D = rootFile.getString("url");
+        String ASSET_3D = rootFile.getString("url");
 
         Log.d(TAG, "Printing url" + ASSET_3D);
 
         ((Activity)context).runOnUiThread(new Runnable() {
             public void run() {
                 Log.d("UI thread", "I am the UI thread");
-                buildModelStage(context);
+                buildModelStage(context, ASSET_3D);
             }
         });
     }

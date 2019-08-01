@@ -28,7 +28,6 @@ import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.NoteComponent;
 import com.example.fbuteamproject.components.VideoComponent;
 import com.example.fbuteamproject.layouts.ARComponentsShell;
-import com.example.fbuteamproject.layouts.EntityLayout;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
@@ -467,6 +466,8 @@ public class ARActivity extends AppCompatActivity {
 
         ArrayList<CompletableFuture<ModelRenderable>> myCompFutures = ModelComponent.getCompletableFutures();
 
+        Log.d(TAG, "Completable Futures size is " + myCompFutures.size());
+
         myRenderables = ModelComponent.buildModelRenderables(myCompFutures, this);
 
         hasTriedLoadingEntityRenderables = true;
@@ -504,11 +505,11 @@ public class ARActivity extends AppCompatActivity {
     private Node createComponents(ArrayList<ModelRenderable> modelRenderables) {
 
         //TODO - Testing
-        EntityLayout entityLayout = new EntityLayout(appEntities, modelRenderables);
+        /*EntityLayout entityLayout = new EntityLayout(appEntities, modelRenderables);
 
         if(true){
             return entityLayout;
-        }
+        }*/
         //TODO - Testing
 
         Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res), this );
@@ -537,10 +538,7 @@ public class ARActivity extends AppCompatActivity {
         //TODO DUMMY CODE TO TEST FUNCTIONALITY OF VIDEOCOMPONENT
         Node videoNode = new Node();
 
-        for (int i = 0; i < appEntities.size(); i++) {
-
-            VideoComponent.setUpVideo(appEntities.get(i), videoNode,this);
-        }
+        VideoComponent.setUpVideo(appEntities.get(1), videoNode,this);
 
         //TODO END
 
