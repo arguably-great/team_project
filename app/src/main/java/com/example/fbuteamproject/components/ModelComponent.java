@@ -37,23 +37,9 @@ public class ModelComponent {
 
     private static ArrayList<ModelRenderable> modelRenderables;
 
-    // The API host.
-    private static String HOST = "poly.googleapis.com";
-
-    // Handler for the background thread, to which we post background thread tasks.
-//    private static Handler backgroundThreadHandler;
-
-    // Our background thread, which does all of the heavy lifting so we don't block the main thread.
-//    private static HandlerThread backgroundThread;
-
     private static ModelRenderable modelRenderable;
 
-    private static CompletableFuture<ModelRenderable> modelStage;
-
     private static Config.Entity currentEntity;
-
-    // True once scene is loaded
-    private static boolean hasFinishedLoading;
 
     public static void makePolyRequest(ArrayList<Config.Entity> entities, Context context) {
 
@@ -214,11 +200,9 @@ public class ModelComponent {
 
         Log.d(TAG, "Printing url" + ASSET_3D);
 
-        ((Activity)context).runOnUiThread(new Runnable() {
-            public void run() {
-                Log.d("UI thread", "I am the UI thread");
-                buildModelStage(context, ASSET_3D);
-            }
+        ((Activity)context).runOnUiThread(() -> {
+            Log.d("UI thread", "I am the UI thread");
+            buildModelStage(context, ASSET_3D);
         });
     }
 

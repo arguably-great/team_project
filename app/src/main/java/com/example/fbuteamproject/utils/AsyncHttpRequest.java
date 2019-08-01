@@ -57,7 +57,7 @@ public class AsyncHttpRequest {
      * @param handler The handler on which the listener should be called.
      * @param listener The listener to call when the request completes.
      */
-    public AsyncHttpRequest(String url, Handler handler, CompletionListener listener) {
+    AsyncHttpRequest(String url, Handler handler, CompletionListener listener) {
         this.handler = handler;
         this.listener = listener;
         try {
@@ -74,17 +74,12 @@ public class AsyncHttpRequest {
      * After the request completes, the listener specified in the constructor will be called
      * to report the result of the request. This method does not block, it returns immediately.
      */
-    public void send() {
+    void send() {
         if (requestStarted) {
             throw new IllegalStateException("AsyncHttpRequest can only be sent once.");
         }
         requestStarted = true;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                backgroundMain();
-            }
-        }).start();
+        new Thread(() -> backgroundMain()).start();
     }
 
     // Main method for background thread.
@@ -112,22 +107,12 @@ public class AsyncHttpRequest {
 
     // Posts a failure callback to the listener.
     private void postFailure(final int statusCode, final String message, final Exception exception) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                listener.onHttpRequestFailure(statusCode, message, exception);
-            }
-        });
+        handler.post(() -> listener.onHttpRequestFailure(statusCode, message, exception));
     }
 
     // Posts a success callback to the listener.
     private void postSuccess(final byte[] responseBody) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                listener.onHttpRequestSuccess(responseBody);
-            }
-        });
+        handler.post(() -> listener.onHttpRequestSuccess(responseBody));
     }
 
     // Copies the entire contents of the given input stream to the given output stream.
