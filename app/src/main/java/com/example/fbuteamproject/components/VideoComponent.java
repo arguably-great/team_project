@@ -30,6 +30,8 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+/* Class to set-up Video player */
+
 public class VideoComponent {
 
     private static final String TAG = "VideoComponent";

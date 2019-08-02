@@ -4,6 +4,11 @@ import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
+/*
+This Class serves as one piece of the bigger overall Layout structure for the application.
+    More specifically, this Class organizes the Notes in AR.
+ */
+
 public class NoteLayout extends Node {
 
     private static final float NOTE_HEIGHT = 0.75f;

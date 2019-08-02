@@ -9,6 +9,8 @@ import com.google.ar.sceneform.rendering.ViewRenderable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+/* Class to build view renderables used for Notes*/
+
 public class NoteComponent {
 
     private static final String TAG = "NoteComponent";

@@ -58,7 +58,6 @@ import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Node;
-import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.ExternalTexture;
 import com.google.ar.sceneform.rendering.ModelRenderable;
@@ -77,11 +76,11 @@ import java.util.concurrent.ExecutionException;
 
 import static com.example.fbuteamproject.utils.DemoUtils.checkIsSupportedDeviceOrFinish;
 
-//import com.example.fbuteamproject.layouts.ARComponentsShell;
-
 /* ARActivity that populates the sceneview with model renderables and view renderables
 for notes, photos and videos upon clicking on the screen.
 */
+
+
 public class ARActivity extends AppCompatActivity {
 
     private static final String TAG = ARActivity.class.getSimpleName();
@@ -92,7 +91,6 @@ public class ARActivity extends AppCompatActivity {
 
     private Planet currPlanetSelected;
 
-    public static int entityClicked;
     private boolean installRequested;
 
     @Nullable
@@ -106,9 +104,6 @@ public class ARActivity extends AppCompatActivity {
     private boolean playWhenReady;
     private int currentWindow = 0;
     private long playbackPosition = 0;
-
-    private ModelRenderable jupiterRenderable;
-
 
     private GestureDetector gestureDetector;
 
@@ -127,28 +122,12 @@ public class ARActivity extends AppCompatActivity {
     // The color to filter out of the video.
     private static final Color CHROMA_KEY_COLOR = new Color(0.1843f, 1.0f, 0.098f);
     // Controls the height of the video in world space.
-    private static final float VIDEO_HEIGHT_METERS = 0.7f;
 
     //Completable Futures for model renderables
     CompletableFuture<ModelRenderable> venusStage;
     CompletableFuture<ModelRenderable> jupiterStage;
     CompletableFuture<ModelRenderable> videoStage;
-
-    // viewrenderables for photos
-    private ViewRenderable jupiterRenderable1;
-    private ViewRenderable jupiterRenderable2;
-    private ViewRenderable jupiterRenderable3;
-    private ViewRenderable jupiterRenderable4;
-    private ViewRenderable jupiterRenderable5;
-    private ViewRenderable jupiterRenderable6;
-
-    CompletableFuture<ViewRenderable> jupiterStage1;
-    CompletableFuture<ViewRenderable> jupiterStage2;
-    CompletableFuture<ViewRenderable> jupiterStage3;
-    CompletableFuture<ViewRenderable> jupiterStage4;
-    CompletableFuture<ViewRenderable> jupiterStage5;
-    CompletableFuture<ViewRenderable> jupiterStage6;
-
+    ModelRenderable jupiterRenderable;
 
     CompletableFuture<ViewRenderable> planetTitleStage;
     CompletableFuture<ViewRenderable> planetContentsStage;
@@ -198,10 +177,6 @@ public class ARActivity extends AppCompatActivity {
 
         ModelComponent.generateCompletableFutures(appEntities, this);
 
-//        buildPlanetRenderables();
-//        buildVideoRenderable();
-
-
         buildViewRenderables();
         setupRenderables();
 
@@ -209,7 +184,7 @@ public class ARActivity extends AppCompatActivity {
         // TODO have photos set up on create
         // creating photo albums and stages
         album = PhotoComponent.buildAlbumPhotos(this);
-        //Log.d(TAG, "here is le album "+ album);
+        //Log.d(TAG, "here is the album "+ album);
         PhotoComponent.buildStages(album, this);
 
 
@@ -293,11 +268,6 @@ public class ARActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setupRenderables() {
         CompletableFuture.allOf(
-//                videoStage,
-//                venusStage,
-//                jupiterStage,
-//                jupiterStage, jupiterStage1, jupiterStage2, jupiterStage3, jupiterStage4,
-//                jupiterStage5, jupiterStage6,
                 planetTitleStage,
                 planetContentsStage)
                 .handle(
@@ -307,15 +277,6 @@ public class ARActivity extends AppCompatActivity {
                                 return null;
                             }
                             try {
-//                                videoRenderable = videoStage.get();
-//                                venusRenderable = venusStage.get();
-//                                jupiterRenderable = jupiterStage.get();
-//                                jupiterRenderable1 = jupiterStage1.get();
-//                                jupiterRenderable2 = jupiterStage2.get();
-//                                jupiterRenderable3 = jupiterStage3.get();
-//                                jupiterRenderable4 = jupiterStage4.get();
-//                                jupiterRenderable5 = jupiterStage5.get();
-//                                jupiterRenderable6 = jupiterStage6.get();
                                 planetTitlesRenderable = planetTitleStage.get();
                                 planetContentsRenderable = planetContentsStage.get();
 
@@ -366,19 +327,7 @@ public class ARActivity extends AppCompatActivity {
                         .setView(this, R.layout.component_entity_contents)
                         .build();
 
-        //buildJupiterPhotos();
 
-    }
-
-
-
-    private void buildJupiterPhotos() {
-        jupiterStage1 = ViewRenderable.builder().setView(this, R.layout.jupiter1).build();
-        jupiterStage2 = ViewRenderable.builder().setView(this, R.layout.jupiter2).build();
-        jupiterStage3 = ViewRenderable.builder().setView(this, R.layout.jupiter3).build();
-        jupiterStage4 = ViewRenderable.builder().setView(this, R.layout.jupiter4).build();
-        jupiterStage5 = ViewRenderable.builder().setView(this, R.layout.jupiter5).build();
-        jupiterStage6 = ViewRenderable.builder().setView(this, R.layout.jupiter6).build();
     }
 
     @Override
@@ -648,8 +597,8 @@ public class ARActivity extends AppCompatActivity {
             changePlanetScreenText(planetTitleView, planetContentView, venusVisual);
 
             // more photo testing
-//            Log.d(TAG, "LOL" + PhotoComponent.viewRenderables.size());
-//            Log.d(TAG, "UGH setupPlanetTapListenerVideo: "+ album);
+//            Log.d(TAG, "PhotoComponent view renderables" + PhotoComponent.viewRenderables.size());
+//            Log.d(TAG, "setupPlanetTapListenerVideo: "+ album);
 //            PhotoComponent.buildStages(album, this);
 
 
@@ -673,54 +622,11 @@ public class ARActivity extends AppCompatActivity {
 
             changePlanetScreenText(planetTitleView, planetContentView, jupiterVisual);
 
-            createPhotoNodes(jupiterRenderable1, jupiterRenderable2, jupiterRenderable3, jupiterRenderable4,
-                    jupiterRenderable5, jupiterRenderable6, baseNode);
+//            createPhotoNodes(jupiterRenderable1, jupiterRenderable2, jupiterRenderable3, jupiterRenderable4,
+//                    jupiterRenderable5, jupiterRenderable6, baseNode);
 
 
         });
-
-    }
-
-    private void createPhotoNodes(ViewRenderable photoRenderable1, ViewRenderable photoRenderable2, ViewRenderable photoRenderable3, ViewRenderable photoRenderable4,
-                                  ViewRenderable photoRenderable5, ViewRenderable photoRenderable6, Node baseNode) {
-
-        Node node1 = new Node();
-        Node node2 = new Node();
-        Node node3 = new Node();
-        Node node4 = new Node();
-        Node node5 = new Node();
-        Node node6 = new Node();
-
-        // setting up nodes for photos
-        node1.setParent(baseNode);
-        node1.setRenderable(photoRenderable1);
-        node1.setLocalPosition(new Vector3(-1.0f, 1.0f, 0.0f) );
-        node1.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-
-        node2.setParent(baseNode);
-        node2.setRenderable(photoRenderable2);
-        node2.setLocalPosition(new Vector3(-1.5f, 0.66f, 0.0f) );
-        node2.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-
-        node3.setParent(baseNode);
-        node3.setRenderable(photoRenderable3);
-        node3.setLocalPosition(new Vector3(-1.0f, 0.33f, 0.0f) );
-        node3.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-
-        node4.setParent(baseNode);
-        node4.setRenderable(photoRenderable4);
-        node4.setLocalPosition(new Vector3(1.0f, 1.0f, 0.0f) );
-        node4.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-
-        node5.setParent(baseNode);
-        node5.setRenderable(photoRenderable5);
-        node5.setLocalPosition(new Vector3(1.5f, 0.66f, 0.0f) );
-        node5.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-
-        node6.setParent(baseNode);
-        node6.setRenderable(photoRenderable6);
-        node6.setLocalPosition(new Vector3(1.0f, 0.33f, 0.0f) );
-        node6.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
     }
 
