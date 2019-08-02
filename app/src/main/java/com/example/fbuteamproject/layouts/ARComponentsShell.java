@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package com.example.fbuteamproject.layouts;
 
 import com.google.ar.sceneform.Node;
@@ -98,7 +97,7 @@ public class ARComponentsShell extends Node {
 
 
 }
-=======
+
 //package com.example.fbuteamproject.layouts;
 //
 //import com.google.ar.sceneform.Node;
@@ -197,4 +196,4 @@ public class ARComponentsShell extends Node {
 //
 //
 //}
->>>>>>> [Dynamic Photos][WIP]
+
