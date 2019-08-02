@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.fbuteamproject.R;
-import com.example.fbuteamproject.activities.ARActivity;
 import com.example.fbuteamproject.models.Photo;
 import com.example.fbuteamproject.utils.DemoUtils;
 import com.google.ar.sceneform.rendering.ViewRenderable;
@@ -17,6 +16,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/* Class to build view renderables used for Photos */
+
 public class PhotoComponent {
 
 
@@ -25,7 +26,6 @@ public class PhotoComponent {
     public static ArrayList<ViewRenderable> viewRenderables;
     private static ViewRenderable viewRenderable;
     private static ArrayList<AtomicBoolean> hasLoaded;
-
 
 
     public static ArrayList<Photo> buildAlbumPhotos(Context context) {
@@ -52,36 +52,29 @@ public class PhotoComponent {
     }
 
     private static String[] selectAlbum() {
-        String[] photosAlbum= new String[0];
+        String[] photosAlbum;
 
-//        if (ARActivity.entityClicked == 1) {
             photosAlbum = new String[]{
                     "https://i.imgur.com/8mKSLC8.jpg",
                     "https://i.imgur.com/9vbrRQm.jpg",
                     "http://i.imgur.com/ovr0NAF.jpg",
                     "http://i.imgur.com/3wQcZeY.jpg",
-                    "http://i.imgur.com/pSHXfu5.jpg"
-            };
-//        }
-
-        if (ARActivity.entityClicked == 2) {
-            photosAlbum = new String[]{
+                    "http://i.imgur.com/pSHXfu5.jpg",
                     "http://i.imgur.com/3wQcZeY.jpg",
                     "http://i.imgur.com/pSHXfu5.jpg",
                     "http://i.imgur.com/3wQcZeY.jpg"
             };
-        }
 
         return photosAlbum;
     }
 
-    public static void buildStages(ArrayList<Photo> data, Context context) {
+    public static void buildStages(ArrayList<Photo> photosAlbum, Context context) {
 
         completableFutures = new ArrayList<>();
 
-        for (int i = 0; i < data.size(); i++) {
+        for (int i = 0; i <= 6 || i < photosAlbum.size(); i++) {
 
-            Log.d(TAG, "buildStages: "+data.get(i));
+            Log.d(TAG, "buildStages: "+photosAlbum.get(i));
 
             //create completable future for the entity
             CompletableFuture<ViewRenderable> photoStage;
@@ -90,13 +83,13 @@ public class PhotoComponent {
 
             // load photos into glide
             Glide.with(context)
-                    .load(data.get(i).getUrl())
+                    .load(photosAlbum.get(i).getUrl())
                     .apply(new RequestOptions()
                             .placeholder(R.mipmap.ic_launcher)
                             .fitCenter().override(1000, 1000))
                     .into(imageView);
 
-            Log.d(TAG, "Yooo"+ data.get(i).getUrl() );
+            Log.d(TAG, "Checking for URLs"+ photosAlbum.get(i).getUrl() );
 
 
             //build model renderable
@@ -144,12 +137,8 @@ public class PhotoComponent {
         return viewRenderables;
     }
 
-//
     public static ArrayList<CompletableFuture<ViewRenderable>> getCompletableFutures() {
         return completableFutures;
     }
-//
-//    public static int getCompletableFuturesSize() {
-//        return completableFutures.size();
-//    }
+
 }
