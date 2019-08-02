@@ -14,11 +14,11 @@ This Class serves as one piece of the bigger overall Layout structure for the ap
  */
 public class EntityLayout extends Node {
 
-    private ArrayList<Node> entityNodes;
+    private ArrayList<Config.Entity> entityNodes;
 
     private final float MAX_X_COVERAGE_DIST  = 2.0f;
     private final Vector3 ENTITY_SCALE_VECTOR = new Vector3(0.005f, 0.005f, 0.005f);
-    private final float PLANET_Y = 1.4f;
+    private final float PLANET_Y = 1.6f;
 
     public EntityLayout(ArrayList<Config.Entity> appEntities, ArrayList<ModelRenderable> entityViewRenderables ){
 
