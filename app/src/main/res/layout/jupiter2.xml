@@ -3,4 +3,6 @@
     android:id="@+id/ivPlanet"
     android:layout_width="300dp"
     android:layout_height="300dp"
-    app:srcCompat="@drawable/saturn" />
+    android:scaleType="centerCrop"
+    app:srcCompat="@drawable/image_5608_2ejupiter" />
+
