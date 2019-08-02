@@ -517,22 +517,15 @@ public class ARActivity extends AppCompatActivity {
 //        Log.d(TAG, "onSingleTap: here are my renderables"+ myRenders);
 
 
-            Frame frame = arSceneView.getArFrame();
-            if (frame != null) {
-                if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
-                    hasPlacedComponents = true;
-                }
-            }
+        ArrayList<CompletableFuture<ModelRenderable>> myCompFutures = ModelComponent.getCompletableFutures();
 
-            ArrayList<CompletableFuture<ModelRenderable>> myCompFutures = ModelComponent.getCompletableFutures();
+        Log.d(TAG, "Completable Futures size is " + myCompFutures.size());
 
-            Log.d(TAG, "Completable Futures size is " + myCompFutures.size());
+        myRenderables = ModelComponent.buildModelRenderables(myCompFutures, this);
 
-            myRenderables = ModelComponent.buildModelRenderables(myCompFutures, this);
+        hasTriedLoadingEntityRenderables = true;
 
-            hasTriedLoadingEntityRenderables = true;
-
-            onSingleTap(tap);
+        onSingleTap(tap);
 
     }
 
