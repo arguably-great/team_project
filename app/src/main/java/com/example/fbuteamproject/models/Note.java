@@ -2,6 +2,11 @@ package com.example.fbuteamproject.models;
 
 import org.parceler.Parcel;
 
+
+/*
+This Model creates Getters and Setters for Notes.
+ */
+
 @Parcel
 public class Note {
 
