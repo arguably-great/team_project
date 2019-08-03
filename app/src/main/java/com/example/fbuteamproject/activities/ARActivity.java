@@ -29,12 +29,14 @@ import com.example.fbuteamproject.components.NoteComponent;
 import com.example.fbuteamproject.components.PhotoComponent;
 import com.example.fbuteamproject.components.VideoComponent;
 import com.example.fbuteamproject.layouts.EntityLayout;
+import com.example.fbuteamproject.layouts.NoteLayout;
 import com.example.fbuteamproject.layouts.PhotoLayout;
 import com.example.fbuteamproject.layouts.VideoLayout;
 import com.example.fbuteamproject.models.Photo;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
+import com.example.fbuteamproject.wrappers.EntityWrapper;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -80,8 +82,7 @@ import static com.example.fbuteamproject.utils.DemoUtils.checkIsSupportedDeviceO
 for notes, photos and videos upon clicking on the screen.
 */
 
-
-public class ARActivity extends AppCompatActivity {
+public class ARActivity extends AppCompatActivity implements EntityWrapper.EntityChangeListener {
 
     private static final String TAG = ARActivity.class.getSimpleName();
 
@@ -136,9 +137,14 @@ public class ARActivity extends AppCompatActivity {
 
     private boolean hasPlayedVideo;
 
-    //TODO - This one will be from Component Class for Notes
-    private ViewRenderable entityContentRenderableFromComponent;
-    //TODO - This one will be from Component Class for Notes
+    private EntityWrapper currEntitySelected;
+    private EntityLayout entityLayout;
+    private VideoLayout videoLayout;
+    private NoteLayout noteLayout;
+
+
+
+    private ViewRenderable entityContentRenderable;
 
     private ArrayList<ModelRenderable> myRenderables;
 
@@ -168,17 +174,20 @@ public class ARActivity extends AppCompatActivity {
         videoRenderable = VideoComponent.buildModelRenderable(videoStage, this);
 
 
-        //TODO - This one will be from Component Class for Notes
-        entityContentRenderableFromComponent = NoteComponent.buildContentRenderable(this);
-        //TODO - This one will be from Component Class for Notes
+        NoteComponent.buildContentRenderable(this);
 
-        Config.AppConfig configuration = Config.AppConfig.getAppConfig();
+        Config.AppConfig configuration = Config.AppConfig.getAppConfig(this);
         appEntities = configuration.entities;
+
+        Log.d("CONTEXT", Config.AppConfig.getContext().toString() );
 
         ModelComponent.generateCompletableFutures(appEntities, this);
 
         buildViewRenderables();
         setupRenderables();
+
+        currEntitySelected = new EntityWrapper();
+        currEntitySelected.setListener(this);
 
 
         // TODO have photos set up on create
@@ -509,24 +518,38 @@ public class ARActivity extends AppCompatActivity {
 
         Node baseNode = new Node();
 
-        //TODO - Testing
-        EntityLayout entityLayout = new EntityLayout(appEntities, modelRenderables);
-
+        entityLayout = new EntityLayout(appEntities, modelRenderables);
         entityLayout.setParent(baseNode);
 
-        /*if(true){
-            return entityLayout;
-        }*/
-        //TODO - Testing
-
-        VideoLayout videoLayout = new VideoLayout(videoRenderable);
+        videoLayout = new VideoLayout(videoRenderable);
         videoLayout.setParent(baseNode);
 
-        VideoComponent.setUpVideo(appEntities.get(1), videoLayout.getVideoNode(),this, hasPlayedVideo);
-        hasPlayedVideo = true;
+        noteLayout = new NoteLayout(NoteComponent.getEntityContentRenderable() );
+        noteLayout.setParent(baseNode);
 
-        VideoComponent.setUpVideo(appEntities.get(0), videoLayout.getVideoNode(), this, hasPlayedVideo);
+        //This coming line should trigger the onEntityChanged method from the included interface
+        currEntitySelected.setEntity(appEntities.get(0) );
 
+
+        //Traverse through all of the Entities and assign their onTaps (basically just trigger listener)
+        for(Config.Entity currEntity: appEntities){
+            currEntity.setOnTapListener(new Node.OnTapListener() {
+                @Override
+                public void onTap(HitTestResult hitTestResult, MotionEvent motionEvent) {
+                    if (currEntitySelected.getEntity() != currEntity){
+                        currEntitySelected.setEntity(currEntity);
+                    }
+                    else{
+                        Toast.makeText(ARActivity.this, "Tapped on the same Entity", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+
+
+        //TODO - Doing this just because the code below is not needed and this is TESTING
+            //TODO - BUT we also want to keep the code from before to understand what we were doing
         if (true) {
             return baseNode;
         }
@@ -653,8 +676,6 @@ public class ARActivity extends AppCompatActivity {
 
         Log.d("FileDebug", fileText.toString() );
 
-
-
         ( (TextView) contentView.findViewById(R.id.tvContents) ).setMovementMethod(new ScrollingMovementMethod() );
 
         ( (TextView) contentView.findViewById(R.id.tvContents) ).setText(fileText.toString() );
@@ -744,13 +765,6 @@ public class ARActivity extends AppCompatActivity {
         video.setRenderable(videoRenderable);
         }
     }
-
-//    private void setupNode(Node currNode, Node baseNode, Renderable renderable, Vector3 localPos, Vector3 localScale){
-//        currNode.setParent(baseNode);
-//        currNode.setRenderable(renderable);
-//        currNode.setLocalPosition(localPos);
-//        currNode.setLocalScale(localScale);
-//    }
 
     public void pause(View v) {
         if (player == null) {
@@ -865,5 +879,14 @@ public class ARActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onEntityChanged() {
+        //TODO - This is where the components will be called and the Handler will be made and stuff
+        VideoComponent.setUpVideo(currEntitySelected.getEntity(), videoLayout.getVideoNode(),this, hasPlayedVideo);
+        hasPlayedVideo = true;
 
+        if (NoteComponent.getHasLoadedContentRenderable() ) {
+            NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
+        }
+    }
 }
