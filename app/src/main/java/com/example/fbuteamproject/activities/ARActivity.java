@@ -145,8 +145,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
     private ViewRenderable entityContentRenderable;
 
-    private EntityLayout entityLayout;
-
     private ArrayList<ModelRenderable> myRenderables;
 
     ArrayList<Photo> album;
@@ -181,7 +179,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         Log.d("CONTEXT", Config.AppConfig.getContext().toString() );
 
-        ModelComponent.generateCompletableFutures(appEntities, this);
+//        ModelComponent.generateCompletableFuturesandModelRenderables(appEntities, this);
 
         entityLayout = new EntityLayout();
 
@@ -484,11 +482,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         videoLayout = new VideoLayout(videoRenderable);
         videoLayout.setParent(baseNode);
 
-        noteLayout = new NoteLayout(NoteComponent.getEntityContentRenderable() );
+        noteLayout = new NoteLayout(NoteComponent.getEntityContentRenderable());
         noteLayout.setParent(baseNode);
 
         //This coming line should trigger the onEntityChanged method from the included interface
-        currEntitySelected.setEntity(appEntities.get(0) );
+        currEntitySelected.setEntity(appEntities.get(0));
 
 
         //Traverse through all of the Entities and assign their onTaps (basically just trigger listener)

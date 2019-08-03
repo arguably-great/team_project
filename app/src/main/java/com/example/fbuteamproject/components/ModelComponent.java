@@ -115,7 +115,7 @@ public class ModelComponent {
                 count--;
                 Log.d("COUNT", "Count Decremented to: " + count);
                 if (count == 0) {
-                    listener.startNodeCreation(Config.AppConfig.getAppConfig().entities);
+                    listener.startNodeCreation(Config.AppConfig.getAppConfig(context).entities);
                 }
                 return null;
             }
