@@ -16,7 +16,7 @@ This Class serves as one piece of the bigger overall Layout structure for the ap
  */
 public class EntityLayout extends Node implements ModelComponent.ModelCallBacksFinishedListener {
 
-    private ArrayList<Node> entityNodes;
+    private ArrayList<Config.Entity> entityNodes;
 
     private final float MAX_X_COVERAGE_DIST  = 2.0f;
 

@@ -84,7 +84,6 @@ public class Config {
                 return;
             }
 
-
             Log.d("FileDebug", "About to fill up Planet with generic Notes. Doing this for " + entityName);
             FileOutputStream outputStream;
 
@@ -120,6 +119,7 @@ public class Config {
 
         public ModelRenderable getEntityModel() {
             return entityModel;
+
         }
     }
 
@@ -146,7 +146,7 @@ public class Config {
 
     static {
         planetConfig = new AppConfig();
-
+      
         planetConfig.entities.add(new Entity("Earth", "88CP80Kgb-u",
                 "https://pmdvod.nationalgeographic.com/NG_Video/596/311/1370718787631_1542234923394_1370715715931_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
                 new Vector3(0.005f, 0.005f, 0.005f), AppConfig.getContext()));
@@ -157,8 +157,6 @@ public class Config {
                 new Vector3(0.005f, 0.005f, 0.005f), AppConfig.getContext()));
         planetConfig.entities.add(new Entity("Mercury", "7piUT6FHGKJ", "https://pmdvod.nationalgeographic.com/NG_Video/298/99/1304907843930_1535034558391_1304910915613_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
                 new Vector3(0.05f, 0.05f, 0.05f), AppConfig.getContext()));
-
-
 
 /*        animalConfig = new AppConfig();
 

@@ -142,7 +142,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private VideoLayout videoLayout;
     private NoteLayout noteLayout;
 
-
     private ViewRenderable entityContentRenderable;
 
     private ArrayList<ModelRenderable> myRenderables;
@@ -178,11 +177,9 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         appEntities = configuration.entities;
 
         Log.d("CONTEXT", Config.AppConfig.getContext().toString() );
-
-//        ModelComponent.generateCompletableFuturesandModelRenderables(appEntities, this);
-
+      
         entityLayout = new EntityLayout();
-
+      
         buildViewRenderables();
         setupRenderables();
 
@@ -477,6 +474,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private Node createComponents() {
 
         Node baseNode = new Node();
+
         entityLayout.setParent(baseNode);
 
         videoLayout = new VideoLayout(videoRenderable);
