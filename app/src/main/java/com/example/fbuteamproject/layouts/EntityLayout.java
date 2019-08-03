@@ -1,9 +1,11 @@
 package com.example.fbuteamproject.layouts;
 
+import android.util.Log;
+
+import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.utils.Config;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
-import com.google.ar.sceneform.rendering.ModelRenderable;
 
 import java.util.ArrayList;
 /*
@@ -12,46 +14,53 @@ This Class serves as one piece of the bigger overall Layout structure for the ap
     by having the EntityLayout Object be the Parent for all the Node objects created.
     This EntityLayout Object can then be placed relative to other Layout Objects
  */
-public class EntityLayout extends Node {
+public class EntityLayout extends Node implements ModelComponent.ModelCallBacksFinishedListener {
 
-    private ArrayList<Config.Entity> entityNodes;
+    private ArrayList<Node> entityNodes;
 
     private final float MAX_X_COVERAGE_DIST  = 2.0f;
-    private final Vector3 ENTITY_SCALE_VECTOR = new Vector3(0.005f, 0.005f, 0.005f);
-    private final float PLANET_Y = 1.6f;
 
-    public EntityLayout(ArrayList<Config.Entity> appEntities, ArrayList<ModelRenderable> entityViewRenderables ){
+    private final float PLANET_Y = 1.4f;
+
+    public EntityLayout(){
+        entityNodes = new ArrayList<>();
+        ModelComponent.setListener(this);
+    }
+
+    public EntityLayout(ArrayList<Config.Entity> appEntities){
 
         entityNodes = new ArrayList<>();
 
-        createEntityNodes(appEntities, entityViewRenderables);
+        createEntityNodes(appEntities);
 
     }
 
-    private void createEntityNodes(ArrayList<Config.Entity> appEntities, ArrayList<ModelRenderable> entityModelRenderables) {
+    private void createEntityNodes(ArrayList<Config.Entity> appEntities) {
 
         float entitySplit;
 
-        if (entityModelRenderables.size() == 1){
+        if (appEntities.size() == 1){
             entitySplit = 0;
         }
         else {
-            entitySplit = (MAX_X_COVERAGE_DIST) / (entityModelRenderables.size() - 1);
+            entitySplit = (MAX_X_COVERAGE_DIST) / (appEntities.size() - 1);
         }
 
-        for(int currIndex = 0; currIndex < entityModelRenderables.size(); currIndex++){
+        for(int currIndex = 0; currIndex < appEntities.size(); currIndex++){
+
+            Log.d("ENTITYLAYOUT", "Current entity model is" + appEntities.get(currIndex).getEntityModel());
 
             Config.Entity currEntity = appEntities.get(currIndex);
 
             currEntity.setParent(this);
-            currEntity.setRenderable(entityModelRenderables.get(currIndex) );
+            currEntity.setRenderable(appEntities.get(currIndex).getEntityModel() );
 
             //Calculate the X and Z positions for the current Node
             float currXPos = (-MAX_X_COVERAGE_DIST / 2) + (currIndex * entitySplit);
             float currZPos = (float) (Math.pow(currXPos, 2) - MAX_X_COVERAGE_DIST/2);
 
             currEntity.setLocalPosition(new Vector3(currXPos, PLANET_Y, currZPos) );
-            currEntity.setLocalScale(ENTITY_SCALE_VECTOR);
+            currEntity.setLocalScale(appEntities.get(currIndex).getEntityScaleVector());
 
             entityNodes.add(currEntity);
 
@@ -59,5 +68,9 @@ public class EntityLayout extends Node {
 
     }
 
-
+    @Override
+    public void startNodeCreation(ArrayList<Config.Entity> entities) {
+        Log.d("START_CREATE", "Layout Stuff");
+        createEntityNodes(entities);
+    }
 }
