@@ -80,7 +80,6 @@ public class VideoComponent {
 
                     return null;
                 });
-        Log.d(TAG, "Printing video renderable for VIDEO");
 
         return videoRenderable;
     }

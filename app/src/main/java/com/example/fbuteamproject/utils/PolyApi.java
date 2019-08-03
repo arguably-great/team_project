@@ -1,15 +1,16 @@
 package com.example.fbuteamproject.utils;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
+
+import com.example.fbuteamproject.R;
 
 /**
  * Methods that call the Poly API.
  */
 public class PolyApi {
-    // IMPORTANT: replace this with your project's API key.
-    private static String API_KEY = "AIzaSyAQFuggi_iKXY9xAKsVWnLZNu_5ElJz-zg";
 
     private static String TAG = "PolySample";
 
@@ -25,8 +26,10 @@ public class PolyApi {
      * @param handler The handler on which to call the listener.
      * @param completionListener The listener to call when the asset request is completed.
      */
-    public static void GetAsset(String assetId, Handler handler,
+    public static void GetAsset(Context context, String assetId, Handler handler,
                                 AsyncHttpRequest.CompletionListener completionListener) {
+
+        String API_KEY = context.getString(R.string.poly_api_key);
 
         // Let's check if the developer (that's you!) correctly replaced the API_KEY with their own
         // API key in this file. If not, complain.
