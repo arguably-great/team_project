@@ -123,8 +123,8 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     // The color to filter out of the video.
     private static final Color CHROMA_KEY_COLOR = new Color(0.1843f, 1.0f, 0.098f);
     // Controls the height of the video in world space.
-
     //Completable Futures for model renderables
+
     CompletableFuture<ModelRenderable> venusStage;
     CompletableFuture<ModelRenderable> jupiterStage;
     CompletableFuture<ModelRenderable> videoStage;
@@ -141,8 +141,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private EntityLayout entityLayout;
     private VideoLayout videoLayout;
     private NoteLayout noteLayout;
-
-
 
     private ViewRenderable entityContentRenderable;
 
@@ -173,16 +171,15 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         videoStage = VideoComponent.buildVideoStage(this);
         videoRenderable = VideoComponent.buildModelRenderable(videoStage, this);
 
-
         NoteComponent.buildContentRenderable(this);
 
         Config.AppConfig configuration = Config.AppConfig.getAppConfig(this);
         appEntities = configuration.entities;
 
         Log.d("CONTEXT", Config.AppConfig.getContext().toString() );
-
-        ModelComponent.generateCompletableFutures(appEntities, this);
-
+      
+        entityLayout = new EntityLayout();
+      
         buildViewRenderables();
         setupRenderables();
 
@@ -298,7 +295,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
                         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    /*@RequiresApi(api = Build.VERSION_CODES.N)
     private void buildPlanetRenderables() {
         venusStage =
                 ModelRenderable
@@ -310,7 +307,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
                         .builder()
                         .setSource(this, Uri.parse("model.sfb"))
                         .build();
-    }
+    }*/
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void buildVideoRenderable() {
@@ -437,54 +434,14 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 //            }
 //        }
 //    }
+        ModelComponent.generateCompletableFuturesandModelRenderables(appEntities, this);
 
-        if (hasTriedLoadingEntityRenderables) {
-
-            if (myRenderables.size() != appEntities.size()) {
-                return;
-            }
-            for (int i = 0; i < myRenderables.size(); i++) {
-                Log.d(TAG, "Printing model renderable" + myRenderables.get(i));
-            }
-
-            Frame frame = arSceneView.getArFrame();
+        Frame frame = arSceneView.getArFrame();
             if (frame != null) {
                 if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
                     hasPlacedComponents = true;
                 }
             }
-            return;
-
-        }
-
-
-        if (!hasFinishedLoading || ModelComponent.GetFuturesSize() != appEntities.size()) {
-            // We can't do anything yet.
-            return;
-
-        }
-
-        // some photo building testing:
-//        Log.d(TAG, "onSingleTap: here are my futures"+ PhotoComponent.getCompletableFutures());
-//        Log.d(TAG, "onSingleTap: here are my sizes"+ PhotoComponent.getCompletableFuturesSize());
-//
-//        ArrayList<CompletableFuture<ViewRenderable>> myVar = PhotoComponent.getCompletableFutures();
-//
-//        ArrayList<ViewRenderable> myRenders = PhotoComponent.buildViewRenderables(myVar, this);
-//
-//        Log.d(TAG, "onSingleTap: here are my renderables"+ myRenders);
-
-
-        ArrayList<CompletableFuture<ModelRenderable>> myCompFutures = ModelComponent.getCompletableFutures();
-
-        Log.d(TAG, "Completable Futures size is " + myCompFutures.size());
-
-        myRenderables = ModelComponent.buildModelRenderables(myCompFutures, this);
-
-        hasTriedLoadingEntityRenderables = true;
-
-        onSingleTap(tap);
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -509,26 +466,25 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         Anchor anchor = hit.createAnchor();
         AnchorNode anchorNode = new AnchorNode(anchor);
         anchorNode.setParent(arSceneView.getScene());
-        Node components = createComponents(myRenderables);
+        Node components = createComponents();
         components.setParent(anchorNode);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private Node createComponents(ArrayList<ModelRenderable> modelRenderables) {
+    private Node createComponents() {
 
         Node baseNode = new Node();
 
-        entityLayout = new EntityLayout(appEntities, modelRenderables);
         entityLayout.setParent(baseNode);
 
         videoLayout = new VideoLayout(videoRenderable);
         videoLayout.setParent(baseNode);
 
-        noteLayout = new NoteLayout(NoteComponent.getEntityContentRenderable() );
+        noteLayout = new NoteLayout(NoteComponent.getEntityContentRenderable());
         noteLayout.setParent(baseNode);
 
         //This coming line should trigger the onEntityChanged method from the included interface
-        currEntitySelected.setEntity(appEntities.get(0) );
+        currEntitySelected.setEntity(appEntities.get(0));
 
 
         //Traverse through all of the Entities and assign their onTaps (basically just trigger listener)
@@ -546,8 +502,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             });
         }
 
-
-
         //TODO - Doing this just because the code below is not needed and this is TESTING
             //TODO - BUT we also want to keep the code from before to understand what we were doing
         if (true) {
@@ -559,7 +513,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
 
         Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res), this );
-        venusVisual.setRenderable(modelRenderables.get(0) );
+//        venusVisual.setRenderable(modelRenderables.get(0) );
 
         Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", getString(R.string.jupiter_res), this);
         jupiterVisual.setRenderable(jupiterRenderable);
