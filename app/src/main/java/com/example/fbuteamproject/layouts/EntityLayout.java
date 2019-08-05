@@ -18,9 +18,9 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
 
     private ArrayList<Config.Entity> entityNodes;
 
-    private final float MAX_X_COVERAGE_DIST  = 2.0f;
+    private final float MAX_X_COVERAGE_DIST  = 2.5f;
 
-    private final float PLANET_Y = 1.4f;
+    private final float PLANET_Y = 1.6f;
 
     public EntityLayout(){
         entityNodes = new ArrayList<>();
@@ -48,8 +48,6 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
 
         for(int currIndex = 0; currIndex < appEntities.size(); currIndex++){
 
-            Log.d("ENTITYLAYOUT", "Current entity model is" + appEntities.get(currIndex).getEntityModel());
-
             Config.Entity currEntity = appEntities.get(currIndex);
 
             currEntity.setParent(this);
@@ -57,7 +55,7 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
 
             //Calculate the X and Z positions for the current Node
             float currXPos = (-MAX_X_COVERAGE_DIST / 2) + (currIndex * entitySplit);
-            float currZPos = (float) (Math.pow(currXPos, 2) - MAX_X_COVERAGE_DIST/2);
+            float currZPos = ( (float) (Math.pow(currXPos, 2) - MAX_X_COVERAGE_DIST/2) );
 
             currEntity.setLocalPosition(new Vector3(currXPos, PLANET_Y, currZPos) );
             currEntity.setLocalScale(appEntities.get(currIndex).getEntityScaleVector());
