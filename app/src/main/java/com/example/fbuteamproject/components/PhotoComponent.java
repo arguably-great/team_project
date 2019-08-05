@@ -3,6 +3,7 @@ package com.example.fbuteamproject.components;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.fbuteamproject.activities.ARActivity;
 import com.example.fbuteamproject.utils.DemoUtils;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
@@ -28,10 +29,10 @@ public class PhotoComponent {
 
         viewRenderables = new ArrayList<>();
 
-        Log.d(TAG, completableFutures.toString());
+//        Log.d(TAG, completableFutures.toString());
 
         // get stages for view renderables
-        for (int i = 0; i < completableFutures.size(); i++) {
+        for (int i = 0; i < ARActivity.completableFutures.size(); i++) {
 
             final int stage = i;
             // handling each completable future in array
