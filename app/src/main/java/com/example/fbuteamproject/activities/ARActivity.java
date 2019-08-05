@@ -161,8 +161,10 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private Query currentQuery;
     private final Set<PhotoViewer> photoViewers = new HashSet<>();
     private static final String STATE_QUERY = "state_search_string";
-    private static final Query DEFAULT_QUERY = new SearchQuery("Earth");
+    public static Query DEFAULT_QUERY = new SearchQuery("saturn planet");
     public static ArrayList<CompletableFuture<ViewRenderable>> completableFutures;
+
+    ArrayList<CompletableFuture<ViewRenderable>> photoCompletables;
 
 
 
@@ -201,15 +203,15 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         Api.get(this).registerSearchListener(queryListener);
 
 
-        if (savedInstanceState != null) {
-            Query savedQuery = savedInstanceState.getParcelable(STATE_QUERY);
-            if (savedQuery != null) {
-                executeQuery(savedQuery);
-            }
-        } else {
+//        if (savedInstanceState != null) {
+//            Query savedQuery = savedInstanceState.getParcelable(STATE_QUERY);
+//            if (savedQuery != null) {
+//                executeQuery(savedQuery);
+//            }
+//        } else {
             executeQuery(DEFAULT_QUERY);
 
-        }
+//        }
       
         buildViewRenderables();
         setupRenderables();
@@ -535,6 +537,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         Node baseNode = new Node();
 
+
+        // photo completable futures & renderables
+        ArrayList<CompletableFuture<ViewRenderable>> photoCompletables = PhotoComponent.getCompletableFutures();
+        PhotoComponent.buildViewRenderables(photoCompletables, this);
+
         entityLayout.setParent(baseNode);
 
         videoLayout = new VideoLayout(videoRenderable);
@@ -542,11 +549,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         noteLayout = new NoteLayout(NoteComponent.getEntityContentRenderable());
         noteLayout.setParent(baseNode);
-
-
-        // photo completable futures & renderables
-        ArrayList<CompletableFuture<ViewRenderable>> photoCompletables = PhotoComponent.getCompletableFutures();
-        PhotoComponent.buildViewRenderables(photoCompletables, this);
 
         // putting renderables in correct layout
         PhotoLayout.photoNodeSetUp(baseNode);
