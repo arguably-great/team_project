@@ -76,6 +76,9 @@ public class ModelComponent {
 
     public static void generateCompletableFuturesandModelRenderables(ArrayList<Config.Entity> entities, Context context){
 
+                //new HashMap<Config., ArrayList<CompletableFuture<ModelRenderable>> >();
+
+
         makePolyRequest(entities, context);
     }
 

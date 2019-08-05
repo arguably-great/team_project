@@ -25,8 +25,6 @@ public class PhotoLayout {
 
     public static void photoNodeSetUp(Node baseNode) {
 
-        Log.d(TAG, "in photonodesetup");
-
         if (ARActivity.photoClicked == true && photoNodes != null) {
 
             Log.d(TAG, "deleting nodes");
@@ -42,9 +40,6 @@ public class PhotoLayout {
             ARActivity.photoClicked = false;
 
         } else {
-
-
-            Log.d(TAG, "creating nodes");
 
             Log.d(TAG, "here are photonodes"+ photoNodes);
 
@@ -91,6 +86,7 @@ public class PhotoLayout {
                     node.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
                 }
             }
+
             ARActivity.photoClicked = true;
         }
 
