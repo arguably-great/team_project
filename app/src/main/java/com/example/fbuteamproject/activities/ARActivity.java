@@ -5,21 +5,16 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.graphics.SurfaceTexture;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -36,7 +31,6 @@ import com.example.fbuteamproject.layouts.EntityLayout;
 import com.example.fbuteamproject.layouts.NoteLayout;
 import com.example.fbuteamproject.layouts.PhotoLayout;
 import com.example.fbuteamproject.layouts.VideoLayout;
-import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
 import com.example.fbuteamproject.utils.FlickrApi.Api;
@@ -44,16 +38,7 @@ import com.example.fbuteamproject.utils.FlickrApi.Query;
 import com.example.fbuteamproject.utils.FlickrApi.SearchQuery;
 import com.example.fbuteamproject.utils.PhotoViewer;
 import com.example.fbuteamproject.wrappers.EntityWrapper;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.VideoListener;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
@@ -67,15 +52,11 @@ import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Node;
-import com.google.ar.sceneform.rendering.Color;
-import com.google.ar.sceneform.rendering.ExternalTexture;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,7 +66,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import static com.example.fbuteamproject.utils.DemoUtils.checkIsSupportedDeviceOrFinish;
 
@@ -101,21 +81,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
     private final int SPEECH_REQUEST_CODE = 100;
 
-    private Planet currPlanetSelected;
-
     private boolean installRequested;
-
-    @Nullable
-    private ModelRenderable videoRenderable;
-
-    private ViewRenderable planetTitlesRenderable;
-    private ViewRenderable planetContentsRenderable;
-
-    //Initialize ExoPlayer variables
-    private SimpleExoPlayer player;
-    private boolean playWhenReady;
-    private int currentWindow = 0;
-    private long playbackPosition = 0;
 
     private GestureDetector gestureDetector;
 
@@ -123,29 +89,19 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
     private Snackbar loadingMessageSnackbar;
 
-    public static boolean photoClicked = false;
-
     // True once scene is loaded
     private boolean hasFinishedLoading;
 
     // True once the scene has been placed.
     private boolean hasPlacedComponents;
 
-    // The color to filter out of the video.
-    private static final Color CHROMA_KEY_COLOR = new Color(0.1843f, 1.0f, 0.098f);
-    // Controls the height of the video in world space.
-    //Completable Futures for model renderables
-
-    CompletableFuture<ModelRenderable> venusStage;
-    CompletableFuture<ModelRenderable> jupiterStage;
-    CompletableFuture<ModelRenderable> videoStage;
-    ModelRenderable jupiterRenderable;
-
-    CompletableFuture<ViewRenderable> planetTitleStage;
-    CompletableFuture<ViewRenderable> planetContentsStage;
     private ArrayList<Config.Entity> appEntities;
-    private boolean hasTriedLoadingEntityRenderables;
 
+    //Video feature variables
+    private SimpleExoPlayer player;
+    @Nullable
+    private ModelRenderable videoRenderable;
+    private CompletableFuture<ModelRenderable> videoStage;
     private boolean hasPlayedVideo;
 
     private EntityWrapper currEntitySelected;
@@ -153,20 +109,15 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private VideoLayout videoLayout;
     private NoteLayout noteLayout;
 
-    private ViewRenderable entityContentRenderable;
+    //Photo Feature variables
+    public static boolean photoClicked = false;
 
-    // photo stuff
     private final QueryListener queryListener = new QueryListener();
     private List<com.example.fbuteamproject.utils.FlickrApi.Photo> currentPhotos = new ArrayList<>();
     private Query currentQuery;
     private final Set<PhotoViewer> photoViewers = new HashSet<>();
-    private static final String STATE_QUERY = "state_search_string";
     public static Query DEFAULT_QUERY = new SearchQuery("saturn planet");
     public static ArrayList<CompletableFuture<ViewRenderable>> completableFutures;
-
-    ArrayList<CompletableFuture<ViewRenderable>> photoCompletables;
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -186,7 +137,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         //find the sceneview
         arSceneView = findViewById(R.id.ar_scene_view);
 
-
+        //build video renderable
         videoStage = VideoComponent.buildVideoStage(this);
         videoRenderable = VideoComponent.buildModelRenderable(videoStage, this);
 
@@ -199,33 +150,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
       
         entityLayout = new EntityLayout();
 
-
         Api.get(this).registerSearchListener(queryListener);
-
-
-//        if (savedInstanceState != null) {
-//            Query savedQuery = savedInstanceState.getParcelable(STATE_QUERY);
-//            if (savedQuery != null) {
-//                executeQuery(savedQuery);
-//            }
-//        } else {
-            executeQuery(DEFAULT_QUERY);
-
-//        }
-      
-        buildViewRenderables();
-        setupRenderables();
+        executeQuery(DEFAULT_QUERY);
 
         currEntitySelected = new EntityWrapper();
         currEntitySelected.setListener(this);
-
-
-//        // TODO have photos set up on create
-//        // creating photo albums and stages
-//        album = PhotoComponent.buildAlbumPhotos(this);
-//        //Log.d(TAG, "here is the album "+ album);
-//        PhotoComponent.buildStages(album, this);
-
 
         // listeners and click
         setupGestureDetector();
@@ -370,70 +299,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
                         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void setupRenderables() {
-        CompletableFuture.allOf(
-                planetTitleStage,
-                planetContentsStage)
-                .handle(
-                        (notUsed, throwable) -> {
-                            if (throwable != null) {
-                                DemoUtils.displayError(this, "Unable to load renderable", throwable);
-                                return null;
-                            }
-                            try {
-                                planetTitlesRenderable = planetTitleStage.get();
-                                planetContentsRenderable = planetContentsStage.get();
 
-                                // Everything finished loading successfully.
-                                hasFinishedLoading = true;
-                            } catch (InterruptedException | ExecutionException ex) {
-                                DemoUtils.displayError(this, "Unable to load renderable", ex);
-                            }
-                            return null;
-                        });
-    }
-
-    /*@RequiresApi(api = Build.VERSION_CODES.N)
-    private void buildPlanetRenderables() {
-        venusStage =
-                ModelRenderable
-                .builder()
-                .setSource(this, Uri.parse("Venus_1241.sfb"))
-                .build();
-        jupiterStage =
-                ModelRenderable
-                        .builder()
-                        .setSource(this, Uri.parse("model.sfb"))
-                        .build();
-    }*/
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void buildVideoRenderable() {
-        videoStage =
-                ModelRenderable
-                        .builder()
-                        .setSource(this, R.raw.video_screen)
-                        .build();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void buildViewRenderables() {
-
-        planetTitleStage =
-                ViewRenderable
-                        .builder()
-                        .setView(this, R.layout.component_entity_title)
-                        .build();
-
-        planetContentsStage =
-                ViewRenderable
-                        .builder()
-                        .setView(this, R.layout.component_entity_contents)
-                        .build();
-
-
-    }
 
     @Override
     protected void onResume() {
@@ -479,18 +345,16 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         if (arSceneView != null) {
             arSceneView.pause();
         }
-        if (player != null) {
-            releasePlayer();
-        }
+
+        //TODO Activity lifecycle stuff (i.e. release player)
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        if (player != null) {
-            releasePlayer();
-        }
+        //TODO Activity lifecycle stuff (i.e. release player)
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -537,7 +401,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         Node baseNode = new Node();
 
-
         // photo completable futures & renderables
         ArrayList<CompletableFuture<ViewRenderable>> photoCompletables = PhotoComponent.getCompletableFutures();
         PhotoComponent.buildViewRenderables(photoCompletables, this);
@@ -559,231 +422,34 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         //Traverse through all of the Entities and assign their onTaps (basically just trigger listener)
         for(Config.Entity currEntity: appEntities){
-            currEntity.setOnTapListener(new Node.OnTapListener() {
-                @Override
-                public void onTap(HitTestResult hitTestResult, MotionEvent motionEvent) {
-                    if (currEntitySelected.getEntity() != currEntity){
-                        currEntitySelected.setEntity(currEntity);
-                    }
-                    else{
-                        Toast.makeText(ARActivity.this, "Tapped on the same Entity", Toast.LENGTH_SHORT).show();
-                    }
+            currEntity.setOnTapListener((hitTestResult, motionEvent) -> {
+                if (currEntitySelected.getEntity() != currEntity){
+                    currEntitySelected.setEntity(currEntity);
+                }
+                else{
+                    Toast.makeText(ARActivity.this, "Tapped on the same Entity", Toast.LENGTH_SHORT).show();
                 }
             });
         }
 
-        //TODO - Doing this just because the code below is not needed and this is TESTING
-            //TODO - BUT we also want to keep the code from before to understand what we were doing
-        if (true) {
-            return baseNode;
-        }
-
-        // putting renderables in correct layout
-        PhotoLayout.photoNodeSetUp(baseNode);
-
-
-        Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res), this );
-//        venusVisual.setRenderable(modelRenderables.get(0) );
-
-        Planet jupiterVisual = new Planet("Jupiter", "Jupiter is a god", getString(R.string.jupiter_res), this);
-        jupiterVisual.setRenderable(jupiterRenderable);
-
-
-        //TODO DUMMY CODE TO TEST FUNCTIONALITY OF VIDEOCOMPONENT
-        //Node videoNode = new Node();
-
-        Node planetContents = new Node();
-        planetContents.setRenderable(planetContentsRenderable);
-
-        View planetTitleView = planetTitlesRenderable.getView();
-        View planetContentView = planetContentsRenderable.getView();
-
         //Creating Intent for Speech-To-Text
-        planetContentView.setOnClickListener(new View.OnClickListener() {
-             @Override
-            public void onClick(View v) {
-                Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
+        noteLayout.getNoteRenderableView().setOnClickListener(v -> {
+           Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+           speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                   RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+           speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+           speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
 
-                try {
-                    startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
-                } catch (ActivityNotFoundException a) {
-                    Toast.makeText(getApplicationContext(),
-                            "Sorry your device not supported",
-                            Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
-        });
+           try {
+               startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
+           } catch (ActivityNotFoundException a) {
+               Toast.makeText(getApplicationContext(),
+                       "Sorry your device not supported",
+                       Toast.LENGTH_SHORT).show();
+           }
+       });
 
         return baseNode;
-    }
-
-
-    private void changePlanetScreenText(View nameView, View contentView, Planet currPlanet){
-
-        File currPlanetFile = currPlanet.getPlanetFile();
-
-        StringBuilder fileText = new StringBuilder();
-
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(currPlanetFile));
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                fileText.append(line);
-                fileText.append('\n');
-            }
-            br.close();
-        }
-        catch (IOException e) {
-            //You'll need to add proper error handling here
-            Log.e("SolarDebug", e.getLocalizedMessage() );
-        }
-
-        Log.d("FileDebug", fileText.toString() );
-
-        ( (TextView) contentView.findViewById(R.id.tvContents) ).setMovementMethod(new ScrollingMovementMethod() );
-
-        ( (TextView) contentView.findViewById(R.id.tvContents) ).setText(fileText.toString() );
-
-
-
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void playVideo(Planet planetVisual, ExternalTexture texture, Node videoNode) {
-
-        stopPlaying();
-
-        setupExoPlayer(texture, planetVisual.getPlanetVideoResID());
-
-        setVideoTexture(texture);
-
-        startExoPlayer(texture, videoNode);
-
-        videoNode.setOnTapListener((hitTestResult, motionEvent) -> {
-
-            if (player == null) {
-                Toast.makeText(this, "Video not found", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            player.setPlayWhenReady(!player.getPlayWhenReady());
-        });
-    }
-
-    private void setupExoPlayer(ExternalTexture texture, String videoResID) {
-
-        player = ExoPlayerFactory.newSimpleInstance(
-                new DefaultRenderersFactory(this),
-                new DefaultTrackSelector(), new DefaultLoadControl());
-
-        player.setVideoSurface(texture.getSurface());
-        player.setPlayWhenReady(playWhenReady);
-        player.seekTo(currentWindow, playbackPosition);
-
-        Uri uri = Uri.parse(videoResID);
-        MediaSource mediaSource = buildMediaSource(uri);
-        player.prepare(mediaSource, true, false);
-
-        player.addVideoListener(new VideoListener() {
-            @Override
-            public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-                Log.d(TAG, "play video listener video size changed");
-            }
-            @Override
-            public void onRenderedFirstFrame() {
-                Log.d(TAG,"play video listener render first frame");
-            }
-        });
-    }
-
-    private MediaSource buildMediaSource(Uri uri) {
-        return new ExtractorMediaSource.Factory(
-                new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "minerva"))).
-                createMediaSource(uri);
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void setVideoTexture(ExternalTexture texture) {
-
-        if (videoRenderable == null || videoRenderable.getMaterial() == null || texture == null) {
-            Toast.makeText(this, "Video not found", Toast.LENGTH_LONG).show();
-            return;
-        }
-            videoRenderable.getMaterial().setExternalTexture("videoTexture", texture);
-            videoRenderable.getMaterial().setFloat4("keyColor", CHROMA_KEY_COLOR);
-
-    }
-
-    private void startExoPlayer(ExternalTexture texture, Node video) {
-        if (!player.getPlayWhenReady()) {
-
-            player.setPlayWhenReady(true);
-
-            texture.getSurfaceTexture().setOnFrameAvailableListener(
-                        (SurfaceTexture surfaceTexture) -> {
-                            video.setRenderable(videoRenderable);
-                            texture.getSurfaceTexture().setOnFrameAvailableListener(null);
-                        });
-        } else {
-        video.setRenderable(videoRenderable);
-        }
-    }
-
-    public void pause(View v) {
-        if (player == null) {
-            Toast.makeText(this, "Video has been stopped", Toast.LENGTH_LONG).show();
-            return;
-        }
-        if (!player.getPlayWhenReady()) {
-            Toast.makeText(this, "Video has been paused", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        player.setPlayWhenReady(!player.getPlayWhenReady());
-    }
-
-    public void resume(View v) {
-
-        if (player == null) {
-            Toast.makeText(this,"Video is playing" , Toast.LENGTH_LONG).show();
-            return;
-        }
-        if (player.getPlayWhenReady()) {
-            Toast.makeText(this, "Video has been paused", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        player.setPlayWhenReady(true);
-    }
-
-
-    private void stopPlaying() {
-        releasePlayer();
-    }
-
-    private void releasePlayer() {
-        if (player == null) {
-            return;
-        }
-
-        playbackPosition = player.getCurrentPosition();
-        currentWindow = player.getCurrentWindowIndex();
-        playWhenReady = player.getPlayWhenReady();
-        player.release();
-        player = null;
-
-    }
-
-    public void stop(View v) {
-        stopPlaying();
     }
 
     private void hideLoadingMessage() {
@@ -815,8 +481,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
                 activity, new String[] {Manifest.permission.CAMERA}, ARActivity.RC_PERMISSIONS);
     }
 
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -824,11 +488,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             case SPEECH_REQUEST_CODE: {
                 if (resultCode == RESULT_OK && null != data) {
 
-                    File currPlanetFile = currPlanetSelected.getPlanetFile();
+                    File currEntityFile = currEntitySelected.getEntity().getEntityFile();
 
                     try {
 
-                        FileWriter fileWriter = new FileWriter( currPlanetFile, true);
+                        FileWriter fileWriter = new FileWriter(currEntityFile, true);
 
                         ArrayList<String> speechResult = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
