@@ -13,13 +13,9 @@ import androidx.annotation.RequiresApi;
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
@@ -39,11 +35,10 @@ public class VideoComponent {
 
     private static ModelRenderable videoRenderable;
     private static CompletableFuture<ModelRenderable> videoStage;
-    private static ExternalTexture texture;
 
     //Initialize ExoPlayer variables
     @SuppressLint("StaticFieldLeak")
-    private static SimpleExoPlayer player;
+    private static SimpleExoPlayer myPlayer;
     private static boolean playWhenReady;
     private static int currentWindow = 0;
     private static long playbackPosition = 0;
@@ -86,25 +81,10 @@ public class VideoComponent {
         return videoRenderable;
     }
 
-    public static void setUpVideo(Config.Entity currEntity, Node videoNode, Context context, boolean hasPlayedVideo) {
-
-        if (!hasPlayedVideo) {
-
-            // Create an ExternalTexture for displaying the contents of the video.
-            texture = new ExternalTexture();
-
-            player = ExoPlayerFactory.newSimpleInstance(
-                    new DefaultRenderersFactory(context),
-                    new DefaultTrackSelector(), new DefaultLoadControl());
-
-            player.setVideoSurface(texture.getSurface());
-        }
-
-        playVideo(texture, currEntity, videoNode, context);
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private static void playVideo(ExternalTexture texture, Config.Entity currEntity, Node videoNode, Context context) {
+    public static void playVideo(ExternalTexture texture, Config.Entity currEntity, Node videoNode, Context context, SimpleExoPlayer player) {
+
+        myPlayer = player;
 
         setupVideoSource(currEntity.getVideoURL(), context);
 
@@ -124,31 +104,32 @@ public class VideoComponent {
     }
 
     private static void releasePlayer() {
-        if (player == null) {
+        if (myPlayer == null) {
             return;
         }
 
-        playbackPosition = player.getCurrentPosition();
-        currentWindow = player.getCurrentWindowIndex();
-        playWhenReady = player.getPlayWhenReady();
+        playbackPosition = myPlayer.getCurrentPosition();
+        currentWindow = myPlayer.getCurrentWindowIndex();
+        playWhenReady = myPlayer.getPlayWhenReady();
 
     }
 
     private static void setupVideoSource(String videoResID, Context context) {
 
-        if (player == null) {
+        if (myPlayer == null) {
             Log.d(TAG, "Player not ready");
             return;
         }
 
-        player.setPlayWhenReady(playWhenReady);
-        player.seekTo(currentWindow, playbackPosition);
+        myPlayer.setPlayWhenReady(playWhenReady);
+        myPlayer.seekTo(currentWindow, playbackPosition);
 
         Uri uri = Uri.parse(videoResID);
         MediaSource mediaSource = buildMediaSource(uri, context);
-        player.prepare(mediaSource, true, false);
+        //player.seekTo(1);
+        myPlayer.prepare(mediaSource, true, false);
 
-        player.addVideoListener(new VideoListener() {
+        myPlayer.addVideoListener(new VideoListener() {
             @Override
             public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
                 Log.d(TAG, "play video listener video size changed");
@@ -181,14 +162,14 @@ public class VideoComponent {
 
     private static void startExoPlayer(ExternalTexture texture, Node video) {
 
-        if (player == null) {
+        if (myPlayer == null) {
             Log.d(TAG, "Player not ready");
             return;
         }
 
-        if (!player.getPlayWhenReady()) {
+        if (!myPlayer.getPlayWhenReady()) {
 
-            player.setPlayWhenReady(true);
+            myPlayer.setPlayWhenReady(true);
 
             texture.getSurfaceTexture().setOnFrameAvailableListener(
                     (SurfaceTexture surfaceTexture) -> {

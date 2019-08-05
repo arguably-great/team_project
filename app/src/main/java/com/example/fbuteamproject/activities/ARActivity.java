@@ -38,7 +38,11 @@ import com.example.fbuteamproject.utils.FlickrApi.Query;
 import com.example.fbuteamproject.utils.FlickrApi.SearchQuery;
 import com.example.fbuteamproject.utils.PhotoViewer;
 import com.example.fbuteamproject.wrappers.EntityWrapper;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
@@ -52,6 +56,7 @@ import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.rendering.ExternalTexture;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
@@ -98,11 +103,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private ArrayList<Config.Entity> appEntities;
 
     //Video feature variables
-    private SimpleExoPlayer player;
     @Nullable
     private ModelRenderable videoRenderable;
     private CompletableFuture<ModelRenderable> videoStage;
-    private boolean hasPlayedVideo;
+    private SimpleExoPlayer player;
+    private ExternalTexture texture;
 
     private EntityWrapper currEntitySelected;
     private EntityLayout entityLayout;
@@ -140,6 +145,14 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         //build video renderable
         videoStage = VideoComponent.buildVideoStage(this);
         videoRenderable = VideoComponent.buildModelRenderable(videoStage, this);
+        // Create an ExternalTexture for displaying the contents of the video.
+        texture = new ExternalTexture();
+
+        player = ExoPlayerFactory.newSimpleInstance(
+                new DefaultRenderersFactory(this),
+                new DefaultTrackSelector(), new DefaultLoadControl());
+
+        player.setVideoSurface(texture.getSurface());
 
         NoteComponent.buildContentRenderable(this);
 
@@ -419,7 +432,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         //This coming line should trigger the onEntityChanged method from the included interface
         currEntitySelected.setEntity(appEntities.get(0));
 
-
         //Traverse through all of the Entities and assign their onTaps (basically just trigger listener)
         for(Config.Entity currEntity: appEntities){
             currEntity.setOnTapListener((hitTestResult, motionEvent) -> {
@@ -517,8 +529,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     @Override
     public void onEntityChanged() {
         //TODO - This is where the components will be called and the Handler will be made and stuff
-        VideoComponent.setUpVideo(currEntitySelected.getEntity(), videoLayout.getVideoNode(),this, hasPlayedVideo);
-        hasPlayedVideo = true;
+        VideoComponent.playVideo(texture, currEntitySelected.getEntity(), videoLayout.getVideoNode(),this, player);
 
         if (NoteComponent.getHasLoadedContentRenderable() ) {
             NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());

@@ -53,8 +53,6 @@ public class ModelComponent {
 
             Config.Entity currentEntity = entities.get(i);
 
-            //String currentEntityName = entities.get(i).getEntityName();
-
             // Request the asset from the Poly API.
             Log.d(TAG, "Requesting asset "+ currentEntity.getEntityName());
 
@@ -149,7 +147,7 @@ public class ModelComponent {
     private static void parseAsset(byte[] assetData, Context context, Config.Entity currentEntity) {
         Log.d(TAG, "Got asset response (" + assetData.length + " bytes). Parsing.");
         String assetBody = new String(assetData, Charset.forName("UTF-8"));
-        Log.d(TAG, assetBody);
+        //Log.d(TAG, assetBody);
         try {
             JSONObject response = new JSONObject(assetBody);
             String displayName = response.getString("displayName");
