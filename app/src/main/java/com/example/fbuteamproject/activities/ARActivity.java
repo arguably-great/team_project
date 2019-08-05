@@ -201,17 +201,9 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
 
         Api.get(this).registerSearchListener(queryListener);
+        executeQuery(DEFAULT_QUERY);
 
 
-//        if (savedInstanceState != null) {
-//            Query savedQuery = savedInstanceState.getParcelable(STATE_QUERY);
-//            if (savedQuery != null) {
-//                executeQuery(savedQuery);
-//            }
-//        } else {
-            executeQuery(DEFAULT_QUERY);
-
-//        }
       
         buildViewRenderables();
         setupRenderables();
@@ -277,6 +269,8 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
                 Glide.with(ARActivity.this).load(currentPhotos.get(i)).apply(new RequestOptions()
                         .placeholder(R.mipmap.ic_launcher)
                         .fitCenter().override(1000, 1000)).into(iv);
+
+                Log.d(TAG, "onSearchCompleted: "+ currentPhotos.get(i));
 
                 photoStage = ViewRenderable.builder().setView(ARActivity.this, iv).build();
 
@@ -537,7 +531,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         Node baseNode = new Node();
 
-
         // photo completable futures & renderables
         ArrayList<CompletableFuture<ViewRenderable>> photoCompletables = PhotoComponent.getCompletableFutures();
         PhotoComponent.buildViewRenderables(photoCompletables, this);
@@ -577,9 +570,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         if (true) {
             return baseNode;
         }
-
-        // putting renderables in correct layout
-        PhotoLayout.photoNodeSetUp(baseNode);
 
 
         Planet venusVisual = new Planet("Venus", "Venus is a goddess", getString(R.string.venus_res), this );
@@ -855,6 +845,14 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         //TODO - This is where the components will be called and the Handler will be made and stuff
         VideoComponent.setUpVideo(currEntitySelected.getEntity(), videoLayout.getVideoNode(),this, hasPlayedVideo);
         hasPlayedVideo = true;
+
+        Api.get(this).registerSearchListener(queryListener);
+
+        DEFAULT_QUERY = new SearchQuery(currEntitySelected.getEntity().getEntityName());
+        Log.d(TAG, "onEntityChanged: "+ currEntitySelected.getEntity().getEntityName());
+
+        executeQuery(DEFAULT_QUERY);
+
 
         if (NoteComponent.getHasLoadedContentRenderable() ) {
             NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
