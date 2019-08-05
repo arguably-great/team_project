@@ -28,7 +28,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 public class ModelComponent {
 
@@ -76,9 +75,6 @@ public class ModelComponent {
 
     public static void generateCompletableFuturesandModelRenderables(ArrayList<Config.Entity> entities, Context context){
 
-                //new HashMap<Config., ArrayList<CompletableFuture<ModelRenderable>> >();
-
-
         makePolyRequest(entities, context);
     }
 
@@ -110,18 +106,15 @@ public class ModelComponent {
 
         currentEntity.setEntityStage(modelStage);
 
-        modelStage.thenApply(new Function<ModelRenderable, Object>() {
-            @Override
-            public Object apply(ModelRenderable modelRenderable) {
+        modelStage.thenApply(modelRenderable -> {
 
-                buildModelRenderable(currentEntity, context);
-                count--;
-                Log.d("COUNT", "Count Decremented to: " + count);
-                if (count == 0) {
-                    listener.startNodeCreation(Config.AppConfig.getAppConfig(context).entities);
-                }
-                return null;
+            buildModelRenderable(currentEntity, context);
+            count--;
+            Log.d("COUNT", "Count Decremented to: " + count);
+            if (count == 0) {
+                listener.startNodeCreation(Config.AppConfig.getAppConfig(context).entities);
             }
+            return null;
         });
 
         Log.d("COUNT", "Count Decremented to: " + count);
@@ -130,11 +123,9 @@ public class ModelComponent {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static void buildModelRenderable(Config.Entity currentEntity, Context context) {
 
-        Config.Entity currEntity = currentEntity;
+        CompletableFuture<ModelRenderable> currEntityStage = currentEntity.getEntityStage();
 
-        CompletableFuture<ModelRenderable> currEntityStage = currEntity.getEntityStage();
-
-        currEntity.getEntityStage().handle(
+        currentEntity.getEntityStage().handle(
                 (notUsed, throwable) -> {
                     if (throwable != null) {
                         DemoUtils.displayError(context, "Unable to load renderable", throwable);
@@ -143,7 +134,7 @@ public class ModelComponent {
                     try {
                         //get it from the completablefuture
                         modelRenderable = currEntityStage.get();
-                        currEntity.setEntityModel(modelRenderable);
+                        currentEntity.setEntityModel(modelRenderable);
 
                     } catch (InterruptedException | ExecutionException ex) {
                         DemoUtils.displayError(context, "Unable to load renderable", ex);

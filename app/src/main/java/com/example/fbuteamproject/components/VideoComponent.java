@@ -1,5 +1,6 @@
 package com.example.fbuteamproject.components;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
@@ -41,6 +42,7 @@ public class VideoComponent {
     private static ExternalTexture texture;
 
     //Initialize ExoPlayer variables
+    @SuppressLint("StaticFieldLeak")
     private static SimpleExoPlayer player;
     private static boolean playWhenReady;
     private static int currentWindow = 0;
@@ -48,8 +50,6 @@ public class VideoComponent {
 
     // The color to filter out of the video.
     private static final Color CHROMA_KEY_COLOR = new Color(0.1843f, 1.0f, 0.098f);
-    // Controls the height of the video in world space.
-    private static final float VIDEO_HEIGHT_METERS = 0.7f;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static CompletableFuture<ModelRenderable> buildVideoStage(Context context) {
@@ -104,7 +104,7 @@ public class VideoComponent {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public static void playVideo(ExternalTexture texture, Config.Entity currEntity, Node videoNode, Context context) {
+    private static void playVideo(ExternalTexture texture, Config.Entity currEntity, Node videoNode, Context context) {
 
         setupVideoSource(currEntity.getVideoURL(), context);
 
@@ -121,10 +121,6 @@ public class VideoComponent {
 
             player.setPlayWhenReady(!player.getPlayWhenReady());
         });
-    }
-
-    private static void stopPlaying() {
-        releasePlayer();
     }
 
     private static void releasePlayer() {

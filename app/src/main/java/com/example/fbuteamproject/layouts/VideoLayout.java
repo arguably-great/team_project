@@ -28,7 +28,7 @@ public class VideoLayout extends Node {
 
     }
 
-    public void createVideoNode(ModelRenderable videoRenderable) {
+    private void createVideoNode(ModelRenderable videoRenderable) {
         videoNode.setParent(this);
         videoNode.setRenderable(videoRenderable);
         videoNode.setLocalPosition(VIDEO_LOCATION_VECTOR);
