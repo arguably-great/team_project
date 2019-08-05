@@ -106,9 +106,7 @@ public class VideoComponent {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static void playVideo(ExternalTexture texture, Config.Entity currEntity, Node videoNode, Context context) {
 
-        //stopPlaying();
-
-        setupVideoSourcePlayer(currEntity.getVideoURL(), context);
+        setupVideoSource(currEntity.getVideoURL(), context);
 
         setVideoTexture(texture, context);
 
@@ -137,12 +135,10 @@ public class VideoComponent {
         playbackPosition = player.getCurrentPosition();
         currentWindow = player.getCurrentWindowIndex();
         playWhenReady = player.getPlayWhenReady();
-        //player.release();
-        //player = null;
 
     }
 
-    private static void setupVideoSourcePlayer(String videoResID, Context context) {
+    private static void setupVideoSource(String videoResID, Context context) {
 
         if (player == null) {
             Log.d(TAG, "Player not ready");
