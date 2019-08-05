@@ -88,6 +88,9 @@ public class ModelComponent {
         //initialize completableFutures list that will hold the stages
         completableFutures = new ArrayList<>();
 
+                //new HashMap<Config., ArrayList<CompletableFuture<ModelRenderable>> >();
+
+
         makePolyRequest(entities, context);
     }
 

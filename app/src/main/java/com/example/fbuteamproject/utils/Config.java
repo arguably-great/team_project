@@ -91,8 +91,9 @@ public class Config {
         //planetConfig.entities.add(new Entity("Mercury", "7piUT6FHGKJ", "Dummyletto"));
         //planetConfig.entities.add(new Entity("Mercury", "5ovHBezIGyZ", "Dummyletto"));
 
-
     }
+
+
 
 
 }

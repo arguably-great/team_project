@@ -573,9 +573,7 @@ public class ARActivity extends AppCompatActivity {
             }
         });
 
-
         //setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView, videoNode);
-        //return videoNode;
 
         return baseNode;
     }
