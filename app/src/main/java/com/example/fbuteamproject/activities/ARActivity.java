@@ -1,6 +1,7 @@
 package com.example.fbuteamproject.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -17,12 +18,15 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.NoteComponent;
@@ -32,10 +36,13 @@ import com.example.fbuteamproject.layouts.EntityLayout;
 import com.example.fbuteamproject.layouts.NoteLayout;
 import com.example.fbuteamproject.layouts.PhotoLayout;
 import com.example.fbuteamproject.layouts.VideoLayout;
-import com.example.fbuteamproject.models.Photo;
 import com.example.fbuteamproject.models.Planet;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
+import com.example.fbuteamproject.utils.FlickrApi.Api;
+import com.example.fbuteamproject.utils.FlickrApi.Query;
+import com.example.fbuteamproject.utils.FlickrApi.SearchQuery;
+import com.example.fbuteamproject.utils.PhotoViewer;
 import com.example.fbuteamproject.wrappers.EntityWrapper;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -72,7 +79,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -144,9 +155,15 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
     private ViewRenderable entityContentRenderable;
 
-    private ArrayList<ModelRenderable> myRenderables;
+    // photo stuff
+    private final QueryListener queryListener = new QueryListener();
+    private List<com.example.fbuteamproject.utils.FlickrApi.Photo> currentPhotos = new ArrayList<>();
+    private Query currentQuery;
+    private final Set<PhotoViewer> photoViewers = new HashSet<>();
+    private static final String STATE_QUERY = "state_search_string";
+    private static final Query DEFAULT_QUERY = new SearchQuery("Earth");
+    public static ArrayList<CompletableFuture<ViewRenderable>> completableFutures;
 
-    ArrayList<Photo> album;
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -179,6 +196,20 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         Log.d("CONTEXT", Config.AppConfig.getContext().toString() );
       
         entityLayout = new EntityLayout();
+
+
+        Api.get(this).registerSearchListener(queryListener);
+
+
+        if (savedInstanceState != null) {
+            Query savedQuery = savedInstanceState.getParcelable(STATE_QUERY);
+            if (savedQuery != null) {
+                executeQuery(savedQuery);
+            }
+        } else {
+            executeQuery(DEFAULT_QUERY);
+
+        }
       
         buildViewRenderables();
         setupRenderables();
@@ -187,12 +218,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         currEntitySelected.setListener(this);
 
 
-        // TODO have photos set up on create
-        // creating photo albums and stages
-        album = PhotoComponent.buildAlbumPhotos(this);
-        //Log.d(TAG, "here is the album "+ album);
-        PhotoComponent.buildStages(album, this);
-
+//        // TODO have photos set up on create
+//        // creating photo albums and stages
+//        album = PhotoComponent.buildAlbumPhotos(this);
+//        //Log.d(TAG, "here is the album "+ album);
+//        PhotoComponent.buildStages(album, this);
 
 
         // listeners and click
@@ -203,6 +233,73 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         // Lastly request CAMERA permission which is required by ARCore.
         requestCameraPermission(this);
 
+    }
+
+
+    private void executeQuery(Query query) {
+        currentQuery = query;
+        if (query == null) {
+            queryListener.onSearchCompleted(null, Collections.emptyList());
+            return;
+        }
+
+        Api.get(this).query(currentQuery);
+
+    }
+
+    public class QueryListener implements Api.QueryListener {
+        @Override
+        public void onSearchCompleted(Query query, List<com.example.fbuteamproject.utils.FlickrApi.Photo> photos) {
+            if (!isCurrentQuery(query)) {
+                return;
+            }
+
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
+                Log.d(TAG, "Search completed, got " + photos.size() + " results");
+            }
+
+            for (PhotoViewer viewer : photoViewers) {
+                viewer.onPhotosUpdated(photos);
+            }
+            currentPhotos = photos;
+
+            completableFutures = new ArrayList<>();
+
+            for (int i = 0; i < 6; i++) {
+
+                CompletableFuture<ViewRenderable> photoStage;
+
+                ImageView iv = new ImageView(ARActivity.this);
+
+
+                Glide.with(ARActivity.this).load(currentPhotos.get(i)).apply(new RequestOptions()
+                        .placeholder(R.mipmap.ic_launcher)
+                        .fitCenter().override(1000, 1000)).into(iv);
+
+                photoStage = ViewRenderable.builder().setView(ARActivity.this, iv).build();
+
+                completableFutures.add(photoStage);
+            }
+
+            Log.d(TAG, "on SearchCompleted: "+currentPhotos);
+        }
+
+        private boolean isCurrentQuery(Query query) {
+            return currentQuery != null && currentQuery.equals(query);
+        }
+
+        @SuppressLint("StringFormatInvalid")
+        @Override
+        public void onSearchFailed(Query query, Exception e) {
+            if (!isCurrentQuery(query)) {
+                return;
+            }
+
+            if (Log.isLoggable(TAG, Log.ERROR)) {
+                Log.e(TAG, "Search failed", e);
+            }
+
+        }
     }
 
     private void setupOnUpdateListener() {
@@ -397,43 +494,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void onSingleTap(MotionEvent tap) {
 
-//        if (!hasFinishedLoading && !NoteComponent.getHasLoadedContentRenderable()) {
-//            // We can't do anything yet.
-//            return;
-//        }
-//
-//        Log.d(TAG, "Current size of completableFutures: " + ModelComponent.GetFuturesSize());
-//
-//        Log.d(TAG, "Printing completable Futures");
-//
-//        if (ModelComponent.GetFuturesSize() == appEntities.size()) {
-//
-//            ArrayList<CompletableFuture<ModelRenderable>> myCompFutures = ModelComponent.getCompletableFutures();
-//
-//            for (int i = 0; i < ModelComponent.GetFuturesSize(); i++) {
-//
-//                Log.d(TAG, "My completable future" + myCompFutures.get(i));
-//            }
-//        }
-//
-//        myRenderables = ModelComponent.buildModelRenderables(ModelComponent.getCompletableFutures(), this);
-//
-//        for (int i = 0; i < myRenderables.size(); i++) {
-//            Log.d(TAG, "Printing model renderable" + myRenderables.get(i));
-//        }
-//
-//        if (!hasFinishedLoading) {
-//            // We can't do anything yet.
-//            return;
-//        }
-//
-//        Frame frame = arSceneView.getArFrame();
-//        if (frame != null) {
-//            if (!hasPlacedComponents && tryPlaceComponents(tap, frame)) {
-//                hasPlacedComponents = true;
-//            }
-//        }
-//    }
         ModelComponent.generateCompletableFuturesandModelRenderables(appEntities, this);
 
         Frame frame = arSceneView.getArFrame();
@@ -482,6 +542,14 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         noteLayout = new NoteLayout(NoteComponent.getEntityContentRenderable());
         noteLayout.setParent(baseNode);
+
+
+        // photo completable futures & renderables
+        ArrayList<CompletableFuture<ViewRenderable>> photoCompletables = PhotoComponent.getCompletableFutures();
+        PhotoComponent.buildViewRenderables(photoCompletables, this);
+
+        // putting renderables in correct layout
+        PhotoLayout.photoNodeSetUp(baseNode);
 
         //This coming line should trigger the onEntityChanged method from the included interface
         currEntitySelected.setEntity(appEntities.get(0));
@@ -550,60 +618,9 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             }
         });
 
-        //setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView, videoNode);
-
         return baseNode;
     }
 
-
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void setupPlanetTapListenerVideo(Planet venusVisual, Planet jupiterVisual, Node baseNode, View planetTitleView, View planetContentView, Node videoNode) {
-
-        // Create an ExternalTexture for displaying the contents of the video.
-        ExternalTexture texture = new ExternalTexture();
-
-
-        venusVisual.setOnTapListener((hitTestResult, motionEvent) -> {
-            currPlanetSelected = venusVisual;
-
-
-            playVideo(venusVisual, texture, videoNode);
-            changePlanetScreenText(planetTitleView, planetContentView, venusVisual);
-
-            // more photo testing
-//            Log.d(TAG, "PhotoComponent view renderables" + PhotoComponent.viewRenderables.size());
-//            Log.d(TAG, "setupPlanetTapListenerVideo: "+ album);
-//            PhotoComponent.buildStages(album, this);
-
-
-            // TODO have photo layout done on entity tap
-
-            ArrayList<CompletableFuture<ViewRenderable>> photoCompletables = PhotoComponent.getCompletableFutures();
-            PhotoComponent.buildViewRenderables(photoCompletables, this);
-
-            // putting renderables in correct layout
-            PhotoLayout.photoNodeSetUp(baseNode);
-
-
-        });
-
-        jupiterVisual.setOnTapListener((hitTestResult, motionEvent) -> {
-            currPlanetSelected = jupiterVisual;
-
-
-            playVideo(jupiterVisual, texture, videoNode);
-
-
-            changePlanetScreenText(planetTitleView, planetContentView, jupiterVisual);
-
-//            createPhotoNodes(jupiterRenderable1, jupiterRenderable2, jupiterRenderable3, jupiterRenderable4,
-//                    jupiterRenderable5, jupiterRenderable6, baseNode);
-
-
-        });
-
-    }
 
     private void changePlanetScreenText(View nameView, View contentView, Planet currPlanet){
 
@@ -840,5 +857,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         if (NoteComponent.getHasLoadedContentRenderable() ) {
             NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
         }
+
+
     }
 }
