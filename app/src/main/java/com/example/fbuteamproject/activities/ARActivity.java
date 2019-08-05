@@ -167,7 +167,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         //find the sceneview
         arSceneView = findViewById(R.id.ar_scene_view);
 
-
         videoStage = VideoComponent.buildVideoStage(this);
         videoRenderable = VideoComponent.buildModelRenderable(videoStage, this);
 
@@ -835,7 +834,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
     @Override
     public void onEntityChanged() {
-        //TODO - This is where the components will be called and the Handler will be made and stuff
+
         VideoComponent.setUpVideo(currEntitySelected.getEntity(), videoLayout.getVideoNode(),this, hasPlayedVideo);
         hasPlayedVideo = true;
 
