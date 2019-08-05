@@ -3,6 +3,7 @@ package com.example.fbuteamproject.layouts;
 import android.view.View;
 
 import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
@@ -32,11 +33,13 @@ public class NoteLayout extends Node {
 
     }
 
-    public void createVideoNode(ViewRenderable noteRenderable) {
+    private void createVideoNode(ViewRenderable noteRenderable) {
         noteNode.setParent(this);
         noteNode.setRenderable(noteRenderable);
         noteNode.setLocalPosition(NOTE_LOCATION_VECTOR);
         noteNode.setLocalScale(NOTE_SCALE_VECTOR);
+
+        noteNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1.0f,0.0f,0.0f), -45f) );
 
     }
 
