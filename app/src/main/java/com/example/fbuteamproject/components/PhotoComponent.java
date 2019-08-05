@@ -46,6 +46,7 @@ public class PhotoComponent {
         }
 
         Log.d(TAG, "buildVenusPhotos: "+ photoViews);
+
 //        buildStages(photoViews, context);
 
         return photoViews;
@@ -74,7 +75,7 @@ public class PhotoComponent {
 
         for (int i = 0; i <= 6 || i < photosAlbum.size(); i++) {
 
-            Log.d(TAG, "buildStages: "+photosAlbum.get(i));
+            Log.d(TAG, "buildStages: " +photosAlbum.get(i));
 
             //create completable future for the entity
             CompletableFuture<ViewRenderable> photoStage;

@@ -146,6 +146,7 @@ public class Config {
 
     static {
         planetConfig = new AppConfig();
+
       
         planetConfig.entities.add(new Entity("Earth", "88CP80Kgb-u",
                 "https://pmdvod.nationalgeographic.com/NG_Video/596/311/1370718787631_1542234923394_1370715715931_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
@@ -167,7 +168,10 @@ public class Config {
         animalConfig.entities.add(new Entity("Wolf", "46bXrRt8pFF","http://fng-ads.fox.com/fw_ads/content/m/1/116450/80/5185488/NATGEO_WLS3_PROMO_HD_MASTER_1288593_435.mp4"));
         animalConfig.entities.add(new Entity("Tiger", "54KLm0HdFWy","http://fng-ads.fox.com/fw_ads/content/m/1/116450/80/5185488/NATGEO_WLS3_PROMO_HD_MASTER_1288593_435.mp4"));
         animalConfig.entities.add(new Entity("SquirrelMonkey", "8J_6QDW6au1","http://fng-ads.fox.com/fw_ads/content/m/1/116450/80/5185488/NATGEO_WLS3_PROMO_HD_MASTER_1288593_435.mp4"));*/
+
     }
+
+
 
 
 }

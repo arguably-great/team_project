@@ -550,9 +550,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             }
         });
 
-
         //setupPlanetTapListenerVideo(venusVisual, jupiterVisual, base, planetTitleView, planetContentView, videoNode);
-        //return videoNode;
 
         return baseNode;
     }
