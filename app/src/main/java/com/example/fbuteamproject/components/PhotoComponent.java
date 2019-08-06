@@ -25,14 +25,12 @@ public class PhotoComponent {
     private static ArrayList<AtomicBoolean> hasLoaded;
 
 
-    public static ArrayList<ViewRenderable> buildViewRenderables(ArrayList<CompletableFuture<ViewRenderable>> completableFutures, Context context) {
+    public static void buildViewRenderables(ArrayList<CompletableFuture<ViewRenderable>> completableFutures, Context context) {
 
         viewRenderables = new ArrayList<>();
 
-//        Log.d(TAG, completableFutures.toString());
-
         // get stages for view renderables
-        for (int i = 0; i < ARActivity.completableFutures.size(); i++) {
+        for (int i = 0; i < 6; i++) {
 
             final int stage = i;
             // handling each completable future in array
@@ -50,19 +48,21 @@ public class PhotoComponent {
                         }
                         return null;
                     });
+
+            ARActivity.loadPhotoCount--;
+            Log.d("COUNT", "Photo count Decremented to: " + ARActivity.loadPhotoCount);
             viewRenderables.add(viewRenderable);
+
+
         }
 
-        for (int i = 0; i < viewRenderables.size(); i++) {
-            Log.d(TAG, "Printing model renderable" + viewRenderable);
-            Log.d(TAG, "Model renderables size is " + viewRenderables.size());
-        }
-
-        return viewRenderables;
     }
 
     public static ArrayList<CompletableFuture<ViewRenderable>> getCompletableFutures() {
         return completableFutures;
     }
+
+
+
 
 }
