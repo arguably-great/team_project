@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -114,11 +115,12 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     //Photo Feature variables
     public static boolean photoClicked = false;
 
-    private final QueryListener queryListener = new QueryListener();
+    private final QueryListener queryListener = new QueryListener(ARActivity.this);
     private List<com.example.fbuteamproject.utils.FlickrApi.Photo> currentPhotos = new ArrayList<>();
     private Query currentQuery;
     private final Set<PhotoViewer> photoViewers = new HashSet<>();
     public static Query DEFAULT_QUERY = new SearchQuery("earth planet");
+    public static Query newQuery;
     public static ArrayList<CompletableFuture<ViewRenderable>> completableFutures;
     private int photoCount = 0;
     ArrayList<Node> photoNodes;
@@ -154,6 +156,8 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
       
         entityLayout = new EntityLayout();
 
+
+        // TODO default search so that view renderables are not null, move to entity create
         Api.get(this).registerSearchListener(queryListener);
         executeQuery(DEFAULT_QUERY);
 
@@ -184,6 +188,14 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     }
 
     public class QueryListener implements Api.QueryListener {
+
+
+        Context context;
+
+        public QueryListener(Context context) {
+            this.context = context;
+        }
+
         @Override
         public void onSearchCompleted(Query query, List<com.example.fbuteamproject.utils.FlickrApi.Photo> photos) {
             if (!isCurrentQuery(query)) {
@@ -199,25 +211,28 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             }
             currentPhotos = photos;
 
-            completableFutures = new ArrayList<>();
+            if (currentPhotos.size() > 1) {
 
-            for (int i = 0; i < 6; i++) {
+                completableFutures = new ArrayList<>();
 
-                CompletableFuture<ViewRenderable> photoStage;
+                for (int i = 0; i < 6; i++) {
 
-                ImageView iv = new ImageView(ARActivity.this);
+                    Log.d(TAG, "on SearchCompleted: "+i);
 
-                Glide.with(ARActivity.this).load(currentPhotos.get(i)).apply(new RequestOptions()
-                        .placeholder(R.mipmap.ic_launcher)
-                        .fitCenter().override(1000, 1000)).into(iv);
+                    CompletableFuture<ViewRenderable> photoStage;
+                    ImageView iv = new ImageView(context);
 
-                photoStage = ViewRenderable.builder().setView(ARActivity.this, iv).build();
+                    Glide.with(context).load(currentPhotos.get(i)).apply(new RequestOptions()
+                            .placeholder(R.mipmap.ic_launcher)
+                            .fitCenter().override(1000, 1000)).into(iv);
 
-                completableFutures.add(photoStage);
+                    photoStage = ViewRenderable.builder().setView(context, iv).build();
 
-                loadPhotoCount++;
+                    completableFutures.add(photoStage);
 
-                Log.d(TAG, "on SearchCompleted: "+i);
+                    loadPhotoCount++;
+
+                }
             }
 
         }
@@ -529,7 +544,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         VideoComponent.setUpVideo(currEntitySelected.getEntity(), videoLayout.getVideoNode(),this, hasPlayedVideo);
         hasPlayedVideo = true;
 
-        DEFAULT_QUERY = new SearchQuery(currEntitySelected.getEntity().getEntityName() + "planet");
+        newQuery = new SearchQuery(currEntitySelected.getEntity().getEntityName() + "planet");
         Log.d(TAG, "onEntityChanged: "+ currEntitySelected.getEntity().getEntityName());
 
         if (photoCount != 0) {
@@ -539,7 +554,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         photoCount++;
 
         Api.get(this).registerSearchListener(queryListener);
-        executeQuery(DEFAULT_QUERY);
+        executeQuery(newQuery);
 
         // photo completable futures & renderables
         ArrayList<CompletableFuture<ViewRenderable>> photoCompletables = PhotoComponent.getCompletableFutures();
