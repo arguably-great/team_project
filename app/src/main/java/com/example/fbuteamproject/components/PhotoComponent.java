@@ -3,6 +3,7 @@ package com.example.fbuteamproject.components;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.fbuteamproject.activities.ARActivity;
 import com.example.fbuteamproject.utils.DemoUtils;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
@@ -47,7 +48,12 @@ public class PhotoComponent {
                         }
                         return null;
                     });
+
+            ARActivity.loadPhotoCount--;
+            Log.d("COUNT", "Photo count Decremented to: " + ARActivity.loadPhotoCount);
             viewRenderables.add(viewRenderable);
+
+
         }
 
         for (int i = 0; i < viewRenderables.size(); i++) {
