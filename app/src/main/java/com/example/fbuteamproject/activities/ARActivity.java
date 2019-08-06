@@ -205,7 +205,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         Context context;
 
-        public QueryListener(Context context) {
+        private QueryListener(Context context) {
             this.context = context;
         }
 
@@ -562,7 +562,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         }
         photoCount++;
 
-        Api.get(this).registerSearchListener(queryListener);
         executeQuery(newQuery);
 
         // photo completable futures & renderables
@@ -571,13 +570,13 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         Log.d(TAG, "onEntityChanged: " + photoClicked);
 
-        if (ARActivity.photoClicked == true && photoNodes != null) {
-            Log.d(TAG, "deleting nodes");
-            for (int i = 0; i < photoNodes.size(); i++) {
-                Log.d(TAG, "Removing nodes" + photoNodes.get(i));
-                photoNodes.get(i).setRenderable(null);
-            }
-        }
+//        if (ARActivity.photoClicked == true && photoNodes != null) {
+//            Log.d(TAG, "deleting nodes");
+//            for (int i = 0; i < photoNodes.size(); i++) {
+//                Log.d(TAG, "Removing nodes" + photoNodes.get(i));
+//                photoNodes.get(i).setRenderable(null);
+//            }
+//        }
 
         for (int i = 0; i < photoNodes.size(); i++) {
             photoNodes.get(i).setRenderable(PhotoComponent.viewRenderables.get(i));
