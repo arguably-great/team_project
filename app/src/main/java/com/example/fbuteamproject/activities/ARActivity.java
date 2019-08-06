@@ -127,7 +127,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private final Set<PhotoViewer> photoViewers = new HashSet<>();
     public static Query DEFAULT_QUERY = new SearchQuery("earth planet");
     public static Query newQuery;
-    public static ArrayList<CompletableFuture<ViewRenderable>> completableFutures;
+   // public static ArrayList<CompletableFuture<ViewRenderable>> completableFutures;
     private int photoCount = 0;
     ArrayList<Node> photoNodes;
 
@@ -173,7 +173,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         // TODO default search so that view renderables are not null, move to entity create
         Api.get(this).registerSearchListener(queryListener);
-        executeQuery(DEFAULT_QUERY);
 
 
         currEntitySelected = new EntityWrapper();
@@ -198,11 +197,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         }
 
         Api.get(this).query(currentQuery);
+        Log.d(TAG, "LISTENING TO QUERY");
 
     }
 
     public class QueryListener implements Api.QueryListener {
-
 
         Context context;
 
@@ -212,6 +211,9 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         @Override
         public void onSearchCompleted(Query query, List<com.example.fbuteamproject.utils.FlickrApi.Photo> photos) {
+
+            Log.d(TAG, "GOT QUERY");
+
             if (!isCurrentQuery(query)) {
                 return;
             }
@@ -225,9 +227,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             }
             currentPhotos = photos;
 
-            if (currentPhotos.size() > 1) {
-
-                completableFutures = new ArrayList<>();
+            if (currentPhotos.size() > 6) {
 
                 for (int i = 0; i < 6; i++) {
 
@@ -242,9 +242,32 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
                     photoStage = ViewRenderable.builder().setView(context, iv).build();
 
-                    completableFutures.add(photoStage);
-
                     loadPhotoCount++;
+
+                    Log.d(TAG, "Current photo count is " + loadPhotoCount);
+
+                    //TODO check if any variable is nullable
+
+                    photoStage.thenApply(viewRenderable -> {
+
+                        Log.d(TAG, "OUR ENTITY IS " + currEntitySelected.getEntity());
+
+                        PhotoComponent.buildViewRenderable(photoStage, context, currEntitySelected.getEntity());
+
+                        loadPhotoCount--;
+                        Log.d(TAG, "Current photo count is " + loadPhotoCount);
+
+                        if(loadPhotoCount == 0) {
+
+                            ArrayList<ViewRenderable> myViews = currEntitySelected.getEntity().getEntityPhotos();
+
+                            Log.d(TAG, "ENTITY PHOTOS ARE " + myViews);
+
+                            //TODO LAYOUT PHOTOS
+                        }
+
+                        return null;
+                    });
 
                 }
             }
@@ -448,10 +471,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         Node baseNode = new Node();
 
-        // photo completable futures & renderables
-        ArrayList<CompletableFuture<ViewRenderable>> photoCompletables = PhotoComponent.getCompletableFutures();
-        PhotoComponent.buildViewRenderables(photoCompletables, this);
-
         entityLayout.setParent(baseNode);
 
         videoLayout = new VideoLayout(videoRenderable);
@@ -568,19 +587,13 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         newQuery = new SearchQuery(currEntitySelected.getEntity().getEntityName() + "planet");
         Log.d(TAG, "onEntityChanged: "+ currEntitySelected.getEntity().getEntityName());
 
-        if (photoCount != 0) {
-            photoClicked = true;
-
-        }
-        photoCount++;
+        //TODO CHECK IF THE ENTITY HAS ALREADY BEEN TAPPED
 
         executeQuery(newQuery);
 
-        // photo completable futures & renderables
-        ArrayList<CompletableFuture<ViewRenderable>> photoCompletables = PhotoComponent.getCompletableFutures();
-        PhotoComponent.buildViewRenderables(photoCompletables, this);
+        Log.d(TAG, "EXECUTING QUERY");
 
-        Log.d(TAG, "onEntityChanged: " + photoClicked);
+        //Log.d(TAG, "onEntityChanged: " + photoClicked);
 
 //        if (ARActivity.photoClicked == true && photoNodes != null) {
 //            Log.d(TAG, "deleting nodes");
@@ -590,10 +603,10 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 //            }
 //        }
 
-        for (int i = 0; i < photoNodes.size(); i++) {
+        /*for (int i = 0; i < photoNodes.size(); i++) {
             photoNodes.get(i).setRenderable(PhotoComponent.viewRenderables.get(i));
             Log.d(TAG, "onEntityChanged: here is new renderable" + PhotoComponent.viewRenderables.get(i));
-        }
+        }*/
 
 
         if (NoteComponent.getHasLoadedContentRenderable() ) {

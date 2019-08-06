@@ -2,12 +2,14 @@ package com.example.fbuteamproject.utils.FlickrApi;
 
 import android.content.Context;
 import android.util.SparseArray;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.util.LruCache;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,10 +24,10 @@ public final class Api {
             "https://api.flickr.com/services/rest/?method=%s&format=json&api_key=" + API_KEY;
     // Incomplete size independent url for photos that can be cached per photo
     private static final String CACHEABLE_PHOTO_URL = "http://farm%s.staticflickr.com/%s/%s_%s_";
-    private static final int MAX_URLS_TO_CACHE = 2000;
+    private static final int MAX_URLS_TO_CACHE = 20;
     private static final LruCache<UrlCacheKey, String> CACHED_URLS =
             new LruCache<>(MAX_URLS_TO_CACHE);
-    private static final int MAX_ITEMS_PER_PAGE = 300;
+    private static final int MAX_ITEMS_PER_PAGE = 50;
     private static final String PER_PAGE = "&per_page=" + MAX_ITEMS_PER_PAGE;
 
     private static final SparseArray<String> EDGE_TO_SIZE_KEY =

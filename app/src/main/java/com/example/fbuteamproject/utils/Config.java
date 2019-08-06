@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.ViewRenderable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,6 +26,7 @@ public class Config {
         private Vector3 entityScaleVector;
         private CompletableFuture<ModelRenderable> entityStage;
         private ModelRenderable entityModel;
+        private ArrayList<ViewRenderable> entityPhotos;
 
 
         Entity(String entityName, String modelId, String videoURL, Vector3 entityScaleVector, Context context) {
@@ -35,6 +37,7 @@ public class Config {
             this.entityScaleVector = entityScaleVector;
             this.entityStage = null;
             this.entityModel = null;
+            this.entityPhotos = new ArrayList<>();
             this.context = context;
             this.entityFile = new File(context.getFilesDir(), entityName + TEXT_EXTENSION);
 
@@ -120,6 +123,14 @@ public class Config {
         public ModelRenderable getEntityModel() {
             return entityModel;
 
+        }
+
+        public ArrayList<ViewRenderable> getEntityPhotos() {
+            return entityPhotos;
+        }
+
+        public void setEntityPhotos(ArrayList<ViewRenderable> entityPhotos) {
+            this.entityPhotos = entityPhotos;
         }
     }
 
