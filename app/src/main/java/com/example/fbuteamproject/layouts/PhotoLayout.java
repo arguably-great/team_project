@@ -2,7 +2,6 @@ package com.example.fbuteamproject.layouts;
 
 import android.util.Log;
 
-import com.example.fbuteamproject.components.PhotoComponent;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
 
@@ -26,7 +25,7 @@ public class PhotoLayout{
 
         photoNodes = new ArrayList<>();
 
-        for (int i = 0; i < PhotoComponent.viewRenderables.size(); i++) {
+        for (int i = 0; i < 6; i++) {
 
             // setting up nodes for photos
             Node node = new Node();

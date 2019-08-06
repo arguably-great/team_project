@@ -25,7 +25,7 @@ public class PhotoComponent {
     private static ArrayList<AtomicBoolean> hasLoaded;
 
 
-    public static ArrayList<ViewRenderable> buildViewRenderables(ArrayList<CompletableFuture<ViewRenderable>> completableFutures, Context context) {
+    public static void buildViewRenderables(ArrayList<CompletableFuture<ViewRenderable>> completableFutures, Context context) {
 
         viewRenderables = new ArrayList<>();
 
@@ -56,17 +56,13 @@ public class PhotoComponent {
 
         }
 
-        for (int i = 0; i < viewRenderables.size(); i++) {
-            Log.d(TAG, "Printing model renderable" + viewRenderable);
-            Log.d(TAG, "Model renderables size is " + viewRenderables.size());
-        }
-
-        return viewRenderables;
     }
 
     public static ArrayList<CompletableFuture<ViewRenderable>> getCompletableFutures() {
         return completableFutures;
     }
+
+
 
 
 }
