@@ -111,6 +111,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private CompletableFuture<ModelRenderable> videoStage;
     private SimpleExoPlayer player;
     private ExternalTexture texture;
+    private long position;
 
     private EntityWrapper currEntitySelected;
     private EntityLayout entityLayout;
@@ -343,6 +344,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             return;
         }
 
+        if(player != null) {
+            player.seekTo(position);
+            player.setPlayWhenReady(true);
+        }
+
         if (arSceneView.getSession() == null) {
             // If the session wasn't created yet, don't resume rendering.
             // This can happen if ARCore needs to be updated or permissions are not granted yet.
@@ -381,15 +387,21 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             arSceneView.pause();
         }
 
-        //TODO Activity lifecycle stuff (i.e. release player)
+        //TODO ACTIVITY LIFECYCLE STUFF
 
+        if(player != null && player.getPlayWhenReady()) {
+            position = player.getCurrentPosition();
+            player.setPlayWhenReady(false);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        //TODO Activity lifecycle stuff (i.e. release player)
+        if (player != null) {
+            releaseExoPlayer();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -588,6 +600,15 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
         }
 
+
+    }
+
+    private void releaseExoPlayer() {
+        if (player == null) {
+            return;
+        }
+        player.release();
+        player = null;
 
     }
 }
