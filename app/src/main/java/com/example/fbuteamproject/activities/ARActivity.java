@@ -117,6 +117,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private EntityLayout entityLayout;
     private VideoLayout videoLayout;
     private NoteLayout noteLayout;
+    private PhotoLayout photoLayout;
 
     //Photo Feature variables
     public static boolean photoClicked = false;
@@ -479,7 +480,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         noteLayout = new NoteLayout(NoteComponent.getEntityContentRenderable());
         noteLayout.setParent(baseNode);
 
+        photoLayout = new PhotoLayout();
+        photoLayout.setParent(baseNode);
+
         // putting renderables in correct layout
+        //TODO - Remove if new PhotoLayout stuff works
         photoNodes = PhotoLayout.photoNodeSetUp(baseNode);
 
         //This coming line should trigger the onEntityChanged method from the included interface
@@ -581,7 +586,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
     @Override
     public void onEntityChanged() {
-        //TODO - This is where the components will be called and the Handler will be made and stuff
         VideoComponent.playVideo(texture, currEntitySelected.getEntity(), videoLayout.getVideoNode(),this, player);
 
         newQuery = new SearchQuery(currEntitySelected.getEntity().getEntityName() + "planet");
@@ -595,23 +599,16 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         //Log.d(TAG, "onEntityChanged: " + photoClicked);
 
-//        if (ARActivity.photoClicked == true && photoNodes != null) {
-//            Log.d(TAG, "deleting nodes");
-//            for (int i = 0; i < photoNodes.size(); i++) {
-//                Log.d(TAG, "Removing nodes" + photoNodes.get(i));
-//                photoNodes.get(i).setRenderable(null);
-//            }
-//        }
-
-        /*for (int i = 0; i < photoNodes.size(); i++) {
-            photoNodes.get(i).setRenderable(PhotoComponent.viewRenderables.get(i));
-            Log.d(TAG, "onEntityChanged: here is new renderable" + PhotoComponent.viewRenderables.get(i));
-        }*/
-
-
-        if (NoteComponent.getHasLoadedContentRenderable() ) {
-            NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
+        //TODO - Remove if new PhotoLayout stuff works
+        if (ARActivity.photoClicked == true && photoNodes != null) {
+            Log.d(TAG, "deleting nodes");
+            for (int i = 0; i < photoNodes.size(); i++) {
+                Log.d(TAG, "Removing nodes" + photoNodes.get(i));
+                photoNodes.get(i).setRenderable(null);
+            }
         }
+        
+        NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
 
 
     }
