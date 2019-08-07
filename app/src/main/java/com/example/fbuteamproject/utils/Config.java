@@ -29,7 +29,7 @@ public class Config {
         private ArrayList<ViewRenderable> entityPhotos;
 
 
-        Entity(String entityName, String modelId, String videoURL, Vector3 entityScaleVector, Context context) {
+        Entity(String entityName, String modelId, String videoURL, Vector3 entityScaleVector, Context context){
             this.entityName = entityName;
             this.modelId = modelId;
             this.videoURL = videoURL;
@@ -144,7 +144,9 @@ public class Config {
 
         public static AppConfig getAppConfig(Context newContext) {
             setContext(newContext);
+
             return planetConfig0;
+
         }
     }
 
@@ -154,7 +156,7 @@ public class Config {
 
     static {
         planetConfig0 = new AppConfig();
-      
+
         planetConfig0.entities.add(new Entity("Earth", "CHAHIN_EARTH.sfb",
                 "file:///sdcard/Movies/earth.mp4",
                 new Vector3(0.5f, 0.5f, 0.5f), AppConfig.getContext()));
@@ -188,6 +190,7 @@ public class Config {
         animalConfig.entities.add(new Entity("Pig", "bbPhEBl5Bh0","https://pmdvod.nationalgeographic.com/NG_Video/336/479/1152476739923_1517604362758_1152482371523_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",new Vector3(0.05f, 0.05f, 0.05f), AppConfig.getContext()));
         animalConfig.entities.add(new Entity("Wolf", "46bXrRt8pFF", "https://pmdvod.nationalgeographic.com/NG_Video/508/71/1453304387732_1551912110015_1453312067615_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4", new Vector3(0.05f, 0.05f, 0.05f), AppConfig.getContext()));
         animalConfig.entities.add(new Entity("Tiger", "54KLm0HdFWy","https://pmdvod.nationalgeographic.com/NG_Video/854/911/Ohio_Tigers_wild_1800.mp4", new Vector3(0.05f, 0.05f, 0.05f), AppConfig.getContext()));
+
     }
 
 
