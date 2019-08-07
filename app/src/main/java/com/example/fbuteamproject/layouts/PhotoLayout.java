@@ -29,7 +29,6 @@ public class PhotoLayout extends Node implements ARActivity.PhotoCallbacksFinish
 
     public PhotoLayout() {
         photoNodes = new ArrayList<>();
-
         PhotoComponent.setListener(this);
     }
 

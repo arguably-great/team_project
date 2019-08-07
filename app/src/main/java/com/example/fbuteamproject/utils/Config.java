@@ -19,7 +19,6 @@ public class Config {
         private String entityName;
         private String modelId;
         private String videoURL;
-        private String albumID;
         private File entityFile;
         private Context context;
         private static final String TEXT_EXTENSION = ".txt";
@@ -33,7 +32,6 @@ public class Config {
             this.entityName = entityName;
             this.modelId = modelId;
             this.videoURL = videoURL;
-            this.albumID = albumID;
             this.entityScaleVector = entityScaleVector;
             this.entityStage = null;
             this.entityModel = null;
@@ -66,14 +64,6 @@ public class Config {
 
         public void setVideoURL(String videoURL) {
             this.videoURL = videoURL;
-        }
-
-        public String getAlbumID() {
-            return albumID;
-        }
-
-        public void setAlbumID(String albumID) {
-            this.albumID = albumID;
         }
 
         public File getEntityFile() {

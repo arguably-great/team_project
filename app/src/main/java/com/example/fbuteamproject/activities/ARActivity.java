@@ -148,7 +148,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         appEntities = configuration.entities;
 
         Log.d("CONTEXT", Config.AppConfig.getContext().toString() );
-      
+
         entityLayout = new EntityLayout();
 
         Api.get(this).registerSearchListener(queryListener);
