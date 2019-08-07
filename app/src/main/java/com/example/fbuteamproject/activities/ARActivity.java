@@ -296,6 +296,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
 
         if (player != null) {
             releaseExoPlayer();
