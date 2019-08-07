@@ -24,17 +24,16 @@ import java.util.concurrent.CompletableFuture;
 public class PhotoQueryListener {
 
     private static final String TAG = "PhotoListener";
-    public static int loadPhotoCount;
-    private final Set<PhotoViewer> photoViewers = new HashSet<>();
-    private List<Photo> currentPhotos = new ArrayList<>();
-    private final QueryListener queryListener = new QueryListener(ARActivity.getContext());
+    private static int loadPhotoCount;
+    private static final Set<PhotoViewer> photoViewers = new HashSet<>();
+    private static List<Photo> currentPhotos = new ArrayList<>();
 
 
-    public class QueryListener implements Api.QueryListener {
+    public static class QueryListener implements Api.QueryListener {
 
         Context context;
 
-        QueryListener(Context context) {
+        public QueryListener(Context context) {
             this.context = context;
 
         }

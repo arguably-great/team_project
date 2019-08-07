@@ -20,7 +20,6 @@ public class PhotoComponent {
 
 
     private static final String TAG = "PhotoComponent";
-//    public static ArrayList<ViewRenderable> viewRenderables;
     private static ViewRenderable viewRenderable;
     public static ARActivity.PhotoCallbacksFinishedListener listener;
     public static Query currentQuery;

@@ -3,7 +3,6 @@ package com.example.fbuteamproject.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +32,7 @@ import com.example.fbuteamproject.utils.DemoUtils;
 import com.example.fbuteamproject.utils.FlickrApi.Api;
 import com.example.fbuteamproject.utils.FlickrApi.Query;
 import com.example.fbuteamproject.utils.FlickrApi.SearchQuery;
+import com.example.fbuteamproject.utils.PhotoQueryListener;
 import com.example.fbuteamproject.wrappers.EntityWrapper;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -89,8 +89,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     // True once the scene has been placed.
     private boolean hasPlacedComponents;
 
-//    public static int loadPhotoCount;
-
     private ArrayList<Config.Entity> appEntities;
 
     //Video feature variables
@@ -100,7 +98,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private SimpleExoPlayer player;
     private ExternalTexture texture;
     private long position;
-    Context context;
+
 
     public static EntityWrapper currEntitySelected;
     private EntityLayout entityLayout;
@@ -108,13 +106,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private NoteLayout noteLayout;
     private PhotoLayout photoLayout;
 
-   // private final QueryListener queryListener = new QueryListener(ARActivity.this);
-//    private List<com.example.fbuteamproject.utils.FlickrApi.Photo> currentPhotos = new ArrayList<>();
-//    private Query currentQuery;
-//    private final Set<PhotoViewer> photoViewers = new HashSet<>();
+
+    // photo query calls
+    public PhotoQueryListener.QueryListener queryListener = new  PhotoQueryListener.QueryListener(ARActivity.this);
     public static Query newQuery;
 
-//    private static PhotoCallbacksFinishedListener listener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -155,7 +151,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
       
         entityLayout = new EntityLayout();
 
-        Api.get(this).registerSearchListener(Api.QueryListener.queryListener);
+        Api.get(this).registerSearchListener(queryListener);
 
 
         currEntitySelected = new EntityWrapper();
@@ -490,11 +486,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         player = null;
 
     }
-
-    public static Context getContext() {
-        return context;
-    }
-
 
 
     public interface PhotoCallbacksFinishedListener {
