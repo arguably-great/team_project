@@ -6,7 +6,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.fbuteamproject.activities.ARActivity;
 import com.example.fbuteamproject.components.PhotoComponent;
 import com.example.fbuteamproject.utils.FlickrApi.Api;
@@ -28,9 +28,13 @@ public class PhotoQueryListener {
     private static List<Photo> currentPhotos = new ArrayList<>();
 
 
+
     public static class QueryListener implements Api.QueryListener {
 
         Context context;
+        private int radius = 30;
+        private int margin = 10;
+
 
         public QueryListener(Context context) {
             this.context = context;
@@ -65,8 +69,8 @@ public class PhotoQueryListener {
                     ImageView iv = new ImageView(context);
 
                     Glide.with(context).load(currentPhotos.get(i))
-                            .transform(new CircleCrop())
-                            .override(1000, 1000).into(iv);
+                            .transform(new RoundedCorners(radius))
+                            .override(1000, 600).centerCrop().into(iv);
 
                     photoStage = ViewRenderable.builder().setView(context, iv).build();
 

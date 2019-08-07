@@ -19,6 +19,7 @@ public class Config {
         private String entityName;
         private String modelId;
         private String videoURL;
+        private String configType;
         private File entityFile;
         private Context context;
         private static final String TEXT_EXTENSION = ".txt";
@@ -32,6 +33,7 @@ public class Config {
             this.entityName = entityName;
             this.modelId = modelId;
             this.videoURL = videoURL;
+            this.configType = configType;
             this.entityScaleVector = entityScaleVector;
             this.entityStage = null;
             this.entityModel = null;
@@ -52,6 +54,10 @@ public class Config {
 
         public String getModelId() {
             return modelId;
+        }
+
+        public String getConfigType(){
+            return configType;
         }
 
         public void setModelPath(String modelId) {
