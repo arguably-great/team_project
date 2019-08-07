@@ -7,7 +7,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.activities.ARActivity;
 import com.example.fbuteamproject.components.PhotoComponent;
 import com.example.fbuteamproject.utils.FlickrApi.Api;
@@ -41,7 +40,7 @@ public class PhotoQueryListener {
         @Override
         public void onSearchCompleted(Query query, List<Photo> photos) {
 
-            Log.d(TAG, "GOT QUERY");
+            Log.d(TAG, "Search completed");
 
             if (!isCurrentQuery(query)) {
                 return;
@@ -60,14 +59,13 @@ public class PhotoQueryListener {
 
                 for (int i = 0; i < 6; i++) {
 
-                    Log.d(TAG, "on SearchCompleted: "+i);
+                    Log.d(TAG, "on SearchCompleted: "+ i);
 
                     CompletableFuture<ViewRenderable> photoStage;
                     ImageView iv = new ImageView(context);
 
                     Glide.with(context).load(currentPhotos.get(i))
                             .transform(new CircleCrop())
-                            .placeholder(R.mipmap.ic_launcher)
                             .override(1000, 1000).into(iv);
 
                     photoStage = ViewRenderable.builder().setView(context, iv).build();
@@ -78,7 +76,7 @@ public class PhotoQueryListener {
 
                     photoStage.thenApply(viewRenderable -> {
 
-                        Log.d(TAG, "OUR ENTITY IS " + ARActivity.currEntitySelected.getEntity());
+                        Log.d(TAG, "Current entity is " + ARActivity.currEntitySelected.getEntity());
 
                         PhotoComponent.buildViewRenderable(photoStage, context, ARActivity.currEntitySelected.getEntity());
 
@@ -89,7 +87,7 @@ public class PhotoQueryListener {
 
                             ArrayList<ViewRenderable> myViews = ARActivity.currEntitySelected.getEntity().getEntityPhotos();
 
-                            Log.d(TAG, "ENTITY PHOTOS ARE " + myViews);
+                            Log.d(TAG, "Current entity photos are " + myViews);
 
                             PhotoComponent.listener.startPhotoNodeCreation(myViews);
                         }
