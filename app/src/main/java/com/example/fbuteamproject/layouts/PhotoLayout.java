@@ -3,6 +3,7 @@ package com.example.fbuteamproject.layouts;
 import android.util.Log;
 
 import com.example.fbuteamproject.activities.ARActivity;
+import com.example.fbuteamproject.components.PhotoComponent;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
@@ -29,7 +30,7 @@ public class PhotoLayout extends Node implements ARActivity.PhotoCallbacksFinish
     public PhotoLayout() {
         photoNodes = new ArrayList<>();
 
-        ARActivity.setListener(this);
+        PhotoComponent.setListener(this);
     }
 
     private void createPhotoNodes(ArrayList<ViewRenderable> photoRenderables) {
