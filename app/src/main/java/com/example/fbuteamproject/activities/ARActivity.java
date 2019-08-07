@@ -1,10 +1,8 @@
 package com.example.fbuteamproject.activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,14 +13,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.components.ModelComponent;
 import com.example.fbuteamproject.components.NoteComponent;
@@ -37,7 +32,7 @@ import com.example.fbuteamproject.utils.DemoUtils;
 import com.example.fbuteamproject.utils.FlickrApi.Api;
 import com.example.fbuteamproject.utils.FlickrApi.Query;
 import com.example.fbuteamproject.utils.FlickrApi.SearchQuery;
-import com.example.fbuteamproject.utils.PhotoViewer;
+import com.example.fbuteamproject.utils.PhotoQueryListener;
 import com.example.fbuteamproject.wrappers.EntityWrapper;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -66,11 +61,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static com.example.fbuteamproject.utils.DemoUtils.checkIsSupportedDeviceOrFinish;
@@ -98,8 +89,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     // True once the scene has been placed.
     private boolean hasPlacedComponents;
 
-    public static int loadPhotoCount;
-
     private ArrayList<Config.Entity> appEntities;
 
     //Video feature variables
@@ -110,19 +99,18 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private ExternalTexture texture;
     private long position;
 
-    private EntityWrapper currEntitySelected;
+
+    public static EntityWrapper currEntitySelected;
     private EntityLayout entityLayout;
     private VideoLayout videoLayout;
     private NoteLayout noteLayout;
     private PhotoLayout photoLayout;
 
-    private final QueryListener queryListener = new QueryListener(ARActivity.this);
-    private List<com.example.fbuteamproject.utils.FlickrApi.Photo> currentPhotos = new ArrayList<>();
-    private Query currentQuery;
-    private final Set<PhotoViewer> photoViewers = new HashSet<>();
+
+    // photo query calls
+    public PhotoQueryListener.QueryListener queryListener = new  PhotoQueryListener.QueryListener(ARActivity.this);
     public static Query newQuery;
 
-    private static PhotoCallbacksFinishedListener listener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -177,108 +165,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         // Lastly request CAMERA permission which is required by ARCore.
         requestCameraPermission(this);
 
-    }
-
-
-    private void executeQuery(Query query) {
-        currentQuery = query;
-        if (query == null) {
-            queryListener.onSearchCompleted(null, Collections.emptyList());
-            return;
-        }
-
-        Api.get(this).query(currentQuery);
-        Log.d(TAG, "LISTENING TO QUERY");
-
-    }
-
-    public class QueryListener implements Api.QueryListener {
-
-        Context context;
-
-        private QueryListener(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        public void onSearchCompleted(Query query, List<com.example.fbuteamproject.utils.FlickrApi.Photo> photos) {
-
-            Log.d(TAG, "GOT QUERY");
-
-            if (!isCurrentQuery(query)) {
-                return;
-            }
-
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, "Search completed, got " + photos.size() + " results");
-            }
-
-            for (PhotoViewer viewer : photoViewers) {
-                viewer.onPhotosUpdated(photos);
-            }
-            currentPhotos = photos;
-
-            if (currentPhotos.size() > 6) {
-
-                for (int i = 0; i < 6; i++) {
-
-                    Log.d(TAG, "on SearchCompleted: "+i);
-
-                    CompletableFuture<ViewRenderable> photoStage;
-                    ImageView iv = new ImageView(context);
-
-                    Glide.with(context).load(currentPhotos.get(i)).apply(new RequestOptions()
-                            .placeholder(R.mipmap.ic_launcher)
-                            .fitCenter().override(1000, 1000)).into(iv);
-
-                    photoStage = ViewRenderable.builder().setView(context, iv).build();
-
-                    loadPhotoCount++;
-
-                    Log.d(TAG, "Current photo count is " + loadPhotoCount);
-
-                    photoStage.thenApply(viewRenderable -> {
-
-                        Log.d(TAG, "OUR ENTITY IS " + currEntitySelected.getEntity());
-
-                        PhotoComponent.buildViewRenderable(photoStage, context, currEntitySelected.getEntity());
-
-                        loadPhotoCount--;
-                        Log.d(TAG, "Current photo count is " + loadPhotoCount);
-
-                        if(loadPhotoCount == 0) {
-
-                            ArrayList<ViewRenderable> myViews = currEntitySelected.getEntity().getEntityPhotos();
-
-                            Log.d(TAG, "ENTITY PHOTOS ARE " + myViews);
-
-                            listener.startPhotoNodeCreation(myViews);
-                        }
-
-                        return null;
-                    });
-
-                }
-            }
-
-        }
-
-        private boolean isCurrentQuery(Query query) {
-            return currentQuery != null && currentQuery.equals(query);
-        }
-
-        @SuppressLint("StringFormatInvalid")
-        @Override
-        public void onSearchFailed(Query query, Exception e) {
-            if (!isCurrentQuery(query)) {
-                return;
-            }
-
-            if (Log.isLoggable(TAG, Log.ERROR)) {
-                Log.e(TAG, "Search failed", e);
-            }
-
-        }
     }
 
     private void setupOnUpdateListener() {
@@ -410,6 +296,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
 
         if (player != null) {
             releaseExoPlayer();
@@ -581,10 +468,10 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         if (currEntity.getEntityPhotos().size() == 0){
             Log.d(TAG, "EXECUTING QUERY");
-            executeQuery(newQuery);
+            PhotoComponent.executeQuery(newQuery, ARActivity.this);
         }
         else{
-            listener.startPhotoNodeCreation(currEntity.getEntityPhotos() );
+            PhotoComponent.listener.startPhotoNodeCreation(currEntity.getEntityPhotos() );
         }
 
         NoteComponent.changeContentView(currEntity, noteLayout.getNoteRenderableView());
@@ -599,10 +486,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         player.release();
         player = null;
 
-    }
-
-    public static void setListener(PhotoCallbacksFinishedListener newListener){
-        listener = newListener;
     }
 
 

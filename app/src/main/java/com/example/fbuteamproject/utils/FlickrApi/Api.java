@@ -126,6 +126,18 @@ public final class Api {
 
     /** An interface for listening for search results from the Flickr API. */
     public interface QueryListener {
+        QueryListener queryListener = new QueryListener() {
+            @Override
+            public void onSearchCompleted(Query query, List<Photo> photos) {
+
+            }
+
+            @Override
+            public void onSearchFailed(Query query, Exception e) {
+
+            }
+        };
+
         /**
          * Called when a search completes successfully.
          *
