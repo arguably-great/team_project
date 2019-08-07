@@ -6,7 +6,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.fbuteamproject.activities.ARActivity;
 import com.example.fbuteamproject.components.PhotoComponent;
 import com.example.fbuteamproject.utils.FlickrApi.Api;
@@ -32,9 +32,8 @@ public class PhotoQueryListener {
     public static class QueryListener implements Api.QueryListener {
 
         Context context;
-        private int radius = 30;
-        private int margin = 10;
-
+        private static final int RADIUS = 50;
+        private static final int PHOTO_NUMBER = 6;
 
         public QueryListener(Context context) {
             this.context = context;
@@ -59,18 +58,24 @@ public class PhotoQueryListener {
             }
             currentPhotos = photos;
 
-            if (currentPhotos.size() > 6) {
+            if (currentPhotos.size() > PHOTO_NUMBER) {
 
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i < PHOTO_NUMBER; i++) {
 
                     Log.d(TAG, "on SearchCompleted: "+ i);
 
                     CompletableFuture<ViewRenderable> photoStage;
                     ImageView iv = new ImageView(context);
 
+                    RequestOptions options = new RequestOptions()
+                            .override(1000, 600)
+                            .centerCrop();
+
+
                     Glide.with(context).load(currentPhotos.get(i))
-                            .transform(new RoundedCorners(radius))
-                            .override(1000, 600).centerCrop().into(iv);
+                            //.transform(new RoundedCorners(RADIUS))
+                            .apply(options)
+                            .into(iv);
 
                     photoStage = ViewRenderable.builder().setView(context, iv).build();
 
