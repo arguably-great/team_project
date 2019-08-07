@@ -1,6 +1,5 @@
 package com.example.fbuteamproject.components;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
@@ -13,10 +12,15 @@ import androidx.annotation.RequiresApi;
 import com.example.fbuteamproject.R;
 import com.example.fbuteamproject.utils.Config;
 import com.example.fbuteamproject.utils.DemoUtils;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.google.ar.sceneform.Node;
@@ -28,7 +32,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 /* Class to set-up Video player */
-
 public class VideoComponent {
 
     private static final String TAG = "VideoComponent";
@@ -37,7 +40,6 @@ public class VideoComponent {
     private static CompletableFuture<ModelRenderable> videoStage;
 
     //Initialize ExoPlayer variables
-    @SuppressLint("StaticFieldLeak")
     private static SimpleExoPlayer myPlayer;
     private static boolean playWhenReady;
     private static int currentWindow = 0;
@@ -86,7 +88,18 @@ public class VideoComponent {
 
         myPlayer = player;
 
-        setupVideoSource(currEntity.getVideoURL(), context);
+        if (currEntity.getVideoURL().substring(0, 4).equals("file")) {
+
+            prepareExoPlayerFromFileUri(Uri.parse(currEntity.getVideoURL()));
+
+        } else if (currEntity.getVideoURL().substring(0, 4).equals("http")) {
+
+            setupVideoSource(currEntity.getVideoURL(), context);
+
+        } else {
+            Toast.makeText(context, "Cannot find video", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         setVideoTexture(texture, context);
 
@@ -126,7 +139,6 @@ public class VideoComponent {
 
         Uri uri = Uri.parse(videoResID);
         MediaSource mediaSource = buildMediaSource(uri, context);
-        //player.seekTo(1);
         myPlayer.prepare(mediaSource, true, false);
 
         myPlayer.addVideoListener(new VideoListener() {
@@ -139,6 +151,28 @@ public class VideoComponent {
                 Log.d(TAG,"play video listener render first frame");
             }
         });
+    }
+
+
+    private static void prepareExoPlayerFromFileUri(Uri uri){
+        DataSpec dataSpec = new DataSpec(uri);
+        final FileDataSource fileDataSource = new FileDataSource();
+        try {
+            fileDataSource.open(dataSpec);
+        } catch (FileDataSource.FileDataSourceException e) {
+            e.printStackTrace();
+        }
+
+        DataSource.Factory factory = new DataSource.Factory() {
+            @Override
+            public DataSource createDataSource() {
+                return fileDataSource;
+            }
+        };
+        MediaSource audioSource = new ExtractorMediaSource(fileDataSource.getUri(),
+                factory, new DefaultExtractorsFactory(), null, null);
+
+        myPlayer.prepare(audioSource);
     }
 
     private static MediaSource buildMediaSource(Uri uri, Context context) {
@@ -170,6 +204,19 @@ public class VideoComponent {
         if (!myPlayer.getPlayWhenReady()) {
 
             myPlayer.setPlayWhenReady(true);
+            myPlayer.addListener(new Player.DefaultEventListener() {
+                @Override
+                public void onLoadingChanged(boolean isLoading) {
+                    Log.d(TAG, "onLoadingChanged " + isLoading);
+                    super.onLoadingChanged(isLoading);
+                }
+
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                    super.onPlayerStateChanged(playWhenReady, playbackState);
+                    Log.d(TAG, "onPlayerStateChanged " + playbackState);
+                }
+            });
 
             texture.getSurfaceTexture().setOnFrameAvailableListener(
                     (SurfaceTexture surfaceTexture) -> {

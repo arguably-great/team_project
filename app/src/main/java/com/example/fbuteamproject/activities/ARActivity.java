@@ -4,11 +4,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -91,6 +93,8 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
     private ArrayList<Config.Entity> appEntities;
 
+    private static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 0x1;
+
     //Video feature variables
     @Nullable
     private ModelRenderable videoRenderable;
@@ -124,6 +128,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             return;
         }
 
+        setContentView(R.layout.temp);
+        requestExternalStoragePermission();
+    }
+
+    private void initializeApp() {
         //set the content and the layout
         setContentView(R.layout.ar_activity);
 
@@ -148,9 +157,11 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         appEntities = configuration.entities;
 
         Log.d("CONTEXT", Config.AppConfig.getContext().toString() );
-      
+
         entityLayout = new EntityLayout();
 
+
+        // TODO default search so that view renderables are not null, move to entity create
         Api.get(this).registerSearchListener(queryListener);
 
         currEntitySelected = new EntityWrapper();
@@ -163,8 +174,48 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         // Lastly request CAMERA permission which is required by ARCore.
         requestCameraPermission(this);
-
     }
+
+    private void requestExternalStoragePermission() {
+        if (needsExternalStoragePermission()) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION },
+                    PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+        }
+    }
+
+    private boolean needsExternalStoragePermission() {
+        return ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode != PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE) {
+            return;
+        }
+
+        if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Access not granted for reading video file and reading sensors :(");
+            return;
+        }
+
+        initializeApp();
+    }
+
+
 
     private void setupOnUpdateListener() {
         // Set an update listener on the Scene that will hide the loading message once a Plane is
