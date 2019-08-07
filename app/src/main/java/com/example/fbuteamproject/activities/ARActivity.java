@@ -95,9 +95,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
     private Snackbar loadingMessageSnackbar;
 
-    // True once scene is loaded
-    private boolean hasFinishedLoading;
-
     // True once the scene has been placed.
     private boolean hasPlacedComponents;
 
@@ -119,18 +116,13 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     private NoteLayout noteLayout;
     private PhotoLayout photoLayout;
 
-    //Photo Feature variables
-    public static boolean photoClicked = false;
-
     private final QueryListener queryListener = new QueryListener(ARActivity.this);
     private List<com.example.fbuteamproject.utils.FlickrApi.Photo> currentPhotos = new ArrayList<>();
     private Query currentQuery;
     private final Set<PhotoViewer> photoViewers = new HashSet<>();
-    public static Query DEFAULT_QUERY = new SearchQuery("earth planet");
     public static Query newQuery;
-   // public static ArrayList<CompletableFuture<ViewRenderable>> completableFutures;
-    private int photoCount = 0;
-    ArrayList<Node> photoNodes;
+
+    private static PhotoCallbacksFinishedListener listener;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -171,8 +163,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
       
         entityLayout = new EntityLayout();
 
-
-        // TODO default search so that view renderables are not null, move to entity create
         Api.get(this).registerSearchListener(queryListener);
 
 
@@ -247,8 +237,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
                     Log.d(TAG, "Current photo count is " + loadPhotoCount);
 
-                    //TODO check if any variable is nullable
-
                     photoStage.thenApply(viewRenderable -> {
 
                         Log.d(TAG, "OUR ENTITY IS " + currEntitySelected.getEntity());
@@ -264,7 +252,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
                             Log.d(TAG, "ENTITY PHOTOS ARE " + myViews);
 
-                            //TODO LAYOUT PHOTOS
+                            listener.startPhotoNodeCreation(myViews);
                         }
 
                         return null;
@@ -483,10 +471,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         photoLayout = new PhotoLayout();
         photoLayout.setParent(baseNode);
 
-        // putting renderables in correct layout
-        //TODO - Remove if new PhotoLayout stuff works
-        photoNodes = PhotoLayout.photoNodeSetUp(baseNode);
-
         //This coming line should trigger the onEntityChanged method from the included interface
         currEntitySelected.setEntity(appEntities.get(0));
 
@@ -586,29 +570,24 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
     @Override
     public void onEntityChanged() {
-        VideoComponent.playVideo(texture, currEntitySelected.getEntity(), videoLayout.getVideoNode(),this, player);
 
-        newQuery = new SearchQuery(currEntitySelected.getEntity().getEntityName() + "planet");
-        Log.d(TAG, "onEntityChanged: "+ currEntitySelected.getEntity().getEntityName());
+        Config.Entity currEntity = currEntitySelected.getEntity();
 
-        //TODO CHECK IF THE ENTITY HAS ALREADY BEEN TAPPED
+        VideoComponent.playVideo(texture, currEntity, videoLayout.getVideoNode(),this, player);
 
-        executeQuery(newQuery);
+        newQuery = new SearchQuery(currEntity.getEntityName() + "planet");
+        Log.d(TAG, "onEntityChanged: "+ currEntity.getEntityName());
 
-        Log.d(TAG, "EXECUTING QUERY");
 
-        //Log.d(TAG, "onEntityChanged: " + photoClicked);
-
-        //TODO - Remove if new PhotoLayout stuff works
-        if (ARActivity.photoClicked == true && photoNodes != null) {
-            Log.d(TAG, "deleting nodes");
-            for (int i = 0; i < photoNodes.size(); i++) {
-                Log.d(TAG, "Removing nodes" + photoNodes.get(i));
-                photoNodes.get(i).setRenderable(null);
-            }
+        if (currEntity.getEntityPhotos().size() == 0){
+            Log.d(TAG, "EXECUTING QUERY");
+            executeQuery(newQuery);
         }
-        
-        NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
+        else{
+            listener.startPhotoNodeCreation(currEntity.getEntityPhotos() );
+        }
+
+        NoteComponent.changeContentView(currEntity, noteLayout.getNoteRenderableView());
 
 
     }
@@ -621,5 +600,16 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         player = null;
 
     }
+
+    public static void setListener(PhotoCallbacksFinishedListener newListener){
+        listener = newListener;
+    }
+
+
+    public interface PhotoCallbacksFinishedListener {
+        void startPhotoNodeCreation(ArrayList<ViewRenderable> photoRenderables);
+    }
+
+
 }
 

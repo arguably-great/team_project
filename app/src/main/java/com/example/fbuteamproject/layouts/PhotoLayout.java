@@ -2,6 +2,7 @@ package com.example.fbuteamproject.layouts;
 
 import android.util.Log;
 
+import com.example.fbuteamproject.activities.ARActivity;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
@@ -15,8 +16,7 @@ This Class serves as one piece of the bigger overall Layout structure for the ap
     More specifically, this Class organizes the Photos in AR.
     This PhotoLayout dynamically creates nodes based on the number of photos.
  */
-//TODO - Add Listener Stuff here
-public class PhotoLayout extends Node {
+public class PhotoLayout extends Node implements ARActivity.PhotoCallbacksFinishedListener {
 
     private static final String TAG = "PhotoLayout";
     private static final int MAX_NUM_NODES = 6;
@@ -29,60 +29,7 @@ public class PhotoLayout extends Node {
     public PhotoLayout() {
         photoNodes = new ArrayList<>();
 
-        //TODO - Add Listener Stuff here
-    }
-
-    //TODO - Remove if new PhotoLayout stuff works
-    public static ArrayList<Node> photoNodeSetUp(Node baseNode) {
-
-        Log.d(TAG, "here are photonodes" + photoNodes);
-
-        photoNodes = new ArrayList<>();
-
-        for (int i = 0; i < 6; i++) {
-
-            // setting up nodes for photos
-            Node node = new Node();
-            photoNodes.add(node);
-
-            node.setParent(baseNode);
-            //node.setRenderable(PhotoComponent.viewRenderables.get(i));
-
-            if (i == 0) {
-                node.setLocalPosition(new Vector3(-1.0f, 1.0f, 0.0f));
-                node.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-            }
-
-            if (i == 1) {
-                node.setLocalPosition(new Vector3(1.0f, 1.0f, 0.0f));
-                node.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-            }
-
-            if (i == 2) {
-                node.setLocalPosition(new Vector3(-1.5f, 0.66f, 0.0f));
-                node.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-            }
-
-            if (i == 3) {
-                node.setLocalPosition(new Vector3(1.5f, 0.66f, 0.0f));
-                node.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-
-            }
-
-            if (i == 4) {
-                node.setLocalPosition(new Vector3(-1.0f, 0.33f, 0.0f));
-                node.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-            }
-
-
-            if (i == 5) {
-                node.setLocalPosition(new Vector3(1.0f, 0.33f, 0.0f));
-                node.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
-            }
-        }
-
-        return photoNodes;
-
+        ARActivity.setListener(this);
     }
 
     private void createPhotoNodes(ArrayList<ViewRenderable> photoRenderables) {
@@ -111,7 +58,7 @@ public class PhotoLayout extends Node {
                 currPhotoNode.setLocalPosition(currLocationVector);
                 currPhotoNode.setLocalScale(PHOTO_SCALE_VECTOR);
 
-                float currAngle = (currIndex % 2 == 0) ? -45f : 45f;
+                float currAngle = (currIndex % 2 == 0) ? 45f : -45f;
 
                 currPhotoNode.setLocalRotation(Quaternion.axisAngle(new Vector3(0.0f, 1.0f, 0.0f), currAngle) );
             }
@@ -132,5 +79,10 @@ public class PhotoLayout extends Node {
     }
 
 
+    @Override
+    public void startPhotoNodeCreation(ArrayList<ViewRenderable> photoRenderables) {
+        Log.d(TAG, "Should be ready to start PhotoNodeCreation");
+        createPhotoNodes(photoRenderables);
+    }
 }
 
