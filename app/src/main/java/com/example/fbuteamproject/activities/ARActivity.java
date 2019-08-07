@@ -153,7 +153,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         Api.get(this).registerSearchListener(queryListener);
 
-
         currEntitySelected = new EntityWrapper();
         currEntitySelected.setListener(this);
 

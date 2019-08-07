@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
+import android.webkit.URLUtil;
 
 import androidx.annotation.RequiresApi;
 
@@ -42,61 +43,83 @@ public class ModelComponent {
     private static ModelCallBacksFinishedListener listener;
     static int count;
 
-    public static void makePolyRequest(ArrayList<Config.Entity> entities, Context context) {
+    public static void makePolyRequest(Config.Entity currentEntity, Context context) {
 
         // Create a background thread, where we will do the heavy lifting.
         backgroundThread = new HandlerThread("Worker");
         backgroundThread.start();
         backgroundThreadHandler = new Handler(backgroundThread.getLooper());
 
-        for (int i = 0; i < entities.size(); i++) {
+//        for (int i = 0; i < entities.size(); i++) {
 
-            Config.Entity currentEntity = entities.get(i);
+        //Config.Entity currentEntity = entities.get(i);
 
-            // Request the asset from the Poly API.
-            Log.d(TAG, "Requesting asset "+ currentEntity.getEntityName());
+        // Request the asset from the Poly API.
+        Log.d(TAG, "Requesting asset "+ currentEntity.getEntityName());
 
-            PolyApi.GetAsset(context, entities.get(i).getModelId(),backgroundThreadHandler, new AsyncHttpRequest.CompletionListener() {
-                @Override
-                public void onHttpRequestSuccess(byte[] responseBody) {
-                    // Successfully fetched asset information.
-                    parseAsset(responseBody, context, currentEntity);
-                }
-                @Override
-                public void onHttpRequestFailure(int statusCode, String message, Exception exception) {
-                    // Something went wrong with the request.
-                    handleRequestFailure(statusCode, message, exception);
-                }
-            });
-        }
+        PolyApi.GetAsset(context, currentEntity.getModelId(),backgroundThreadHandler, new AsyncHttpRequest.CompletionListener() {
+            @Override
+            public void onHttpRequestSuccess(byte[] responseBody) {
+                // Successfully fetched asset information.
+                parseAsset(responseBody, context, currentEntity);
+            }
+            @Override
+            public void onHttpRequestFailure(int statusCode, String message, Exception exception) {
+                // Something went wrong with the request.
+                handleRequestFailure(statusCode, message, exception);
+            }
+        });
+//        }
     }
 
     public static void generateCompletableFuturesandModelRenderables(ArrayList<Config.Entity> entities, Context context){
 
-        makePolyRequest(entities, context);
+        for (int i = 0; i < entities.size(); i++) {
+
+            String modelId = entities.get(i).getModelId();
+
+            if (modelId.substring(modelId.length() - 4).equals(".sfb")) {
+
+                Log.d(TAG, "FOUND SFB FILE, DEFAULT TO LOCAL");
+
+                buildModelStage(context, modelId, entities.get(i));
+
+            } else {
+
+                Log.d(TAG, "FOUND ASSET 3D ID, MAKE NETWORK CALL");
+
+                makePolyRequest(entities.get(i), context);
+
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public static void buildModelStage(final Context context, String ASSET_3D, final Config.Entity currentEntity) {
+    public static void buildModelStage(final Context context, String assetURL, final Config.Entity currentEntity) {
 
         //create completable future for the entity
         CompletableFuture<ModelRenderable> modelStage;
 
-                //build model renderable
-                modelStage =
-                        ModelRenderable
-                                .builder()
-                                .setSource(context,
-                                        RenderableSource
-                                                .builder()
-                                                .setSource(context, Uri.parse(ASSET_3D), RenderableSource.SourceType.GLTF2)
-                                                .setScale(0.75f)
-                                                .setRecenterMode(RenderableSource.RecenterMode.ROOT)
-                                                .build()
+        boolean isHttpURL = URLUtil.isHttpUrl(assetURL);
 
-                                )
-                                .setRegistryId(ASSET_3D)
-                                .build();
+        if (isHttpURL) {
+            modelStage =
+                    ModelRenderable
+                            .builder()
+                            .setSource(context,
+                                    RenderableSource
+                                            .builder()
+                                            .setSource(context, Uri.parse(assetURL), RenderableSource.SourceType.GLTF2)
+                                            .setScale(0.75f)
+                                            .setRecenterMode(RenderableSource.RecenterMode.ROOT)
+                                            .build()
+
+                            )
+                            .setRegistryId(assetURL)
+                            .build();
+        } else {
+            modelStage = ModelRenderable.builder().setSource(context, Uri.parse(assetURL)).build();
+        }
 
         //increment the completable future count
         count++;

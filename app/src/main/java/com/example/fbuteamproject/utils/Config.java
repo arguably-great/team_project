@@ -148,27 +148,41 @@ public class Config {
 
         public static AppConfig getAppConfig(Context newContext) {
             setContext(newContext);
-            return planetConfig;
+            return planetConfig0;
         }
     }
 
-    static AppConfig planetConfig;
+    static AppConfig planetConfig0;
+    static AppConfig planetConfig1;
     static AppConfig animalConfig;
 
     static {
-        planetConfig = new AppConfig();
-
+        planetConfig0 = new AppConfig();
       
-        planetConfig.entities.add(new Entity("Earth", "88CP80Kgb-u",
+        planetConfig0.entities.add(new Entity("Earth", "CHAHIN_EARTH.sfb",
                 "https://pmdvod.nationalgeographic.com/NG_Video/596/311/1370718787631_1542234923394_1370715715931_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
-                new Vector3(0.005f, 0.005f, 0.005f), AppConfig.getContext()));
-        planetConfig.entities.add(new Entity("Venus", "5ovHBezIGyZ",
+                new Vector3(0.5f, 0.5f, 0.5f), AppConfig.getContext()));
+        planetConfig0.entities.add(new Entity("Earth", "Venus_1241.sfb",
+                "https://pmdvod.nationalgeographic.com/NG_Video/596/311/1370718787631_1542234923394_1370715715931_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext()));
+        planetConfig0.entities.add(new Entity("Earth", "Neptune.sfb",
+                "https://pmdvod.nationalgeographic.com/NG_Video/596/311/1370718787631_1542234923394_1370715715931_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext()));
+        planetConfig0.entities.add(new Entity("Earth", "13906_Saturn_v1_l3.sfb",
+                "https://pmdvod.nationalgeographic.com/NG_Video/596/311/1370718787631_1542234923394_1370715715931_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext()));
+        planetConfig0.entities.add(new Entity("Jupiter", "model.sfb",
+                "https://pmdvod.nationalgeographic.com/NG_Video/596/311/1370718787631_1542234923394_1370715715931_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext()));
+
+        /*planetConfig1 = new AppConfig();
+        planetConfig1.entities.add(new Entity("Venus", "5ovHBezIGyZ",
                 "https://pmdvod.nationalgeographic.com/NG_Video/204/391/1346685507950_1539814478542_1346690115566_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
                 new Vector3(0.005f, 0.005f, 0.005f), AppConfig.getContext()));
-        planetConfig.entities.add(new Entity("Mars", "dsrYdi4GZ8U", "https://pmdvod.nationalgeographic.com/NG_Video/863/99/1241075779988_1527179700645_1241081923914_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
+        planetConfig1.entities.add(new Entity("Mars", "dsrYdi4GZ8U", "https://pmdvod.nationalgeographic.com/NG_Video/863/99/1241075779988_1527179700645_1241081923914_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
                 new Vector3(0.005f, 0.005f, 0.005f), AppConfig.getContext()));
-        planetConfig.entities.add(new Entity("Mercury", "7piUT6FHGKJ", "https://pmdvod.nationalgeographic.com/NG_Video/298/99/1304907843930_1535034558391_1304910915613_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
-                new Vector3(0.05f, 0.05f, 0.05f), AppConfig.getContext()));
+        planetConfig1.entities.add(new Entity("Mercury", "7piUT6FHGKJ", "https://pmdvod.nationalgeographic.com/NG_Video/298/99/1304907843930_1535034558391_1304910915613_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
+                new Vector3(0.05f, 0.05f, 0.05f), AppConfig.getContext()));*/
 
         animalConfig = new AppConfig();
 
@@ -178,8 +192,6 @@ public class Config {
         animalConfig.entities.add(new Entity("Pig", "bbPhEBl5Bh0","https://pmdvod.nationalgeographic.com/NG_Video/336/479/1152476739923_1517604362758_1152482371523_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",new Vector3(0.05f, 0.05f, 0.05f), AppConfig.getContext()));
         animalConfig.entities.add(new Entity("Wolf", "46bXrRt8pFF", "https://pmdvod.nationalgeographic.com/NG_Video/508/71/1453304387732_1551912110015_1453312067615_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4", new Vector3(0.05f, 0.05f, 0.05f), AppConfig.getContext()));
         animalConfig.entities.add(new Entity("Tiger", "54KLm0HdFWy","https://pmdvod.nationalgeographic.com/NG_Video/854/911/Ohio_Tigers_wild_1800.mp4", new Vector3(0.05f, 0.05f, 0.05f), AppConfig.getContext()));
-        //animalConfig.entities.add(new Entity("SquirrelMonkey", "8J_6QDW6au1","http://fng-ads.fox.com/fw_ads/content/m/1/116450/80/5185488/NATGEO_WLS3_PROMO_HD_MASTER_1288593_435.mp4"));
-
     }
 
 
