@@ -129,6 +129,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         }
 
         setContentView(R.layout.temp);
+
         requestExternalStoragePermission();
     }
 

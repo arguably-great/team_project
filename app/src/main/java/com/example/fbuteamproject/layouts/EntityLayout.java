@@ -18,7 +18,11 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
 
     private ArrayList<Config.Entity> entityNodes;
 
-    private final float MAX_X_COVERAGE_DIST  = 2.5f;
+    private final float MAX_X_COVERAGE_DIST  = 2.6f;
+
+    private final float RADIUS = MAX_X_COVERAGE_DIST/2;
+
+    private float ALPHA;
 
     private final float PLANET_Y = 1.6f;
 
@@ -37,31 +41,44 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
 
     private void createEntityNodes(ArrayList<Config.Entity> appEntities) {
 
-        float entitySplit;
-
         if (appEntities.size() == 1){
-            entitySplit = 0;
-        }
-        else {
-            entitySplit = (MAX_X_COVERAGE_DIST) / (appEntities.size() - 1);
-        }
 
-        for(int currIndex = 0; currIndex < appEntities.size(); currIndex++){
+            ALPHA = (float) (-1 * Math.PI / 2);
 
-            Config.Entity currEntity = appEntities.get(currIndex);
+            Config.Entity currEntity = appEntities.get(0);
 
             currEntity.setParent(this);
-            currEntity.setRenderable(appEntities.get(currIndex).getEntityModel() );
+            currEntity.setRenderable(appEntities.get(0).getEntityModel());
 
-            //Calculate the X and Z positions for the current Node
-            float currXPos = (-MAX_X_COVERAGE_DIST / 2) + (currIndex * entitySplit);
-            float currZPos = ( (float) (Math.pow(currXPos, 2) - MAX_X_COVERAGE_DIST/2) );
+            float currXPos = (float) (RADIUS*Math.cos(ALPHA));
+            float currZPos = (float) (RADIUS*Math.sin(ALPHA));
 
             currEntity.setLocalPosition(new Vector3(currXPos, PLANET_Y, currZPos) );
-            currEntity.setLocalScale(appEntities.get(currIndex).getEntityScaleVector());
+            currEntity.setLocalScale(appEntities.get(0).getEntityScaleVector());
 
             entityNodes.add(currEntity);
 
+        }
+        else {
+
+            ALPHA = (float) (-1 * Math.PI / (appEntities.size() - 1 ));
+
+            for(int currIndex = 0; currIndex < appEntities.size(); currIndex++){
+
+                Config.Entity currEntity = appEntities.get(currIndex);
+
+                currEntity.setParent(this);
+                currEntity.setRenderable(appEntities.get(currIndex).getEntityModel() );
+
+                float currXPos = (float) (RADIUS*Math.cos(currIndex*ALPHA));
+                float currZPos =(float) (RADIUS*Math.sin(currIndex*ALPHA));
+
+                currEntity.setLocalPosition(new Vector3(currXPos, PLANET_Y, currZPos) );
+                currEntity.setLocalScale(appEntities.get(currIndex).getEntityScaleVector());
+
+                entityNodes.add(currEntity);
+
+            }
         }
 
     }
