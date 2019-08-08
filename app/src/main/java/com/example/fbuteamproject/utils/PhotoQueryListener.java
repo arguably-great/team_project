@@ -32,8 +32,11 @@ public class PhotoQueryListener {
     public static class QueryListener implements Api.QueryListener {
 
         Context context;
-        private static final int RADIUS = 50;
+
         private static final int PHOTO_NUMBER = 12;
+        private int PHOTO_WIDTH = 1000;
+        private int PHOTO_HEIGHT = 600;
+        
 
         public QueryListener(Context context) {
             this.context = context;
@@ -68,9 +71,10 @@ public class PhotoQueryListener {
                     ImageView iv = new ImageView(context);
 
                     RequestOptions options = new RequestOptions()
-                            .override(1000, 600)
+                            .override(PHOTO_WIDTH, PHOTO_HEIGHT)
                             .centerCrop();
 
+                    Log.d(TAG, "Here is a photo "+ currentPhotos.get(i));
 
                     Glide.with(context).load(currentPhotos.get(i))
                             .apply(options)

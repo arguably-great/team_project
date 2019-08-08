@@ -29,6 +29,7 @@ public class PhotoComponent {
     public static void buildViewRenderable(CompletableFuture<ViewRenderable> photoStage, Context context, Config.Entity currentEntity) {
 
 
+        Log.d(TAG, "buildViewRenderable ");
         // handling each completable future in array
         photoStage.handle(
                 (notUsed, throwable) -> {
