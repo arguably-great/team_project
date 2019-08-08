@@ -512,7 +512,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         VideoComponent.playVideo(texture, currEntity, videoLayout.getVideoNode(),this, player);
 
-        newQuery = new SearchQuery(currEntity.getEntityName()); // + currEntity.getConfigType());
+        newQuery = new SearchQuery(currEntity.getKeyWord() );
         Log.d(TAG, "onEntityChanged: "+ currEntity.getEntityName());
 
 

@@ -8,6 +8,9 @@ import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
 
 import java.util.ArrayList;
+
+import static android.content.ContentValues.TAG;
+
 /*
 This Class serves as one piece of the bigger overall Layout structure for the application.
     More specifically, this Class organizes the Nodes with respect to one another
@@ -39,6 +42,7 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
 
         float entitySplit;
 
+
         if (appEntities.size() == 1){
             entitySplit = 0;
         }
@@ -49,6 +53,12 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
         for(int currIndex = 0; currIndex < appEntities.size(); currIndex++){
 
             Config.Entity currEntity = appEntities.get(currIndex);
+
+            if (currEntity.getEntityRotation() != null ) {
+                Log.d(TAG, "rotated entity "+  appEntities.get(currIndex).getEntityName());
+                Log.d(TAG, "entity's rotation "+ appEntities.get(currIndex).getEntityRotation());
+                currEntity.setLocalRotation(appEntities.get(currIndex).getEntityRotation());
+            }
 
             currEntity.setParent(this);
             currEntity.setRenderable(appEntities.get(currIndex).getEntityModel() );
