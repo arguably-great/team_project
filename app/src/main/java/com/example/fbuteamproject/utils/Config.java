@@ -172,7 +172,7 @@ public class Config {
 
         planetConfig0.entities.add(new Entity("Mercury", "13900_Mercury_v1_l3.sfb",
                 "file:///sdcard/Movies/jupiter.mp4",
-                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "black hole", null));
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet solar system", null));
         planetConfig0.entities.add(new Entity("Venus", "Venus_1241.sfb",
                 "file:///sdcard/Movies/VENUS.mp4",
                 new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "venus milky way", null));
