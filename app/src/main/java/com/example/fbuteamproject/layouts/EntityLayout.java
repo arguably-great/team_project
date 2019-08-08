@@ -60,11 +60,6 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
                 currEntity.setLocalRotation(currEntity.getEntityRotation());
             }
 
-            if (currEntity.getEntityRotation() != null ) {
-                Log.d(TAG, "rotated entity "+  appEntities.get(currIndex).getEntityName());
-                Log.d(TAG, "entity's rotation "+ appEntities.get(currIndex).getEntityRotation());
-                currEntity.setLocalRotation(appEntities.get(currIndex).getEntityRotation());
-            }
 
             currEntity.setParent(this);
             currEntity.setRenderable(appEntities.get(0).getEntityModel());
