@@ -20,12 +20,20 @@ This Class serves as one piece of the bigger overall Layout structure for the ap
 public class PhotoLayout extends Node implements ARActivity.PhotoCallbacksFinishedListener {
 
     private static final String TAG = "PhotoLayout";
-    private static final int MAX_NUM_NODES = 6;
+    private static final int MAX_NUM_NODES = 12;
+    private static final int NUM_COLS = 4;
+    private static final float CLOSER_PHOTO_Z = 0.25f;
+    private static final float FARTHER_PHOTO_Z = 0.75f;
+    private static final float DEFAULT = 0.0f;
+    private static final float MAX_IMAGE_Y = 1.0f;
+    private static final float LEFT_PHOTO_ANGLE = 45f;
+    private static final float RIGHT_PHOTO_ANGLE = -45f;
+    private static final float PHOTO_SEPARATION_X = 0.25f;
+
     private static ArrayList<Node> photoNodes;
     private static final Vector3 PHOTO_SCALE_VECTOR = new Vector3(0.3f, 0.3f, 0.3f);
     private static final float MAX_Y_LEVELS = 3.0f;
     private static final float MAX_X_COVERAGE_DIST = 2.5f;
-    private static final float PHOTO_NODE_Z = 0.25f;
 
     public PhotoLayout() {
         photoNodes = new ArrayList<>();
@@ -42,14 +50,48 @@ public class PhotoLayout extends Node implements ARActivity.PhotoCallbacksFinish
             
             for (int currIndex = 0; currIndex < photoNodes.size(); currIndex++) {
 
-                float currNodeX = (currIndex % 2 == 0) ? -MAX_X_COVERAGE_DIST / 2 : MAX_X_COVERAGE_DIST / 2;
+                int currRow = currIndex % NUM_COLS;
+                float currNodeX;
+                float currNodeZ;
+                float currAngle;
+
+                switch(currRow){
+                    case 0:
+                        currNodeX = (-MAX_X_COVERAGE_DIST / 2);
+                        currNodeZ = CLOSER_PHOTO_Z;
+                        currAngle = LEFT_PHOTO_ANGLE;
+                        break;
+
+                    case 1:
+                        currNodeX = (-MAX_X_COVERAGE_DIST / 2) - PHOTO_SEPARATION_X;
+                        currNodeZ = FARTHER_PHOTO_Z;
+                        currAngle = LEFT_PHOTO_ANGLE;
+                        break;
+
+                    case 2:
+                        currNodeX = (MAX_X_COVERAGE_DIST / 2) + PHOTO_SEPARATION_X;
+                        currNodeZ = FARTHER_PHOTO_Z;
+                        currAngle = RIGHT_PHOTO_ANGLE;
+                        break;
+
+                    case 3:
+                        currNodeX = MAX_X_COVERAGE_DIST / 2;
+                        currNodeZ = CLOSER_PHOTO_Z;
+                        currAngle = RIGHT_PHOTO_ANGLE;
+                        break;
+
+                    default:
+                        currNodeX = DEFAULT;
+                        currNodeZ = DEFAULT;
+                        currAngle = DEFAULT;
+                }
 
                 //Using integer division to assess what level we are currently on
-                int currLevelY = currIndex / 2;
+                int currLevelY = currIndex / NUM_COLS;
 
-                float currNodeY = (1.0f - (currLevelY / MAX_Y_LEVELS) );
+                float currNodeY = (MAX_IMAGE_Y - (currLevelY / MAX_Y_LEVELS) );
 
-                Vector3 currLocationVector = new Vector3(currNodeX, currNodeY, PHOTO_NODE_Z);
+                Vector3 currLocationVector = new Vector3(currNodeX, currNodeY, currNodeZ);
 
                 Node currPhotoNode = photoNodes.get(currIndex);
 
@@ -58,9 +100,8 @@ public class PhotoLayout extends Node implements ARActivity.PhotoCallbacksFinish
                 currPhotoNode.setLocalPosition(currLocationVector);
                 currPhotoNode.setLocalScale(PHOTO_SCALE_VECTOR);
 
-                float currAngle = (currIndex % 2 == 0) ? 45f : -45f;
 
-                currPhotoNode.setLocalRotation(Quaternion.axisAngle(new Vector3(0.0f, 1.0f, 0.0f), currAngle) );
+                currPhotoNode.setLocalRotation(Quaternion.axisAngle(new Vector3(0.0f,1.0f,0.0f), currAngle) );
             }
         }
 

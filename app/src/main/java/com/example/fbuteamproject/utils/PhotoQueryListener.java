@@ -33,7 +33,7 @@ public class PhotoQueryListener {
 
         Context context;
         private static final int RADIUS = 50;
-        private static final int PHOTO_NUMBER = 6;
+        private static final int PHOTO_NUMBER = 12;
 
         public QueryListener(Context context) {
             this.context = context;
@@ -73,7 +73,6 @@ public class PhotoQueryListener {
 
 
                     Glide.with(context).load(currentPhotos.get(i))
-                            //.transform(new RoundedCorners(RADIUS))
                             .apply(options)
                             .into(iv);
 

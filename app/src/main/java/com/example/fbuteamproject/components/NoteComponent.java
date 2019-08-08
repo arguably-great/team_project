@@ -77,7 +77,7 @@ public class NoteComponent {
 
             while ((line = br.readLine()) != null) {
                 fileText.append(line);
-                fileText.append('\n');
+                fileText.append("\n\n");
             }
             br.close();
         }
@@ -89,6 +89,9 @@ public class NoteComponent {
         Log.d("FileDebug", fileText.toString() );
 
         ( (TextView) contentView.findViewById(R.id.tvContents) ).setMovementMethod(new ScrollingMovementMethod() );
+
+        ( (TextView) contentView.findViewById(R.id.tvContents) ).setText("");
+
 
         ( (TextView) contentView.findViewById(R.id.tvContents) ).setText(fileText.toString() );
 
