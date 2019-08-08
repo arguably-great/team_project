@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<TextView
-    android:id="@+id/tvContents"
+<com.example.fbuteamproject.utils.LinedPaperText xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/etContents"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/rounded_bg"
-    android:scrollbars="vertical"
+    android:cursorVisible="false"
     android:maxLines="4"
-    android:textColor="#FFFFFF"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    android:minLines="4"
+    android:scrollbars="vertical"
+    android:textColor="@color/black"/>

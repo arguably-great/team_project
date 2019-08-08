@@ -484,32 +484,28 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case SPEECH_REQUEST_CODE: {
-                if (resultCode == RESULT_OK && null != data) {
+        if (requestCode == SPEECH_REQUEST_CODE) {
+            if (resultCode == RESULT_OK && null != data) {
 
-                    File currEntityFile = currEntitySelected.getEntity().getEntityFile();
+                File currEntityFile = currEntitySelected.getEntity().getEntityFile();
 
-                    try {
+                try {
 
-                        FileWriter fileWriter = new FileWriter(currEntityFile, true);
+                    FileWriter fileWriter = new FileWriter(currEntityFile, true);
 
-                        ArrayList<String> speechResult = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    ArrayList<String> speechResult = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-                        fileWriter.append("\n" + speechResult.get(0) );
-                        fileWriter.close();
+                    fileWriter.append("\n" + speechResult.get(0));
+                    fileWriter.close();
 
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                break;
-            }
 
+                NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
+            }
         }
     }
 
