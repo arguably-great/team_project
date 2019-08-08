@@ -83,7 +83,7 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
                 Config.Entity currEntity = appEntities.get(currIndex);
 
                 if (currEntity.getEntityRotation() != null ) {
-                    PLANET_Y = 1.7f;
+                    PLANET_Y = 1.67f;
                     Log.d(TAG, "rotated entity "+  currEntity.getEntityName());
                     Log.d(TAG, "entity's rotation "+ currEntity.getEntityRotation());
                     currEntity.setLocalRotation(currEntity.getEntityRotation());
