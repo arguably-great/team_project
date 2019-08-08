@@ -160,19 +160,19 @@ public class Config {
         planetConfig0 = new AppConfig();
       
         planetConfig0.entities.add(new Entity("Earth", "CHAHIN_EARTH.sfb",
-                "file:///sdcard/Movies/test.mp4",
+                "file:///sdcard/Movies/earth.mp4",
                 new Vector3(0.5f, 0.5f, 0.5f), AppConfig.getContext()));
         planetConfig0.entities.add(new Entity("Venus", "Venus_1241.sfb",
-                "file:///sdcard/VideoDownloader/Download/EARTH.mp4",
+                "file:///sdcard/Movies/VENUS.mp4",
                 new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext()));
         planetConfig0.entities.add(new Entity("Neptune", "Neptune.sfb",
-                "file:///sdcard/Movies/test.mp4",
+                "file:///sdcard/Movies/neptune.mp4",
                 new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext()));
         planetConfig0.entities.add(new Entity("Saturn", "13906_Saturn_v1_l3.sfb",
-                "file:///sdcard/Movies/test.mp4",
+                "file:///sdcard/Movies/saturn.mp4",
                 new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext()));
         planetConfig0.entities.add(new Entity("Jupiter", "model.sfb",
-                "file:///sdcard/Movies/test.mp4",
+                "file:///sdcard/Movies/jupiter.mp4",
                 new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext()));
 
         /*planetConfig1 = new AppConfig();
