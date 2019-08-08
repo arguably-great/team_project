@@ -136,3 +136,19 @@ sceneform.asset('sampledata/models/Venus/Venus_1241.obj',
         'src/main/assets/Venus_1241')
 
 
+
+
+sceneform.asset('sampledata/models/Mercury/13900_Mercury_v1_l3.obj',
+        'default',
+        'sampledata/models/Mercury/13900_Mercury_v1_l3.sfa',
+        'src/main/assets/13900_Mercury_v1_l3')
+
+sceneform.asset('sampledata/models/Uranus/13907_Uranus_v2_l3.obj',
+        'default',
+        'sampledata/models/Uranus/13907_Uranus_v2_l3.sfa',
+        'src/main/assets/13907_Uranus_v2_l3')
+
+sceneform.asset('sampledata/models/Mars/Mars.obj',
+        'default',
+        'sampledata/models/Mars/Mars.sfa',
+        'src/main/assets/Mars')
