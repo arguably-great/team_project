@@ -105,21 +105,6 @@ dependencies {
 
 apply plugin: 'com.google.ar.sceneform.plugin'
 
-sceneform.asset('sampledata/1239 Mars.obj',
-        'default',
-        'sampledata/1239 Mars.sfa',
-        'src/main/assets/1239 Mars')
-
-sceneform.asset('sampledata/CHAHIN_EARTH.obj',
-        'default',
-        'sampledata/CHAHIN_EARTH.sfa',
-        'src/main/assets/CHAHIN_EARTH')
-
-sceneform.asset('sampledata/Neptune.obj',
-        'default',
-        'sampledata/Neptune.sfa',
-        'src/main/assets/Neptune')
-
 sceneform.asset('sampledata/models/Jupiter/model.obj',
         'default',
         'sampledata/models/Jupiter/model.sfa',
@@ -135,9 +120,6 @@ sceneform.asset('sampledata/models/Venus/Venus_1241.obj',
         'sampledata/models/Venus/Venus_1241.sfa',
         'src/main/assets/Venus_1241')
 
-
-
-
 sceneform.asset('sampledata/models/Mercury/13900_Mercury_v1_l3.obj',
         'default',
         'sampledata/models/Mercury/13900_Mercury_v1_l3.sfa',
@@ -152,3 +134,13 @@ sceneform.asset('sampledata/models/Mars/Mars.obj',
         'default',
         'sampledata/models/Mars/Mars.sfa',
         'src/main/assets/Mars')
+
+sceneform.asset('sampledata/models/Earth/CHAHIN_EARTH.obj',
+        'default',
+        'sampledata/models/Earth/CHAHIN_EARTH.sfa',
+        'src/main/assets/CHAHIN_EARTH')
+
+sceneform.asset('sampledata/models/Neptune/Neptune.obj',
+        'default',
+        'sampledata/models/Neptune/Neptune.sfa',
+        'src/main/assets/Neptune')

@@ -172,6 +172,20 @@ public class Config {
         planetConfig0.entities.add(new Entity("Jupiter", "model.sfb",
                 "file:///sdcard/Movies/jupiter.mp4",
                 new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet"));
+        planetConfig0.entities.add(new Entity("Uranus", "13907_Uranus_v2_l3.sfb",
+                "file:///sdcard/Movies/jupiter.mp4",
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet"));
+        planetConfig0.entities.add(new Entity("Mercury", "13900_Mercury_v1_l3.sfb",
+                "file:///sdcard/Movies/jupiter.mp4",
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet"));
+        planetConfig0.entities.add(new Entity("Mars", "Mars.sfb",
+                "file:///sdcard/Movies/jupiter.mp4",
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet"));
+
+
+
+
+
         /*planetConfig1 = new AppConfig();
         planetConfig1.entities.add(new Entity("Venus", "5ovHBezIGyZ",
                 "https://pmdvod.nationalgeographic.com/NG_Video/204/391/1346685507950_1539814478542_1346690115566_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
