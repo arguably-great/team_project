@@ -288,6 +288,9 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     @Override
     protected void onResume() {
         super.onResume();
+
+        Log.d("Speech2Text", "onResume called at some point.");
+
         if (arSceneView == null) {
             return;
         }
@@ -331,6 +334,10 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     @Override
     public void onPause() {
         super.onPause();
+
+        Log.d("Speech2Text", "OnPause called at some point ");
+
+
         if (arSceneView != null) {
             arSceneView.pause();
         }
@@ -432,6 +439,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
            speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
 
            try {
+               Log.d("Speech2Text", "About to start my request");
                startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
            } catch (ActivityNotFoundException a) {
                Toast.makeText(getApplicationContext(),
@@ -496,8 +504,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
                         e.printStackTrace();
                     }
 
-                    //TODO - WANT TO BE ABLE TO ALSO CHANGE THE TEXTVIEW THAT IS CURRENTLY SHOWING.
-
+                    NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
                 }
                 break;
             }

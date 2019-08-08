@@ -73,7 +73,6 @@ public class PhotoQueryListener {
 
 
                     Glide.with(context).load(currentPhotos.get(i))
-                            //.transform(new RoundedCorners(RADIUS))
                             .apply(options)
                             .into(iv);
 
