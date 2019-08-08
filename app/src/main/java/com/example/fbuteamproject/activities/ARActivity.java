@@ -417,7 +417,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         photoLayout.setParent(baseNode);
 
         //This coming line should trigger the onEntityChanged method from the included interface
-        currEntitySelected.setEntity(appEntities.get(0));
+        currEntitySelected.setEntity(appEntities.get(2));
 
         //Traverse through all of the Entities and assign their onTaps (basically just trigger listener)
         for(Config.Entity currEntity: appEntities){
