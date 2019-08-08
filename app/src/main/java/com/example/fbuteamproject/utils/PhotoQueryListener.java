@@ -36,7 +36,7 @@ public class PhotoQueryListener {
         private static final int PHOTO_NUMBER = 12;
         private int PHOTO_WIDTH = 1000;
         private int PHOTO_HEIGHT = 600;
-        
+
 
         public QueryListener(Context context) {
             this.context = context;
