@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -432,22 +433,27 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         }
 
         //Creating Intent for Speech-To-Text
-        noteLayout.getNoteRenderableView().setOnClickListener(v -> {
-           Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-           speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                   RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-           speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-           speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
+        noteLayout.getNoteRenderableView().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
 
-           try {
-               Log.d("Speech2Text", "About to start my request");
-               startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
-           } catch (ActivityNotFoundException a) {
-               Toast.makeText(getApplicationContext(),
-                       "Sorry your device not supported",
-                       Toast.LENGTH_SHORT).show();
-           }
-       });
+                try {
+                    Log.d("Speech2Text", "About to start my request");
+                    startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
+                } catch (ActivityNotFoundException a) {
+                    Toast.makeText(getApplicationContext(),
+                            "Sorry your device not supported",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                return true;
+            }
+        });
 
         return baseNode;
     }
@@ -504,7 +510,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
                     e.printStackTrace();
                 }
 
-                NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
+                NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView(), false);
             }
         }
     }
@@ -528,9 +534,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             PhotoComponent.listener.startPhotoNodeCreation(currEntity.getEntityPhotos() );
         }
 
-        NoteComponent.changeContentView(currEntity, noteLayout.getNoteRenderableView());
-
-
+        NoteComponent.changeContentView(currEntity, noteLayout.getNoteRenderableView(), true);
     }
 
     private void releaseExoPlayer() {

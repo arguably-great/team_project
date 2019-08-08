@@ -44,10 +44,6 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
 
     private void createEntityNodes(ArrayList<Config.Entity> appEntities) {
 
-
-        float entitySplit;
-
-
         if (appEntities.size() == 1){
 
             ALPHA = (float) (-1 * Math.PI / 2);

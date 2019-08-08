@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 
 public class NoteComponent {
 
+    public static final String START_OF_NOTE_LINE = "\n\n     \u2022  ";
     private static ViewRenderable entityContentRenderable;
 
     private static CompletableFuture<ViewRenderable> buildContentStage(Context context){
@@ -57,7 +58,7 @@ public class NoteComponent {
         return entityContentRenderable;
     }
 
-    public static void changeContentView(Config.Entity currEntity, View contentView){
+    public static void changeContentView(Config.Entity currEntity, View contentView, boolean shouldScrollToTop){
 
         File currEntityFile = currEntity.getEntityFile();
 
@@ -66,10 +67,17 @@ public class NoteComponent {
         try {
             BufferedReader br = new BufferedReader(new FileReader(currEntityFile));
             String line;
-
+            int lineCount = 0;
             while ((line = br.readLine()) != null) {
-                fileText.append(line);
-                fileText.append("\n\n");
+                if (lineCount != 0) {
+                    fileText.append(START_OF_NOTE_LINE);
+                    fileText.append(line);
+                }
+                else{
+                    fileText.append(line);
+                }
+                //Keep track of the lines so that the first line in the file does not have additional spacing
+                lineCount++;
             }
             br.close();
         }
@@ -87,6 +95,9 @@ public class NoteComponent {
 
         ( (EditText) contentView.findViewById(R.id.etContents) ).setText(fileText.toString() );
 
+        if (shouldScrollToTop) {
+            contentView.findViewById(R.id.etContents).scrollTo(0, 0);
+        }
 
     }
 
