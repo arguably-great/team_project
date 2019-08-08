@@ -47,6 +47,7 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
 
         float entitySplit;
 
+
         if (appEntities.size() == 1){
 
             ALPHA = (float) (-1 * Math.PI / 2);
@@ -57,6 +58,12 @@ public class EntityLayout extends Node implements ModelComponent.ModelCallBacksF
                 Log.d(TAG, "rotated entity "+  currEntity.getEntityName());
                 Log.d(TAG, "entity's rotation "+ currEntity.getEntityRotation());
                 currEntity.setLocalRotation(currEntity.getEntityRotation());
+            }
+
+            if (currEntity.getEntityRotation() != null ) {
+                Log.d(TAG, "rotated entity "+  appEntities.get(currIndex).getEntityName());
+                Log.d(TAG, "entity's rotation "+ appEntities.get(currIndex).getEntityRotation());
+                currEntity.setLocalRotation(appEntities.get(currIndex).getEntityRotation());
             }
 
             currEntity.setParent(this);
