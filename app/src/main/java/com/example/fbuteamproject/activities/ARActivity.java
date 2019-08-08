@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -432,22 +433,27 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         }
 
         //Creating Intent for Speech-To-Text
-        noteLayout.getNoteRenderableView().setOnClickListener(v -> {
-           Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-           speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                   RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-           speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-           speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
+        noteLayout.getNoteRenderableView().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
 
-           try {
-               Log.d("Speech2Text", "About to start my request");
-               startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
-           } catch (ActivityNotFoundException a) {
-               Toast.makeText(getApplicationContext(),
-                       "Sorry your device not supported",
-                       Toast.LENGTH_SHORT).show();
-           }
-       });
+                try {
+                    Log.d("Speech2Text", "About to start my request");
+                    startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
+                } catch (ActivityNotFoundException a) {
+                    Toast.makeText(getApplicationContext(),
+                            "Sorry your device not supported",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                return true;
+            }
+        });
 
         return baseNode;
     }
@@ -484,32 +490,28 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case SPEECH_REQUEST_CODE: {
-                if (resultCode == RESULT_OK && null != data) {
+        if (requestCode == SPEECH_REQUEST_CODE) {
+            if (resultCode == RESULT_OK && null != data) {
 
-                    File currEntityFile = currEntitySelected.getEntity().getEntityFile();
+                File currEntityFile = currEntitySelected.getEntity().getEntityFile();
 
-                    try {
+                try {
 
-                        FileWriter fileWriter = new FileWriter(currEntityFile, true);
+                    FileWriter fileWriter = new FileWriter(currEntityFile, true);
 
-                        ArrayList<String> speechResult = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    ArrayList<String> speechResult = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-                        fileWriter.append("\n" + speechResult.get(0) );
-                        fileWriter.close();
+                    fileWriter.append("\n" + speechResult.get(0));
+                    fileWriter.close();
 
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                break;
-            }
 
+                NoteComponent.changeContentView(currEntitySelected.getEntity(), noteLayout.getNoteRenderableView(), false);
+            }
         }
     }
 
@@ -532,9 +534,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
             PhotoComponent.listener.startPhotoNodeCreation(currEntity.getEntityPhotos() );
         }
 
-        NoteComponent.changeContentView(currEntity, noteLayout.getNoteRenderableView());
-
-
+        NoteComponent.changeContentView(currEntity, noteLayout.getNoteRenderableView(), true);
     }
 
     private void releaseExoPlayer() {

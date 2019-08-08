@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<TextView
-    android:id="@+id/tvContents"
+<com.example.fbuteamproject.utils.LinedPaperText xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/etContents"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/rounded_bg"
+    android:cursorVisible="false"
+    android:maxLines="8"
+    android:maxWidth="250dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     android:scrollbars="vertical"
-    android:maxLines="4"
-    android:textColor="#FFFFFF"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    android:textColor="@color/black"
+    android:textSize="18sp" />
