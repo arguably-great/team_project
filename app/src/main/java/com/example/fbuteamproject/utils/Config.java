@@ -166,6 +166,9 @@ public class Config {
     static {
         planetConfig0 = new AppConfig();
 
+
+        planetConfig0 = new AppConfig();
+
         planetConfig0.entities.add(new Entity("Earth", "CHAHIN_EARTH.sfb",
                 "file:///sdcard/Movies/earth.mp4",
                 new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "solar system earth", null));
@@ -181,6 +184,15 @@ public class Config {
         planetConfig0.entities.add(new Entity("Jupiter", "model.sfb",
                 "file:///sdcard/Movies/jupiter.mp4",
                 new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "jupiter moon", null));
+        planetConfig0.entities.add(new Entity("Uranus", "13907_Uranus_v2_l3.sfb",
+                "file:///sdcard/Movies/jupiter.mp4",
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet", null));
+        planetConfig0.entities.add(new Entity("Mercury", "13900_Mercury_v1_l3.sfb",
+                "file:///sdcard/Movies/jupiter.mp4",
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet", null));
+        planetConfig0.entities.add(new Entity("Mars", "Mars.sfb",
+                "file:///sdcard/Movies/jupiter.mp4",
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet", null));
 
         /*planetConfig1 = new AppConfig();
         planetConfig1.entities.add(new Entity("Venus", "5ovHBezIGyZ",
