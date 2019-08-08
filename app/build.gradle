@@ -135,12 +135,12 @@ sceneform.asset('sampledata/models/Mars/Mars.obj',
         'sampledata/models/Mars/Mars.sfa',
         'src/main/assets/Mars')
 
-sceneform.asset('sampledata/models/Earth/CHAHIN_EARTH.obj',
-        'default',
-        'sampledata/models/Earth/CHAHIN_EARTH.sfa',
-        'src/main/assets/CHAHIN_EARTH')
-
 sceneform.asset('sampledata/models/Neptune/Neptune.obj',
         'default',
         'sampledata/models/Neptune/Neptune.sfa',
         'src/main/assets/Neptune')
+
+sceneform.asset('sampledata/models/Earth/CHAHIN_EARTH.obj',
+        'default',
+        'sampledata/models/Earth/CHAHIN_EARTH.sfa',
+        'src/main/assets/CHAHIN_EARTH')
