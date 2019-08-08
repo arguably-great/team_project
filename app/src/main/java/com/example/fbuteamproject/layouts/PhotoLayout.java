@@ -21,19 +21,24 @@ public class PhotoLayout extends Node implements ARActivity.PhotoCallbacksFinish
 
     private static final String TAG = "PhotoLayout";
     private static final int MAX_NUM_NODES = 12;
-    public static final int NUM_COLS = 4;
+    private static final int NUM_COLS = 4;
+    private static final float CLOSER_PHOTO_Z = 0.25f;
+    private static final float FARTHER_PHOTO_Z = 0.75f;
+    private static final float DEFAULT = 0.0f;
+    private static final float MAX_IMAGE_Y = 1.0f;
+    private static final float LEFT_PHOTO_ANGLE = 45f;
+    private static final float RIGHT_PHOTO_ANGLE = -45f;
+    private static final float PHOTO_SEPARATION_X = 0.25f;
+
     private static ArrayList<Node> photoNodes;
     private static final Vector3 PHOTO_SCALE_VECTOR = new Vector3(0.3f, 0.3f, 0.3f);
     private static final float MAX_Y_LEVELS = 3.0f;
     private static final float MAX_X_COVERAGE_DIST = 2.5f;
-    private static final float PHOTO_NODE_Z = 0.25f;
 
     public PhotoLayout() {
         photoNodes = new ArrayList<>();
         PhotoComponent.setListener(this);
     }
-
-    //TODO - Code will work better after rebasing with Sophia's Stuff
 
     private void createPhotoNodes(ArrayList<ViewRenderable> photoRenderables) {
 
@@ -50,43 +55,41 @@ public class PhotoLayout extends Node implements ARActivity.PhotoCallbacksFinish
                 float currNodeZ;
                 float currAngle;
 
-                //TODO - Dont keep these as magic numbers. ADD FLEXIBILITY OR CONSTANTS
-                    //TODO - Also make sure to check this code AFTER Sophia puts her stuff on master
                 switch(currRow){
                     case 0:
-                        currNodeX = -MAX_X_COVERAGE_DIST / 2;
-                        currNodeZ = -0.25f;
-                        currAngle = 45f;
+                        currNodeX = (-MAX_X_COVERAGE_DIST / 2);
+                        currNodeZ = CLOSER_PHOTO_Z;
+                        currAngle = LEFT_PHOTO_ANGLE;
                         break;
 
                     case 1:
-                        currNodeX = -MAX_X_COVERAGE_DIST / 2;
-                        currNodeZ = 0.25f;
-                        currAngle = 45f;
+                        currNodeX = (-MAX_X_COVERAGE_DIST / 2) - PHOTO_SEPARATION_X;
+                        currNodeZ = FARTHER_PHOTO_Z;
+                        currAngle = LEFT_PHOTO_ANGLE;
                         break;
 
                     case 2:
-                        currNodeX = (MAX_X_COVERAGE_DIST / 2) - 0.3f;
-                        currNodeZ = 0.25f;
-                        currAngle = -45f;
+                        currNodeX = (MAX_X_COVERAGE_DIST / 2) + PHOTO_SEPARATION_X;
+                        currNodeZ = FARTHER_PHOTO_Z;
+                        currAngle = RIGHT_PHOTO_ANGLE;
                         break;
 
                     case 3:
-                        currNodeX = MAX_X_COVERAGE_DIST / 2 + 0.3f;
-                        currNodeZ = 0.0f;
-                        currAngle = -45f;
+                        currNodeX = MAX_X_COVERAGE_DIST / 2;
+                        currNodeZ = CLOSER_PHOTO_Z;
+                        currAngle = RIGHT_PHOTO_ANGLE;
                         break;
 
                     default:
-                        currNodeX = 0.0f;
-                        currNodeZ = -0.25f;
-                        currAngle = 0.0f;
+                        currNodeX = DEFAULT;
+                        currNodeZ = DEFAULT;
+                        currAngle = DEFAULT;
                 }
 
                 //Using integer division to assess what level we are currently on
                 int currLevelY = currIndex / NUM_COLS;
 
-                float currNodeY = (1.0f - (currLevelY / MAX_Y_LEVELS) );
+                float currNodeY = (MAX_IMAGE_Y - (currLevelY / MAX_Y_LEVELS) );
 
                 Vector3 currLocationVector = new Vector3(currNodeX, currNodeY, currNodeZ);
 
@@ -97,7 +100,8 @@ public class PhotoLayout extends Node implements ARActivity.PhotoCallbacksFinish
                 currPhotoNode.setLocalPosition(currLocationVector);
                 currPhotoNode.setLocalScale(PHOTO_SCALE_VECTOR);
 
-                currPhotoNode.setLocalRotation(Quaternion.axisAngle(new Vector3(0.0f, 1.0f, 0.0f), currAngle) );
+
+                currPhotoNode.setLocalRotation(Quaternion.axisAngle(new Vector3(0.0f,1.0f,0.0f), currAngle) );
             }
         }
 
