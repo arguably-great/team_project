@@ -12,4 +12,4 @@
     android:paddingRight="10dp"
     android:scrollbars="vertical"
     android:textColor="@color/black"
-    android:textSize="18sp" />
+    android:textSize="12sp" />
