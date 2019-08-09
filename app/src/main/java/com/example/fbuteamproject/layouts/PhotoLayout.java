@@ -22,13 +22,23 @@ public class PhotoLayout extends Node implements ARActivity.PhotoCallbacksFinish
     private static final String TAG = "PhotoLayout";
     private static final int MAX_NUM_NODES = 12;
     private static final int NUM_COLS = 4;
-    private static final float CLOSER_PHOTO_Z = 0.25f;
-    private static final float FARTHER_PHOTO_Z = 0.75f;
-    private static final float DEFAULT = 0.0f;
-    private static final float MAX_IMAGE_Y = 1.0f;
-    private static final float LEFT_PHOTO_ANGLE = 45f;
-    private static final float RIGHT_PHOTO_ANGLE = -45f;
-    private static final float PHOTO_SEPARATION_X = 0.25f;
+    private static final float CLOSER_PHOTO_Z_PHONE = 0.25f;
+    private static final float FARTHER_PHOTO_Z_PHONE = 0.75f;
+    private static final float DEFAULT_PHONE = 0.0f;
+    private static final float MAX_IMAGE_Y_PHONE = 1.0f;
+    private static final float LEFT_PHOTO_ANGLE_PHONE = 45f;
+    private static final float RIGHT_PHOTO_ANGLE_PHONE = -45f;
+    private static final float PHOTO_SEPARATION_X_PHONE = 0.25f;
+
+    private static final float CLOSER_PHOTO_Z_TABLET = 0.25f;
+    private static final float FARTHER_PHOTO_Z_TABLET = 0.75f;
+    private static final float DEFAULT_TABLET = 0.0f;
+    private static final float MAX_IMAGE_Y_TABLET = 1.0f;
+    private static final float LEFT_PHOTO_ANGLE_TABLET = 45f;
+    private static final float RIGHT_PHOTO_ANGLE_TABLET = -45f;
+    private static final float PHOTO_SEPARATION_X_TABLET = 0.5f;
+
+
 
     private static ArrayList<Node> photoNodes;
     private static final Vector3 PHOTO_SCALE_VECTOR = new Vector3(0.3f, 0.3f, 0.3f);
@@ -58,38 +68,38 @@ public class PhotoLayout extends Node implements ARActivity.PhotoCallbacksFinish
                 switch(currRow){
                     case 0:
                         currNodeX = (-MAX_X_COVERAGE_DIST / 2);
-                        currNodeZ = CLOSER_PHOTO_Z;
-                        currAngle = LEFT_PHOTO_ANGLE;
+                        currNodeZ = CLOSER_PHOTO_Z_TABLET;
+                        currAngle = LEFT_PHOTO_ANGLE_TABLET;
                         break;
 
                     case 1:
-                        currNodeX = (-MAX_X_COVERAGE_DIST / 2) - PHOTO_SEPARATION_X;
-                        currNodeZ = FARTHER_PHOTO_Z;
-                        currAngle = LEFT_PHOTO_ANGLE;
+                        currNodeX = (-MAX_X_COVERAGE_DIST / 2) - PHOTO_SEPARATION_X_TABLET;
+                        currNodeZ = FARTHER_PHOTO_Z_TABLET;
+                        currAngle = LEFT_PHOTO_ANGLE_TABLET;
                         break;
 
                     case 2:
-                        currNodeX = (MAX_X_COVERAGE_DIST / 2) + PHOTO_SEPARATION_X;
-                        currNodeZ = FARTHER_PHOTO_Z;
-                        currAngle = RIGHT_PHOTO_ANGLE;
+                        currNodeX = (MAX_X_COVERAGE_DIST / 2) + PHOTO_SEPARATION_X_TABLET;
+                        currNodeZ = FARTHER_PHOTO_Z_TABLET;
+                        currAngle = RIGHT_PHOTO_ANGLE_TABLET;
                         break;
 
                     case 3:
                         currNodeX = MAX_X_COVERAGE_DIST / 2;
-                        currNodeZ = CLOSER_PHOTO_Z;
-                        currAngle = RIGHT_PHOTO_ANGLE;
+                        currNodeZ = CLOSER_PHOTO_Z_TABLET;
+                        currAngle = RIGHT_PHOTO_ANGLE_TABLET;
                         break;
 
                     default:
-                        currNodeX = DEFAULT;
-                        currNodeZ = DEFAULT;
-                        currAngle = DEFAULT;
+                        currNodeX = DEFAULT_TABLET;
+                        currNodeZ = DEFAULT_TABLET;
+                        currAngle = DEFAULT_TABLET;
                 }
 
                 //Using integer division to assess what level we are currently on
                 int currLevelY = currIndex / NUM_COLS;
 
-                float currNodeY = (MAX_IMAGE_Y - (currLevelY / MAX_Y_LEVELS) );
+                float currNodeY = (MAX_IMAGE_Y_TABLET - (1.5f * MAX_IMAGE_Y_TABLET) * (currLevelY / MAX_Y_LEVELS) );
 
                 Vector3 currLocationVector = new Vector3(currNodeX, currNodeY, currNodeZ);
 

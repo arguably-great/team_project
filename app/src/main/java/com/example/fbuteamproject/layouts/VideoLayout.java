@@ -11,14 +11,12 @@ This Class serves as one piece of the bigger overall Layout structure for the ap
  */
 public class VideoLayout extends Node {
 
-    private static final float VIDEO_HEIGHT = 0.7f;
+    private static final float VIDEO_HEIGHT_PHONE = 0.7f;
+    private static final float VIDEO_HEIGHT_TABLET = 0.9f;
     private static final Vector3 VIDEO_LOCATION_VECTOR = new Vector3(0.0f, 0.6f, -1.0f);
-    private static final Vector3 VIDEO_SCALE_VECTOR = new Vector3(VIDEO_HEIGHT * 2, VIDEO_HEIGHT, 1.0f);
+    private static final Vector3 VIDEO_SCALE_VECTOR = new Vector3(VIDEO_HEIGHT_TABLET * 2, VIDEO_HEIGHT_TABLET, 1.0f);
     private Node videoNode;
 
-    public VideoLayout(){
-        this.videoNode = new Node();
-    }
 
     public VideoLayout(ModelRenderable videoRenderable){
 
