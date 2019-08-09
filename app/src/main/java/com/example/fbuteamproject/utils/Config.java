@@ -3,6 +3,7 @@ package com.example.fbuteamproject.utils;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.BuildConfig;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
@@ -155,8 +156,17 @@ public class Config {
         public static AppConfig getAppConfig(Context newContext) {
             setContext(newContext);
 
-            return animalConfig;
+            if(BuildConfig.FLAVOR.equals("planet")) {
 
+                return planetConfig0;
+            }
+            else if(BuildConfig.FLAVOR.equals("animal")) {
+
+               return animalConfig;
+
+            }
+
+            return planetConfig0;
         }
     }
 

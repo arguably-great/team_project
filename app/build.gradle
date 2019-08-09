@@ -32,6 +32,21 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    flavorDimensions "version"
+
+    productFlavors {
+        planet {
+            dimension "version"
+            applicationIdSuffix ".planet"
+            versionNameSuffix "-planet"
+        }
+        animal {
+            dimension "version"
+            applicationIdSuffix ".animal"
+            versionNameSuffix "-animal"
+        }
+    }
 }
 ext {
     supportLibVersion = '28.0.0'  // variable that can be referenced to keep support libs consistent
