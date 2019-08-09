@@ -145,3 +145,33 @@ sceneform.asset('sampledata/models/Earth/CHAHIN_EARTH.obj',
         'default',
         'sampledata/models/Earth/CHAHIN_EARTH.sfa',
         'src/main/assets/CHAHIN_EARTH')
+
+sceneform.asset('sampledata/models/Animals/Elephant/Elephant.obj',
+        'default',
+        'sampledata/models/Animals/Elephant/Elephant.sfa',
+        'src/main/assets/Elephant')
+
+sceneform.asset('sampledata/models/Animals/Giraffe/Giraffe.obj',
+        'default',
+        'sampledata/models/Animals/Giraffe/Giraffe.sfa',
+        'src/main/assets/Giraffe')
+
+sceneform.asset('sampledata/models/Animals/Jaguar/Jaguar.obj',
+        'default',
+        'sampledata/models/Animals/Jaguar/Jaguar.sfa',
+        'src/main/assets/Jaguar')
+
+sceneform.asset('sampledata/models/Animals/Lion/Lion.obj',
+        'default',
+        'sampledata/models/Animals/Lion/Lion.sfa',
+        'src/main/assets/Lion')
+
+sceneform.asset('sampledata/models/Animals/Monkey/SquirrelMonkey.OBJ',
+        'default',
+        'sampledata/models/Animals/Monkey/SquirrelMonkey.sfa',
+        'src/main/assets/SquirrelMonkey')
+
+sceneform.asset('sampledata/models/Animals/Zebra/Zebra.obj',
+        'default',
+        'sampledata/models/Animals/Zebra/Zebra.sfa',
+        'src/main/assets/Zebra')
