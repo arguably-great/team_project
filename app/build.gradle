@@ -34,17 +34,16 @@ android {
     }
 
     flavorDimensions "version"
-
     productFlavors {
-        planet {
+        planet0 {
             dimension "version"
-            applicationIdSuffix ".planet"
-            versionNameSuffix "-planet"
+            applicationIdSuffix ".planet0"
+            versionNameSuffix "-planet0"
         }
-        animal {
+        animal0 {
             dimension "version"
-            applicationIdSuffix ".animal"
-            versionNameSuffix "-animal"
+            applicationIdSuffix ".animal0"
+            versionNameSuffix "-animal0"
         }
     }
 }
