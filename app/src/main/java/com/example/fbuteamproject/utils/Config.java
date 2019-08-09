@@ -197,11 +197,11 @@ public class Config {
         animalConfig.entities.add(new Entity("Elephant", "Elephant.sfb","https://pmdvod.nationalgeographic.com/NG_Video/493/847/1087143491881_1509643865712_1087150659568_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
                 new Vector3(0.4f, 0.4f, 0.4f), AppConfig.getContext(), "elephant herds", Quaternion.axisAngle(new Vector3(0,1,0), 20)));
         animalConfig.entities.add(new Entity("Giraffe", "Giraffe.sfb","https://pmdvod.nationalgeographic.com/NG_Video/392/819/1142872131764_1516653097532_1142871619814_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
-                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "grazing giraffe herds animals", null));
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "giraffe herds animals", null));
         animalConfig.entities.add(new Entity("Jaguar", "Jaguar.sfb","https://pmdvod.nationalgeographic.com/NG_Video/722/723/1251665987846_1528499941303_1251668547971_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
                 new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "national geographic cheetah", null));
         animalConfig.entities.add(new Entity("Lion", "Lion.sfb","https://pmdvod.nationalgeographic.com/NG_Video/336/479/1152476739923_1517604362758_1152482371523_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
-                new Vector3(0.3f, 0.3f, 0.3f), AppConfig.getContext(), "animal lion lioness", null));
+                new Vector3(0.3f, 0.3f, 0.3f), AppConfig.getContext(), "animal lion pride herd", null));
         animalConfig.entities.add(new Entity("Monkey", "SquirrelMonkey.sfb", "https://pmdvod.nationalgeographic.com/NG_Video/508/71/1453304387732_1551912110015_1453312067615_mp4_video_1024x576_1632000_primary_audio_eng_3.mp4",
                 new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "monkey chimpanzee gorilla", Quaternion.axisAngle(new Vector3(0,1,0), 30)));
         animalConfig.entities.add(new Entity("Zebra", "Zebra.sfb","https://pmdvod.nationalgeographic.com/NG_Video/854/911/Ohio_Tigers_wild_1800.mp4",
