@@ -157,19 +157,18 @@ public class Config {
             setContext(newContext);
 
 
-            if(BuildConfig.FLAVOR.equals("planetDebug")) {
+            if(BuildConfig.FLAVOR.equals("planet0Debug")) {
 
                 return planetConfig0;
 
             }
-            else if(BuildConfig.FLAVOR.equals("animalDebug")) {
+            else if(BuildConfig.FLAVOR.equals("animal0Debug")) {
 
                 return animalConfig;
 
             }
 
             return animalConfig;
-
         }
     }
 
