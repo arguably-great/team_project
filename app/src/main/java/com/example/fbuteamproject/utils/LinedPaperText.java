@@ -14,9 +14,11 @@ import com.example.fbuteamproject.R;
 public class LinedPaperText extends EditText {
 
     private static final float VERTICAL_OFFSET_SCALING_FACTOR = 0.1f;
+    private static final int RED_MARGIN_OFFSET = 5;
 
 
-    private Paint linePainter;
+    private Paint horizontalLinePainter;
+    private Paint verticalLinePainter;
 
     private Rect reusableRect;
 
@@ -40,11 +42,13 @@ public class LinedPaperText extends EditText {
     private void init(){
         reusableRect = new Rect();
 
-        linePainter = new Paint();
+        horizontalLinePainter = new Paint();
+        horizontalLinePainter.setStyle(Paint.Style.FILL);
+        horizontalLinePainter.setColor(getResources().getColor(R.color.linedPaperBlue) ) ;
 
-//        linePainter.setARGB(200, 0, 0, 0);
-        linePainter.setStyle(Paint.Style.FILL);
-        linePainter.setColor(getResources().getColor(R.color.linedPaperBlue) ) ;
+        verticalLinePainter = new Paint();
+        verticalLinePainter.setStyle(Paint.Style.FILL);
+        verticalLinePainter.setColor(getResources().getColor(R.color.linedPaperRedMargin) ) ;
 
     }
 
@@ -73,7 +77,15 @@ public class LinedPaperText extends EditText {
                     baseline + verticalOffset,
                     reusableRect.right,
                     baseline + verticalOffset,
-                    linePainter
+                    horizontalLinePainter
+            );
+
+            canvas.drawLine(
+                    reusableRect.left - RED_MARGIN_OFFSET,
+                    baseline + verticalOffset,
+                    reusableRect.left - RED_MARGIN_OFFSET,
+                    baseline - lineHeight,
+                    verticalLinePainter
             );
 
             baseline += lineHeight;
