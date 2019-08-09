@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -291,7 +290,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     protected void onResume() {
         super.onResume();
 
-        Log.d("Speech2Text", "onResume called at some point.");
+        Log.d("LifeCycle", "onResume called at some point.");
 
         if (arSceneView == null) {
             return;
@@ -337,7 +336,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     public void onPause() {
         super.onPause();
 
-        Log.d("Speech2Text", "OnPause called at some point ");
+        Log.d("LifeCycle", "OnPause called at some point ");
 
 
         if (arSceneView != null) {
@@ -355,7 +354,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
+        Log.d("LifeCycle", "onDestroy");
 
         if (player != null) {
             releaseExoPlayer();
@@ -433,26 +432,23 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         }
 
         //Creating Intent for Speech-To-Text
-        noteLayout.getNoteRenderableView().setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
+        noteLayout.getNoteRenderableView().setOnLongClickListener(v -> {
+            Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+            speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak now...");
 
-                try {
-                    Log.d("Speech2Text", "About to start my request");
-                    startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
-                } catch (ActivityNotFoundException a) {
-                    Toast.makeText(getApplicationContext(),
-                            "Sorry your device not supported",
-                            Toast.LENGTH_SHORT).show();
-                }
-
-                return true;
+            try {
+                Log.d("Speech2Text", "About to start my request");
+                startActivityForResult(speechIntent, SPEECH_REQUEST_CODE);
+            } catch (ActivityNotFoundException a) {
+                Toast.makeText(getApplicationContext(),
+                        "Sorry your device not supported",
+                        Toast.LENGTH_SHORT).show();
             }
+
+            return true;
         });
 
         return baseNode;

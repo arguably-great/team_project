@@ -15,14 +15,12 @@ This Class serves as one piece of the bigger overall Layout structure for the ap
 public class NoteLayout extends Node {
 
     private static final float NOTE_HEIGHT = 0.75f;
-    private static final Vector3 NOTE_LOCATION_VECTOR = new Vector3(0.0f, 0.2f, -0.2f);
+    private static final Vector3 NOTE_LOCATION_VECTOR_PHONE = new Vector3(0.0f, 0.4f, -0.2f);
+    private static final Vector3 NOTE_LOCATION_VECTOR_TABLET = new Vector3(0.0f, 0.15f, -0.1f);
+
     private static final Vector3 NOTE_SCALE_VECTOR = new Vector3(NOTE_HEIGHT * 2, NOTE_HEIGHT * 1.5f, 1.0f);
     private Node noteNode;
     private ViewRenderable noteRenderable;
-
-    public NoteLayout(){
-        this.noteNode = new Node();
-    }
 
     public NoteLayout(ViewRenderable noteRenderable){
 
@@ -36,7 +34,7 @@ public class NoteLayout extends Node {
     private void createVideoNode(ViewRenderable noteRenderable) {
         noteNode.setParent(this);
         noteNode.setRenderable(noteRenderable);
-        noteNode.setLocalPosition(NOTE_LOCATION_VECTOR);
+        noteNode.setLocalPosition(NOTE_LOCATION_VECTOR_TABLET);
         noteNode.setLocalScale(NOTE_SCALE_VECTOR);
 
         noteNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1.0f,0.0f,0.0f), -60f) );
