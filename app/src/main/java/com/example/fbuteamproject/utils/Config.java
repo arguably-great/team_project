@@ -29,8 +29,7 @@ public class Config {
         private CompletableFuture<ModelRenderable> entityStage;
         private ModelRenderable entityModel;
         private ArrayList<ViewRenderable> entityPhotos;
-
-
+        
         Entity(String entityName, String modelId, String videoURL, Vector3 entityScaleVector, Context context, String keyWord, Quaternion rotation){
             this.entityName = entityName;
             this.modelId = modelId;
