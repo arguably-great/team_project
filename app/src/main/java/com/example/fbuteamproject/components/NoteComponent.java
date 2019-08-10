@@ -22,7 +22,9 @@ import java.util.concurrent.ExecutionException;
 
 public class NoteComponent {
 
-    public static final String START_OF_NOTE_LINE = "\n\n     \u2022  ";
+    public static final String START_OF_NOTE_LINE = "\n     \u2022  ";
+    public static final String END_OF_NOTE_LINE = "\n";
+
     private static ViewRenderable entityContentRenderable;
 
     private static CompletableFuture<ViewRenderable> buildContentStage(Context context){
@@ -72,8 +74,10 @@ public class NoteComponent {
                 if (lineCount != 0) {
                     fileText.append(START_OF_NOTE_LINE);
                     fileText.append(line);
+                    fileText.append(END_OF_NOTE_LINE);
                 }
                 else{
+                    fileText.append("\n");
                     fileText.append(line);
                 }
                 //Keep track of the lines so that the first line in the file does not have additional spacing

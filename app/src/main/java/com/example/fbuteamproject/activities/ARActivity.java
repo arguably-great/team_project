@@ -398,6 +398,9 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         anchorNode.setParent(arSceneView.getScene());
         Node components = createComponents();
         components.setParent(anchorNode);
+
+        arSceneView.getPlaneRenderer().setVisible(false);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
