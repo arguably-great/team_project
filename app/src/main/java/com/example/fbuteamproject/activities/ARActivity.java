@@ -298,7 +298,7 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
 
         if(player != null) {
             player.seekTo(position);
-            player.setPlayWhenReady(true);
+//            player.setPlayWhenReady(true);
         }
 
         if (arSceneView.getSession() == null) {
@@ -399,7 +399,6 @@ public class ARActivity extends AppCompatActivity implements EntityWrapper.Entit
         Node components = createComponents();
         components.setParent(anchorNode);
 
-        arSceneView.getPlaneRenderer().setVisible(false);
 
     }
 

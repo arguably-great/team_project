@@ -202,7 +202,6 @@ public class VideoComponent {
         }
 
         if (!myPlayer.getPlayWhenReady()) {
-
             myPlayer.setPlayWhenReady(true);
             myPlayer.addListener(new Player.DefaultEventListener() {
                 @Override

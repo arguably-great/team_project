@@ -29,7 +29,7 @@ public class Config {
         private CompletableFuture<ModelRenderable> entityStage;
         private ModelRenderable entityModel;
         private ArrayList<ViewRenderable> entityPhotos;
-        
+
         Entity(String entityName, String modelId, String videoURL, Vector3 entityScaleVector, Context context, String keyWord, Quaternion rotation){
             this.entityName = entityName;
             this.modelId = modelId;
@@ -180,28 +180,28 @@ public class Config {
 
         planetConfig0.entities.add(new Entity("Mercury", "13900_Mercury_v1_l3.sfb",
                 "file:///sdcard/Movies/mercury.mp4",
-                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet solar system", null));
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "mercury nasa planet", null));
         planetConfig0.entities.add(new Entity("Venus", "Venus_1241.sfb",
                 "file:///sdcard/Movies/VENUS.mp4",
-                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "venus milky way", null));
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "venus milky way nasa planet", null));
         planetConfig0.entities.add(new Entity("Earth", "CHAHIN_EARTH.sfb",
                 "file:///sdcard/Movies/earth.mp4",
-                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "solar system earth forest", null));
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "mother earth planet globe world", null));
         planetConfig0.entities.add(new Entity("Mars", "Mars.sfb",
                 "file:///sdcard/Movies/mars.mp4",
                 new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "red mars planet solar system", null));
         planetConfig0.entities.add(new Entity("Jupiter", "model.sfb",
                 "file:///sdcard/Movies/jupiter.mp4",
-                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet jupiter solar system", null));
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet jupiter nasa solar system", null));
         planetConfig0.entities.add(new Entity("Saturn", "13906_Saturn_v1_l3.sfb",
                 "file:///sdcard/Movies/saturn.mp4",
-                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet solar system saturn rings", new Quaternion(90, 0, 10, 90)));
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet solar system saturn rings nasa", new Quaternion(90, 0, 10, 90)));
         planetConfig0.entities.add(new Entity("Uranus", "13907_Uranus_v2_l3.sfb",
                 "file:///sdcard/Movies/uranus.mp4",
-                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet uranus solar system", new Quaternion(90, 0, 10, 95)));
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet uranus solar system nasa", new Quaternion(90, 0, 10, 95)));
         planetConfig0.entities.add(new Entity("Neptune", "Neptune.sfb",
                 "file:///sdcard/Movies/neptune.mp4",
-                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet solar system neptune moon", null));
+                new Vector3(0.2f, 0.2f, 0.2f), AppConfig.getContext(), "planet solar system neptune moon nasa", null));
 
 
         animalConfig = new AppConfig();
